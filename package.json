@@ -1,0 +1,60 @@
+{
+  "name": "alarm_clock",
+  "version": "0.0.5",
+  "description": "Alarm Clock App",
+  "main": "init.es6",
+  "scripts": {
+    "start": "./node_modules/webpack/bin/webpack.js && node init.es6 -d",
+    "local": "./node_modules/webpack/bin/webpack.js && node init.es6 -ld",
+    "app": "node init.es6 -d",
+    "watch": "./node_modules/webpack/bin/webpack.js --watch",
+    "test": "./node_modules/eslint/bin/eslint.js . --ext .jsx,.es6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KyleKing/My-Programming-Sketchbook.git"
+  },
+  "author": "Kyle King",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KyleKing/My-Programming-Sketchbook/issues"
+  },
+  "homepage": "https://github.com/KyleKing/My-Programming-Sketchbook/tree/master/Raspberry_Pi",
+  "dependencies": {
+    "babel-register": "^6.11.6",
+    "body-parser": "^1.13.3",
+    "child_process": "^1.0.2",
+    "cli-color": "^1.1.0",
+    "commander": "^2.9.0",
+    "cron": "^1.1.0",
+    "debug": "^2.2.0",
+    "express": "^4.13.3",
+    "eyespect": "^0.1.10",
+    "fs-extra": "^0.30.0",
+    "interface-addresses": "0.0.5",
+    "moment": "^2.14.1",
+    "nedb": "^1.8.0",
+    "node-pid-controller": "^1.0.0",
+    "onoff": "^1.1.1",
+    "pi-blaster.js": "^0.1.1",
+    "python-shell": "^0.4.0",
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "serialport": "^4.0.1",
+    "socket.io": "^1.3.6"
+  },
+  "devDependencies": {
+    "babel-core": "^6.0.12",
+    "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.0.1",
+    "babel-preset-es2015": "^6.0.12",
+    "babel-preset-react": "^6.0.15",
+    "eslint": "^3.2.2",
+    "eslint-config-airbnb": "^10.0.0",
+    "eslint-plugin-import": "^1.6.1",
+    "eslint-plugin-jsx-a11y": "^2.0.1",
+    "eslint-plugin-react": "^6.0.0",
+    "webpack": "^1.12.1",
+    "webpack-dev-server": "^1.12.1"
+  }
+}

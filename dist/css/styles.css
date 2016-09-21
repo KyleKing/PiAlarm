@@ -1,0 +1,115 @@
+header {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/**
+ * Control Panel Buttons (Right Panel)
+ */
+
+.right-title {
+    margin: 20px;
+}
+
+/* @media (min-width: 500px) { */
+.custom-button-formatting {
+    margin: 10px;
+    padding-top: 10px !important;
+    padding-right: 20px !important;
+    padding-bottom: 10px !important;
+    padding-left: 20px !important;
+}
+/*}*/
+
+/**
+ * Control Panel Step List (Right Panel)
+ */
+
+ul {
+    padding-right: 40px;
+    padding-left: 40px;
+}
+
+ul li {
+    position: relative;
+    list-style: none;
+    color: white;
+}
+
+/* Status Colors */
+.alarm {
+    background-color: RGB(52, 73, 94);
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.alarm-buttons {
+    text-align: right;
+}
+
+span {
+    margin-left: 20px;
+}
+
+/**
+ * Both Panels to Align Vertically
+ */
+
+.live-image {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+@media (min-width: 992px) {
+    .live-image {
+        padding-top: 60px;
+    }
+}
+
+/* Text box style: */
+input {
+    color: RGB(52, 73, 94);
+    margin-left: 5px;
+    margin-right: 5px;
+    max-width: 100%;
+}
+input.input-title {
+    min-width: 300px;
+}
+input.input-schedule {
+    max-width: 150px;
+}
+.input-error {
+    border-color: #ec7063;
+    border-width: 4px;
+    background-color: RGB(238, 123, 123);
+}
+
+
+/* CSS Workaround of immutable React this.state() */
+.removed {
+    display: none !important;
+}
+
+/* Save Button: */
+.changed {
+    color: #fff;
+    background-color: #48c9b0;
+    border-color: #48c9b0;
+}
+.unchanged {
+    background-color: #bdc3c7;
+    border-color: #bdc3c7;
+    color: rgba(255, 255, 255, 0.75);
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    cursor: not-allowed;
+}
+
+.button-oversized {
+    padding: 20px;
+    margin: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
