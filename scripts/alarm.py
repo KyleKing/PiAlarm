@@ -3,18 +3,26 @@ import sys
 import subprocess
 import RPi.GPIO as GPIO
 import time
+# import config as cg
 
 
 ###########################
 # Accept STDIN
 ###########################
 
-# # simple JSON echo script
+
+# # simple JSON echo scripts
+
+# line = ' '
+# while line:
+#     # Parse STDIN
+#     line = sys.stdin.readline().strip().lower()
+
 # for line in sys.stdin:
 #     # print line[:-1]
 #     log_to_web_app(line[:-1])
 
-# TODO: Could be set with stdin in later release:
+# TODO: Could be set with stdin in later version:
 stages = [1, 2, 3, 4]
 
 
@@ -22,8 +30,8 @@ stages = [1, 2, 3, 4]
 # Globals:
 ###########################
 
+
 # For debugging purposes:
-# conv_min = 60
 conv_min = 60
 time_step = 1
 
@@ -32,11 +40,6 @@ pin_shaker = 23
 pin_buzzer = 18
 pin_led = 17
 pin_button = 24
-
-# FIXME: ONLY RUN ONE INSTANCE OF PI-BLASTER!
-# print "\nStarting pi-blaster:"
-# sys.stdout.flush()
-# subprocess.call("sudo ~/pi-blaster/pi-blaster", shell=True)
 
 # Other:
 alarm_on = True
@@ -81,8 +84,6 @@ def alarm_deactivate(pin_num):
         set_PWM(pin_shaker, 0)
         set_PWM(pin_buzzer, 0)
         set_PWM(pin_led, 0)
-    # else:
-    #     print "? alarm_deactivate() - not a rising edge ?"
 
 
 def gen_button_cb(pin_num):
@@ -99,9 +100,6 @@ def gen_button_cb(pin_num):
 
 def all_off():
     global led_color, shaker_val, buzzer_val
-    # Not a temp value...
-    # if led_color > 0:
-    #     led_color = 0
     if shaker_val > 0:
         shaker_val = 0
     if buzzer_val > 0:
@@ -156,8 +154,10 @@ for stage in stages:
         # set_globals(5, 6, 1, 0.7, 1, 1, 1)
         set_globals(1.5, 2, 1, 0.7, 1, 1, 1)
 
-    # FIXME: WILL NOT FIX: TODO: What condition to keep alarm going?
-    alarm_on = True
+    # # FIXME: WILL NOT FIX: TODO: What condition to keep alarm going?
+    # alarm_on = True
+    # Actually finish alarm:
+    # sys.exit()
 
     # Loop-specific variables:
     all_off()

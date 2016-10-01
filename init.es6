@@ -69,9 +69,8 @@ http.listen(app.get('port'), () => {
 const db = require('./modules/data.es6');
 const alarms = db.alarms;
 const sched = require('./modules/scheduler.es6');
-const clock = require('./modules/clock.es6');
-if (process.env.LOCAL === 'false')
-  clock.start();
+const electronics = require('./modules/electronics.es6');
+electronics.startClock();
 
 const PythonShell = require('python-shell');
 

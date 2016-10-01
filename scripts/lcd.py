@@ -50,6 +50,7 @@ def full_message(message):
         return False
     return True
 
+
 while True:
     line = sys.stdin.readline()
     message = line.rstrip()

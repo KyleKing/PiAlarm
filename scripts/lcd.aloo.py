@@ -31,13 +31,13 @@
 # pausebreak()
 # full_message('One Line Message')
 
-AllKLB=0
-ALOO="is really cool wow shark"
-ice_cream_kangaroo_bike=ALOO.split(" ")
+AllKLB = 0
+ALOO = "is really cool wow shark"
+ice_cream_kangaroo_bike = ALOO.split(" ")
 # Sample Code:
 for i in range(len(ice_cream_kangaroo_bike)):
-    KLB=len(ice_cream_kangaroo_bike[i])
-    AllKLB=AllKLB+KLB
+    KLB = len(ice_cream_kangaroo_bike[i])
+    AllKLB = AllKLB + KLB
     # if ALLKLB = 14,
     #   KLB is = 3, then make newline, but if KLB = 2, keep on same line
-    i=i+1
+    i = i + 1

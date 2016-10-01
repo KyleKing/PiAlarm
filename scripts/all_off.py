@@ -12,9 +12,6 @@ pin_shaker = 23
 pin_buzzer = 18
 pin_led = 17
 
-# FIXME: ONLY RUN ONE INSTANCE OF PI-BLASTER!
-# print "\nStarting pi-blaster for all_off:"
-# subprocess.call("sudo ~/pi-blaster/pi-blaster", shell=True)
 
 ###########################
 # Functions and Stuff

@@ -11,20 +11,20 @@ const alarms = new Datastore({
 });
 
 function generateUniq() {
-  const randVal = Math.floor(Math.random() * (20));
-  const uniq = moment().format(`YYYY_DDDD_kk_mm_ss_${randVal}`);
+  const randVal = Math.floor(Math.random() * (50));
+  const uniq = moment().format(`YYMMDD_mm-ss_${randVal}`);
   return uniq;
 }
 
 function freshCron() {
   dataDebug('Creating a fresh cron DB with fake data');
   const prefs = [1];
-  const schedule = '0 0 0 * * *';
+  const schedule = '0 0 * * * *';
   prefs.forEach((pref, index) => {
     const uniq = generateUniq();
     alarms.insert({
       uniq,
-      title: `WORK: ${uniq}`,
+      title: `ALARM: ${uniq}`,
       schedule,
       running: true,
     });
@@ -33,15 +33,6 @@ function freshCron() {
 
 if (existsSync('./data/alarms')) {
   dataDebug('Using existing cron DB');
-
-  // // Check if more documents in need:
-  // alarms.count({}, (err, count) => {
-  //   if (err)
-  //     throw err;
-  //   if (count < 2)
-  //     freshCron();
-  // });
-
   alarms.find({}, (err, docs) => {
     if (err) throw new Error(err);
     docs.forEach((doc) => {

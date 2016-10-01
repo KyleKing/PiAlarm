@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Alarm_Clock</title>
+		<title>PiAlarm</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<link rel="icon" type="image/png" href="./favicon.png" />
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
@@ -12,21 +12,9 @@
 	<body>
 		<div class="container">
 			<div id="alarms"></div>
-			<div class='row'>
-				<p class='text-center'>
-			  	<strong>Quick CRON guide</strong><br/>
-			  	second         0-59<br/>
-			  	minute         0-59<br/>
-			  	hour           0-23<br/>
-			  	day of month   0-31<br/>
-			  	month          0-12<br/>
-			  	day of week    0-6 (Sun-Sat)
-				</p>
-			</div>
 		</div>
 		<script src="./js/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 		<script src="./bundle.js"></script>
-		<script src="./client.js"></script>
 	</body>
 </html>

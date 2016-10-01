@@ -21,7 +21,7 @@ class Alarm extends React.Component {
   }
 
   toggleButton() {
-    // console.log(`Toggled: ${this.props.uniq}`);
+    // console.log(`Toggled: ${this.props.uniq}, but no direct action!`);
     this.setState({
       running: !this.state.running,
       changed: true,
@@ -61,7 +61,7 @@ class Alarm extends React.Component {
   }
 
   handleSubmit(e) {
-    e.preventDefault();
+    // e.preventDefault();
     const newState = {
       uniq: this.state.uniq,
       title: this.state.title,
@@ -91,6 +91,8 @@ class Alarm extends React.Component {
   }
 
   render() {
+    const fc = 'flex-container'
+    const fi = 'flex-item'
     const buttonBase = 'btn custom-button-formatting';
     const buttonValue = this.state.running ? 'Enabled' : 'Disabled';
     const buttonState = this.state.running ? 'info' : 'danger';
@@ -98,34 +100,37 @@ class Alarm extends React.Component {
     const removed = this.state.removed ? 'removed' : 'alarm-exists';
     const changed = this.state.changed ? 'changed' : 'unchanged';
 
+    // <form className={`${fi} ${fc}`} style={{ display: 'inline' }} onSubmit={this.handleSubmit}>
+
     return (
-      <div className={`alarm ${removed}`}>
+      <div className={`alarm ${removed} ${fc}`}>
         <button
           type="button"
-          className={buttonClasses}
+          className={`${fi} ${buttonClasses}`}
           onClick={() => this.toggleButton()}
         >{buttonValue}</button>
-        <form style={{ display: 'inline' }} onSubmit={this.handleSubmit}>
-          <input
-            type="text"
-            className="input-title"
-            defaultValue={this.state.title}
-            onChange={this.handleTitleChange}
-          />
-          <input
-            type="text"
-            className={`input-schedule ${(this.state.error) ? 'input-error' : ''}`}
-            defaultValue={this.state.schedule}
-            onChange={this.handleScheduleChange}
-          />
-          <button
-            className={`${buttonBase} ${changed}`}
-            type="submit"
-          >Save</button>
-        </form>
+
+        <input
+          type="text"
+          className={`${fi} input-title`}
+          defaultValue={this.state.title}
+          onChange={this.handleTitleChange}
+        />
+        <input
+          type="text"
+          className={`${fi} input-schedule ${(this.state.error) ? 'input-error' : ''}`}
+          defaultValue={this.state.schedule}
+          onChange={this.handleScheduleChange}
+        />
+        <button
+          className={`${fi} ${buttonBase} ${changed}`}
+          onClick={() => this.handleSubmit()}
+          type="submit"
+        >Save</button>
+
         <button
           type="button"
-          className={`${buttonBase} btn-danger remove`}
+          className={`${fi} ${buttonBase} btn-danger remove`}
           id={this.props.uniq}
           onClick={() => this.removeAlarm()}
         >REMOVE</button>
