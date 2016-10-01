@@ -21,7 +21,7 @@ if (process.env.ALARM !== 'false')
 
 module.exports = {
   scheduleCron(title, cronSchedule) {
-    schedDebug(`Scheduling ${title} (with ${cronSchedule})`);
+    schedDebug(`Scheduling '${title}' (with sched: ${cronSchedule})`);
     return new CronJob(cronSchedule, () => {
       schedDebug(` ! Starting Alarm ('${title}') ! `);
       electronics.updateClockDisplay(`h:mm:ss a   [${title}]`);

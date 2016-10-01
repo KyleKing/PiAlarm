@@ -8,17 +8,21 @@ const spawn = require('child_process').spawn;
 const moment = require('moment');
 const CronJob = require('cron').CronJob;
 
-function exec_on_no_stdout(task, cb) {
+function exec_on_no_stdout(task, cb, altCB, quiet) {
   exec(task, (childerr, stdout, stderr) => {
-    electronicDebug(`EXEC: ${task}`);
+    if (quiet === null)
+      electronicDebug(`EXEC: ${task}`);
     if (childerr) electronicDebug(warn(childerr));
     if (stderr) electronicDebug(error(`stderr: ${stderr}`));
     if (!stdout) {
-      electronicDebug('No STDOUT returned, calling `cb`')
+      if (quiet === null)
+        electronicDebug('No STDOUT returned, calling `cb`')
       cb()
     } else {
-      electronicDebug('REturned STDOUT (not calling `cb`');
-      console.log(stdout);
+      if (quiet === null)
+        console.log(stdout);
+      if (altCB)
+        altCB()
     }
   });
 }
@@ -45,7 +49,7 @@ module.exports = {
   },
 
   triggerAlarm() {
-    electronicDebug('Starting Alarm');
+    electronicDebug('Starting Python Alarm Script');
     if (process.env.LOCAL === 'false') {
       const pyshell = new PythonShell('scripts/alarm.py');
       // pyshell.send('THIS COULD BE USEFUL!');
@@ -65,8 +69,10 @@ module.exports = {
     const updateClock = new CronJob('0 * * * * *', () => {
       const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
       exec_on_no_stdout(checkAlarm, () => {
-        this.updateClockDisplay('h:mm a      [ALARM]');
-      });
+        this.updateClockDisplay('h:mm a   ddd - MMM Do');
+      }, () => {
+        this.updateClockDisplay('h:mm a   [ALARM!]');
+      }, true);
     }, () => {
       electronicDebug('Stopped updating Clock Display');
     }, true);

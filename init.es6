@@ -88,6 +88,10 @@ if (process.env.LOCAL === 'false') {
   pyshell.on('error', (err) => { throw err; });
 }
 
+////////////////////////////
+// Initialize Alarms
+////////////////////////////
+
 const ClockAlarms = {};
 
 // Create alarms only once:
@@ -108,13 +112,53 @@ alarms.find({}, (err, allAlarms) => {
       initDebug(`(Register) x Not starting: ${alarm.title}`);
       initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
     }
-    // // FIXME: Check that alarm is running (undefined if not):
-    // // initDebug(`Does 'running'? ${ClockAlarms[alarm.uniq].hasOwnProperty('running')}`);
-    // initDebug(`${alarm.uniq} is running? ${ClockAlarms[alarm.uniq].running}`);
   });
-  // initDebug(ClockAlarms);
-  // TODO: Timezone?
 });
+
+////////////////////////////
+// Reused Functions
+////////////////////////////
+
+function deleteAlarm (uniq) {
+  alarms.remove({ uniq }, {}, (err, numRemoved) => {
+    if (err)
+      throw err;
+    if (numRemoved <= 0)
+      initDebug(`(deleteAlarm) Removing ${uniq} FAILED!`);
+  });
+}
+
+function eraseAlarm (uniq) {
+    initDebug(`(eraseAlarm) x Stopped: ${ClockAlarms[uniq].title}`);
+    initDebug(`    - ${uniq} (is running? ${ClockAlarms[uniq].running})`);
+    ClockAlarms[uniq].stop();
+    ClockAlarms[uniq] = null;
+    deleteAlarm(uniq);
+}
+
+function createAlarm (alarmState, socket) {
+    alarms.insert(alarmState, (err, alarm) => {
+      if (err)
+        throw err;
+      if (alarm) {
+        ClockAlarms[alarm.uniq] = sched.scheduleCron(alarm.title, alarm.schedule);
+        if (alarm.running === true) {
+          ClockAlarms[alarm.uniq].start();
+          initDebug(`(createAlarm) ^ Started: ${alarm.title}`);
+          initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+        } else {
+          initDebug(`(createAlarm) x Didn't start: ${alarm.title}`);
+          initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+        }
+        socket.emit('alarm event', alarm);
+      } else
+        initDebug('WARN: No alarm in insert callback');
+    });
+}
+
+////////////////////////////
+// Socket Actions
+////////////////////////////
 
 io.on('connection', (socket) => {
   alarms.find({}, (err, allAlarms) => {
@@ -126,71 +170,30 @@ io.on('connection', (socket) => {
   });
 
   socket.on('new', () => {
+    initDebug(`(socket.new) Creating new alarm (${uniq})`);
     const uniq = db.generateUniq();
-    initDebug(`Creating new alarm (${uniq})`);
-    alarms.insert({
+    const alarmState = {
       uniq,
       title: '_New_Alarm_',
-      schedule: '0 0 0 * * *',
+      schedule: '20 * * * * *',
       running: false,
       saved: false,
-    }, (err, alarm) => {
-      if (err)
-        throw err;
-      if (alarm) {
-        ClockAlarms[alarm.uniq] = sched.scheduleCron(alarm.title, alarm.schedule);
-        if (alarm.running === true) {
-          ClockAlarms[alarm.uniq].start();
-          initDebug(`(New) ^ Started: ${alarm.title}`);
-          initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
-        } else {
-          initDebug(`(New) x Didn't start: ${alarm.title}`);
-          initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
-        }
-        socket.emit('alarm event', alarm);
-      } else
-        initDebug('WARN: No alarm in insert callback');
-    });
+    };
+    createAlarm(alarmState, socket);
   });
 
-  // FIXME: Needs some work!
   socket.on('update', (newState) => {
-    alarms.update({ uniq: newState.uniq }, { $set: newState }, {}, (err) => {
-      if (err)
-        throw err;
-    });
-    initDebug(`Is updated alarm in ClockAlarms? ${ClockAlarms.hasOwnProperty(newState.uniq)}`);
-    if (!ClockAlarms.hasOwnProperty(newState.uniq)) {
-      ClockAlarms[newState.uniq] = sched.scheduleCron(newState.title, newState.schedule);
-      initDebug(`Adding alarm with uniq: ${newState.uniq} to ClockAlarms{}`);
-    } else {
-      ClockAlarms[newState.uniq].stop();
-      initDebug(`(Update) x PRE-EMPTIVELY Stopped: ${newState.title}`);
-      initDebug(`    - ${newState.uniq} (is running? ${ClockAlarms[newState.uniq].running})`);
-    }
-    if (newState.running === true) {
-      ClockAlarms[newState.uniq].start();
-      initDebug(`(Update)  ^ Started: ${newState.title}`);
-      initDebug(`    - ${newState.uniq} (is running? ${ClockAlarms[newState.uniq].running})`);
-    } else {
-      // ClockAlarms[newState.uniq].stop();
-      initDebug(`(Update) x ALREADY (no stop now) Stopped: ${newState.title}`);
-      initDebug(`    - ${newState.uniq} (is running? ${ClockAlarms[newState.uniq].running})`);
-    }
+    initDebug(`(socket.update) Is updated alarm in ClockAlarms? ${ClockAlarms.hasOwnProperty(newState.uniq)}`);
+    eraseAlarm(newState.uniq);
+    createAlarm(newState, socket);
+    // alarms.update({ uniq: newState.uniq }, newState, {}, (err) => {
+    //   if (err)
+    //     throw err;
+    // }):
   });
 
   socket.on('remove', (uniq) => {
-    initDebug(`(Remove) x Stopped: ${ClockAlarms[uniq].title}`);
-    initDebug(`    - ${uniq} (is running? ${ClockAlarms[uniq].running})`);
-    // initDebug(ClockAlarms[uniq]);
-    ClockAlarms[uniq].stop();
-    // FIXME: Can I remove a property entirely?
-    ClockAlarms[uniq] = null;
-    alarms.remove({ uniq }, {}, (err, numRemoved) => {
-      if (err)
-        throw err;
-      if (numRemoved <= 0)
-        initDebug(`Removing ${uniq} FAILED!`);
-    });
+    initDebug(`(socket.remove) Deleting alarm (${uniq})`);
+    eraseAlarm(uniq);
   });
 });

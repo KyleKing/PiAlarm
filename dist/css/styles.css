@@ -25,6 +25,7 @@ ul li {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 .flex-item {
     flex-grow: 1
@@ -98,9 +99,6 @@ input {
     margin-bottom: 10px;
     margin-left: 5px;
     margin-right: 5px;
-}
-input.input-schedule {
-    max-width: 150px;
 }
 .input-error {
     border-color: #ec7063;
