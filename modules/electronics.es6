@@ -21,7 +21,7 @@ if (process.env.LOCAL === 'false') {
       console.log(stdout);
     } else {
       electronicDebug('Something matching pi-blaster is running');
-      spawn('sh', ['bootPiBlaster.sh']);
+      spawn('sh', ['scripts/bootPiBlaster.sh']);
     }
   });
 }
@@ -31,7 +31,7 @@ if (process.env.LOCAL === 'false') {
 function triggerAlarm() {
   electronicDebug('Starting Alarm');
   if (process.env.LOCAL === 'false') {
-    const pyshell = new PythonShell('./alarm.py');
+    const pyshell = new PythonShell('scripts/alarm.py');
     // TODO: sends a message to the Python script via stdin
     // pyshell.send('msg');
     pyshell.on('message', (message) => {

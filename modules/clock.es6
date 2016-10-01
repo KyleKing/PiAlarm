@@ -15,7 +15,7 @@ const moment = require('moment');
 const PythonShell = require('python-shell');
 let pyshell = {};
 if (process.env.LOCAL === 'false')
-  pyshell = new PythonShell('lcd.py');
+  pyshell = new PythonShell('scripts/lcd.py');
 const CronJob = require('cron').CronJob;
 
 module.exports = {

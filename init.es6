@@ -76,7 +76,7 @@ if (process.env.LOCAL === 'false')
 const PythonShell = require('python-shell');
 
 if (process.env.LOCAL === 'false') {
-  const pyshell = new PythonShell('./all_off.py');
+  const pyshell = new PythonShell('scripts/all_off.py');
   initDebug('Started all_off.py');
   pyshell.on('message', (message) => {
     initDebug(`rcvd (ALL_OFF): ${message}`);

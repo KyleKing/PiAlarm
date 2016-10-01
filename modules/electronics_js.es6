@@ -6,7 +6,7 @@ electronicDebug('Debugger initialized!');
 electronicDebug('Start pi-blaster manually');
 if (process.env.LOCAL === 'false') {
   const spawn = require('child_process').spawn;
-  spawn('sh', ['bootPiBlaster.sh']);
+  spawn('sh', ['scripts/bootPiBlaster.sh']);
 }
 
 const fs = require('fs-extra');
@@ -73,7 +73,7 @@ module.exports = {
 // TODO (Adaptation of above):
 // /** Create SIGNINT event on user input */
 // socket.on('stop', () => {
-//   new PythonShell('./all_off.py');
+//   new PythonShell('scripts/all_off.py');
 //   console.log('Stopped Python Script Manually');
 //   pyshell.childProcess.kill();
 // });

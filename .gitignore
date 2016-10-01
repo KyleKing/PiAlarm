@@ -39,3 +39,4 @@ jspm_packages
 # Repository-Specific
 data/
 /dist/bundle.js.map
+/dist/bundle.js

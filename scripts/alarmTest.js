@@ -2,7 +2,7 @@ console.log('Manually test the alarm script from a JS script');
 
 console.log('Start pi-blaster manually');
 const spawn = require('child_process').spawn; // eslint-disable-line
-spawn('sh', ['bootPiBlaster.sh']);
+spawn('sh', ['scripts/bootPiBlaster.sh']);
 
 const PythonShell = require('python-shell');
 
