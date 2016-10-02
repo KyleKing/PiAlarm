@@ -17,9 +17,9 @@ cg.quiet_logging(True)
 pin_shaker = 23
 pin_buzzer = 18
 pin_button = 24
-pin_blue = 22
-pin_red = 25
-pin_green = 21
+pin_blue = 21
+pin_red = 27
+pin_green = 22
 
 # Just an indicator light
 pin_led = 17

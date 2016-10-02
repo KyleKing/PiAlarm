@@ -7,6 +7,7 @@ const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const moment = require('moment');
 const CronJob = require('cron').CronJob;
+const PythonShell = require('python-shell');
 
 function exec_on_no_stdout(task, cb, altCB, quiet) {
   exec(task, (childerr, stdout, stderr) => {
@@ -29,16 +30,28 @@ function exec_on_no_stdout(task, cb, altCB, quiet) {
 
 electronicDebug('Checking if pi-blaster should start');
 if (process.env.LOCAL === 'false') {
-  exec_on_no_stdout('ps aux | grep [b]laster', () => {
-    electronicDebug('Starting pi-blaster');
-    spawn('sh', ['scripts/bootPiBlaster.sh']);
+  // Fails because of backslashes...
+  // exec_on_no_stdout("ps aux | grep '/home/pi/pi-blaster/[p]i-blaster'", () => {
+  //   electronicDebug('Starting pi-blaster');
+  //   spawn('sh', ['bash scripts/bootPiBlaster.sh']);
+  // });
+  let pyShellPiBlaster = {};
+  if (process.env.LOCAL === 'false')
+    pyShellPiBlaster = new PythonShell('scripts/pyBootPiBlaster.py');
+  pyShellPiBlaster.on('message', (message) => {
+    electronicDebug(`rcvd (pyShellPiBlaster): ${message}`);
   });
+  pyShellPiBlaster.on('close', (err) => {
+    if (err)
+      throw err;
+    electronicDebug('Completed running pyShellPiBlaster.py');
+  });
+  pyShellPiBlaster.on('error', (err) => { throw err; });
 }
 
-const PythonShell = require('python-shell');
-let pyshell = {};
+let pyShellLCD = {};
 if (process.env.LOCAL === 'false')
-  pyshell = new PythonShell('scripts/lcd.py');
+  pyShellLCD = new PythonShell('scripts/lcd.py');
 
 module.exports = {
   startAlarm() {
@@ -51,28 +64,29 @@ module.exports = {
   triggerAlarm() {
     electronicDebug('Starting Python Alarm Script');
     if (process.env.LOCAL === 'false') {
-      const pyshell = new PythonShell('scripts/alarm.py');
-      // pyshell.send('THIS COULD BE USEFUL!');
-      pyshell.on('message', (message) => {
+      const pyShellAlarm = new PythonShell('scripts/alarm.py');
+      // pyShellAlarm.send('THIS COULD BE USEFUL!');
+      pyShellAlarm.on('message', (message) => {
         electronicDebug(`rcvd (ALARM): ${message}`);
       });
-      pyshell.on('close', (err) => {
+      pyShellAlarm.on('close', (err) => {
         if (err)
           throw err;
         electronicDebug('Completed alarm and closed (ALARM.py)');
       });
-      pyshell.on('error', (err) => { throw err; });
+      pyShellAlarm.on('error', (err) => { throw err; });
     }
   },
 
   startClock() {
     const updateClock = new CronJob('0 * * * * *', () => {
-      const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
-      exec_on_no_stdout(checkAlarm, () => {
-        this.updateClockDisplay('h:mm a   ddd - MMM Do');
-      }, () => {
-        this.updateClockDisplay('h:mm a   [ALARM!]');
-      }, true);
+      this.updateClockDisplay('h:mm a   [ALARM!]');
+      // const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
+      // exec_on_no_stdout(checkAlarm, () => {
+      //   this.updateClockDisplay('h:mm a   ddd - MMM Do');
+      // }, () => {
+      //   this.updateClockDisplay('h:mm a   [ALARM!]');
+      // }, true);
     }, () => {
       electronicDebug('Stopped updating Clock Display');
     }, true);
@@ -83,7 +97,7 @@ module.exports = {
   updateClockDisplay(format) {
     const displayText = moment().format(format);
     if (process.env.LOCAL === 'false')
-      pyshell.send(displayText);
+      pyShellLCD.send(displayText);
     electronicDebug(`Set New Clock Text: ${displayText}`);
     return displayText;
   },

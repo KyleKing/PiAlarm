@@ -17,9 +17,9 @@ program
   .option('-l, --local', 'when not a Raspberry Pi, run in \'local\' mode')
   .option('--alarm', 'Start an alarm right away for testing')
   .parse(process.argv);
-process.env.DEBUG = program.debug || false;
-process.env.LOCAL = program.local || false;
-process.env.ALARM = program.alarm || false;
+process.env.DEBUG = program.debug || 'false';
+process.env.LOCAL = program.local || 'false';
+process.env.ALARM = program.alarm || 'false';
 
 /* initialize debugger */
 const debug = require('./modules/debugger.es6');

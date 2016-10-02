@@ -4,14 +4,19 @@ import sys
 # import time
 import Adafruit_CharLCD as LCD
 
-# Raspberry Pi pin configuration:
-lcd_rs = 24  # 27 - yellow
-lcd_en = 25  # 22 - green
-lcd_d4 = 12  # 25 - blue
-lcd_d5 = 13  # 24 - violet
-lcd_d6 = 16  # 23 - grey
-lcd_d7 = 19  # 27 - white
-lcd_backlight = 4
+# Raspberry Pi pin configuration (adjusted for soldered perf board):
+# Pin Name = Actual Pin Number # LCD Pin (#/16)-Expected Pin Number
+lcd_rs = 24  # 4-27
+lcd_en = 25  # 6-22
+lcd_d4 = 12  # 11-25
+lcd_d5 = 13  # 12-24
+lcd_d6 = 16  # 13-23
+lcd_d7 = 19  # 14-18
+lcd_backlight = 20  # 16-4 (FIXME: currently grounded, but could be to 21?)
+# # Only for RGB display:
+# lcd_red   = 19  # 16-4
+# lcd_green = 17 # 17-17
+# lcd_blue  = 7  # 18-7 (Pin 7 is CE1)
 
 # Define LCD column and row size for 16x2 LCD.
 lcd_columns = 16

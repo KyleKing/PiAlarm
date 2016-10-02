@@ -12,9 +12,9 @@ debug = False
 cg.quiet_logging(debug)
 
 # Electronic Pin Numbering Globals:
-pin_blue = 25
-pin_red = 22
-pin_green = 21
+pin_blue = 21
+pin_red = 27
+pin_green = 22
 
 ###########################
 # Functions and Stuff
