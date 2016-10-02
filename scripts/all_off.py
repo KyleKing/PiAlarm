@@ -2,14 +2,26 @@
 import sys
 import subprocess
 import RPi.GPIO as GPIO
+import config as cg
+
 
 ###########################
 # Globals:
 ###########################
 
+
+alarm_on = True
+cg.quiet_logging(True)
+
 # Electronic Pin Numbering Globals:
 pin_shaker = 23
 pin_buzzer = 18
+pin_button = 24
+pin_blue = 22
+pin_red = 25
+pin_green = 21
+
+# Just an indicator light
 pin_led = 17
 
 
@@ -20,16 +32,21 @@ pin_led = 17
 
 def set_PWM(pin_num, percent):
     """Run PWM commands through Pi-Blaster"""
-    cmd = "echo " + str(pin_num) + "=" + str(percent)
-    status = subprocess.call(cmd + " > /dev/pi-blaster", shell=True)
-    print "Called: " + cmd + " > /dev/pi-blaster"
-    return status
+    # echo "22=0" > /dev/pi-blaster
+    cmd = 'echo "' + str(pin_num) + "=" + str(percent)
+    cg.send(cmd + '" > /dev/pi-blaster')
+    return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
 
 
 def all_off():
-    print set_PWM(pin_shaker, 0)
-    print set_PWM(pin_buzzer, 0)
-    print set_PWM(pin_led, 0)
+    cg.send('\nDeactivating all PWM pins')
+    set_PWM(pin_shaker, 1)
+    set_PWM(pin_buzzer, 0)
+    set_PWM(pin_led, 0)
+    set_PWM(pin_red, 0)
+    set_PWM(pin_blue, 0)
+    set_PWM(pin_green, 0)
+
 
 ###########################
 # Alarm logic!
