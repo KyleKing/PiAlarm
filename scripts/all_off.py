@@ -16,7 +16,7 @@ cg.quiet_logging(True)
 # Electronic Pin Numbering Globals:
 pin_shaker = 23
 pin_buzzer = 18
-pin_button = 24
+pin_button = 20
 pin_blue = 21
 pin_red = 27
 pin_green = 22

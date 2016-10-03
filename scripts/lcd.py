@@ -12,7 +12,7 @@ lcd_d4 = 12  # 11-25
 lcd_d5 = 13  # 12-24
 lcd_d6 = 16  # 13-23
 lcd_d7 = 19  # 14-18
-lcd_backlight = 20  # 16-4 (FIXME: currently grounded, but could be to 21?)
+lcd_backlight = 26  # 16-4 (FIXME: currently grounded, but could be to 21?)
 # # Only for RGB display:
 # lcd_red   = 19  # 16-4
 # lcd_green = 17 # 17-17

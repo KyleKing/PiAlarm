@@ -22,7 +22,7 @@ cg.quiet_logging(True)
 # Electronic Pin Numbering Globals:
 pin_shaker = 23
 pin_buzzer = 18
-pin_button = 24
+pin_button = 20
 pin_blue = 21
 pin_red = 27
 pin_green = 22
@@ -105,7 +105,7 @@ for stage in [1, 2, 3]:
     if debug:
         alarm_stage_time = [0, 10, 10, 10]
     else:
-        alarm_stage_time = [0, 60, 120, 300]
+        alarm_stage_time = [0, 90, 180, 500]
     cg.send('\nStarting Stage: ' + str(stage) + ' for ' +
             str(alarm_stage_time[stage]) + ' seconds')
 
@@ -114,14 +114,15 @@ for stage in [1, 2, 3]:
         # Stage 1 - Blue LED for 1 minute
         if stage == 1:
             cg.send('Configuring Stage 1')
-            set_PWM(pin_blue, 0.5)
+            set_PWM(pin_green, 0.2)
+            set_PWM(pin_red, 0.2)
             set_PWM(pin_led, 1)
         # Stage 2 - Purple LED and Bed Shaker for 2 minutes
         if stage == 2:
             cg.send('Configuring Stage 2')
-            set_PWM(pin_blue, 1)
-            set_PWM(pin_red, 1)
-            set_PWM(pin_shaker, 0)
+            set_PWM(pin_blue, 0.5)
+            set_PWM(pin_red, 0.5)
+            set_PWM(pin_buzzer, 0.1)
             set_PWM(pin_led, 0.2)
         # Stage 3 - FADE LED Strip, Bed Shaker, and Buzzer for 5 minutes
         if stage == 3:

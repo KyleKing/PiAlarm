@@ -28,16 +28,11 @@ function exec_on_no_stdout(task, cb, altCB, quiet) {
   });
 }
 
+
+// Run Pi-Blaster if not already running for smooth PID control
 electronicDebug('Checking if pi-blaster should start');
 if (process.env.LOCAL === 'false') {
-  // Fails because of backslashes...
-  // exec_on_no_stdout("ps aux | grep '/home/pi/pi-blaster/[p]i-blaster'", () => {
-  //   electronicDebug('Starting pi-blaster');
-  //   spawn('sh', ['bash scripts/bootPiBlaster.sh']);
-  // });
-  let pyShellPiBlaster = {};
-  if (process.env.LOCAL === 'false')
-    pyShellPiBlaster = new PythonShell('scripts/pyBootPiBlaster.py');
+  pyShellPiBlaster = new PythonShell('scripts/pyBootPiBlaster.py');
   pyShellPiBlaster.on('message', (message) => {
     electronicDebug(`rcvd (pyShellPiBlaster): ${message}`);
   });
@@ -48,6 +43,7 @@ if (process.env.LOCAL === 'false') {
   });
   pyShellPiBlaster.on('error', (err) => { throw err; });
 }
+
 
 let pyShellLCD = {};
 if (process.env.LOCAL === 'false')
@@ -61,6 +57,7 @@ module.exports = {
     });
   },
 
+  // Create python shell to run the predefined alarm script
   triggerAlarm() {
     electronicDebug('Starting Python Alarm Script');
     if (process.env.LOCAL === 'false') {
@@ -78,15 +75,15 @@ module.exports = {
     }
   },
 
+  // Update display on 1 minute intervals:
   startClock() {
     const updateClock = new CronJob('0 * * * * *', () => {
-      this.updateClockDisplay('h:mm a   [ALARM!]');
-      // const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
-      // exec_on_no_stdout(checkAlarm, () => {
-      //   this.updateClockDisplay('h:mm a   ddd - MMM Do');
-      // }, () => {
-      //   this.updateClockDisplay('h:mm a   [ALARM!]');
-      // }, true);
+      const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
+      exec_on_no_stdout(checkAlarm, () => {
+        this.updateClockDisplay('h:mm a        ddd - MMM Do');
+      }, () => {
+        this.updateClockDisplay('h:mm a            [ALARM!]');
+      }, true);
     }, () => {
       electronicDebug('Stopped updating Clock Display');
     }, true);

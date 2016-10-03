@@ -30,17 +30,17 @@ def set_PWM(pin_num, percent):
 
 
 def fade_up(pin):
-    for i in range(10):
+    for i in range(100):
         i = i + 1
         set_PWM(pin, 0.1 - 0.1 / (i + 1))
-        time.sleep(0.1)
+        time.sleep(0.2)
 
 
 def fade_down(pin):
-    for i in range(10):
+    for i in range(100):
         i = i + 1
         set_PWM(pin, 0.1 / (i + 1))
-        time.sleep(0.1)
+        time.sleep(0.2)
 
 
 def all_off():

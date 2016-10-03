@@ -19,7 +19,7 @@ function generateUniq() {
 function freshCron() {
   dataDebug('Creating a fresh cron DB with fake data');
   const prefs = [1];
-  const schedule = '0 0,5,10,15,20,25,30,35,40,45,50,55 * * * *';
+  const schedule = '20 0,5,10,15,20,25,30,35,40,45,50,55 * * * *';
   prefs.forEach((pref, index) => {
     const uniq = generateUniq();
     alarms.insert({
