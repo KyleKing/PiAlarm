@@ -11,19 +11,28 @@ import config as cg
 
 
 alarm_on = True
-cg.quiet_logging(True)
+cg.quiet_logging(False)
+
+# Standard pins: --gpio 4,17,18,27,21,22,23,24,25
+# New pins: --gpio 4,17,18,27,21,22,23,24,25
 
 # Electronic Pin Numbering Globals:
-pin_shaker = 23
-pin_buzzer = 18
-pin_button = 20
-pin_blue = 21
-pin_red = 27
-pin_green = 22
+# pin_button = 20  # prev: 20
+pin_button = cg.get_pin('Input_Pins', 'pin_button')
+# pin_buzzer = 16  # prev: 18
+pin_buzzer = cg.get_pin('GPIO_Pins', 'pin_buzzer')
+# pin_shaker = 21  # prev: 23
+pin_shaker = cg.get_pin('GPIO_Pins', 'pin_shaker')
+# pin_blue = 5  # prev: 21
+pin_blue = cg.get_pin('GPIO_Pins', 'pin_blue')
+# pin_red = 6  # prev: 27
+pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
+# pin_green = 13  # prev: 22
+pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 
 # Just an indicator light
-pin_led = 17
-
+# pin_led = 19  # prev: 17
+pin_led = cg.get_pin('GPIO_Pins', 'pin_led')
 
 ###########################
 # Functions and Stuff

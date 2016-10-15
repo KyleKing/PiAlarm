@@ -4,7 +4,7 @@ import time
 import subprocess
 import RPi.GPIO as GPIO
 import config as cg
-import fade
+# import fade
 
 ###########################
 # Globals:
@@ -12,23 +12,18 @@ import fade
 
 alarm_on = True
 debug = False
-# debug = True
-cg.quiet_logging(True)
-# cg.quiet_logging(debug)
-
-# Pi-Blaster Pins
-# --gpio 4,17,18,27,21,22,23,24,25
+cg.quiet_logging(debug)
 
 # Electronic Pin Numbering Globals:
-pin_shaker = 23
-pin_buzzer = 18
-pin_button = 20
-pin_blue = 21
-pin_red = 27
-pin_green = 22
+pin_button = cg.get_pin('Input_Pins', 'pin_button')
+pin_buzzer = cg.get_pin('GPIO_Pins', 'pin_buzzer')
+pin_shaker = cg.get_pin('GPIO_Pins', 'pin_shaker')
+pin_blue = cg.get_pin('GPIO_Pins', 'pin_blue')
+pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
+pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 
 # Just an indicator light
-pin_led = 17
+pin_led = cg.get_pin('GPIO_Pins', 'pin_led')
 
 ###########################
 # Functions and Stuff
@@ -99,13 +94,13 @@ GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate,
 # Implemented hardware bouncetime with 0.1uf capacitor, so use this instead:
 # GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate)
 
+if debug:
+    alarm_stage_time = [0, 10, 10, 10]
+else:
+    alarm_stage_time = [0, 90, 180, 60]
 
 for stage in [1, 2, 3]:
     all_off()
-    if debug:
-        alarm_stage_time = [0, 10, 10, 10]
-    else:
-        alarm_stage_time = [0, 90, 180, 500]
     cg.send('\nStarting Stage: ' + str(stage) + ' for ' +
             str(alarm_stage_time[stage]) + ' seconds')
 
@@ -127,18 +122,26 @@ for stage in [1, 2, 3]:
         # Stage 3 - FADE LED Strip, Bed Shaker, and Buzzer for 5 minutes
         if stage == 3:
             cg.send('Configuring Stage 3')
-            fade.fade_RGB_Strip()
+            # THIS IS THE PROBLEM:
+            # fade.fade_RGB_Strip()
+            set_PWM(pin_blue, 0.5)
+            set_PWM(pin_red, 0.5)
             set_PWM(pin_shaker, 0)
             set_PWM(pin_buzzer, 0.5)
             set_PWM(pin_led, 1)
-        # Stage 4 - WELL FADE EVERYTHING?
-        if stage == 4:
-            fade.fade_RGB_Strip()
 
+        # Run alarm and check for button interrupt:
         while alarm_on and current_time < alarm_stage_time[stage]:
             current_time += 1
             time.sleep(1)
+
+        # Prep for the next loop:
+        if stage == 3 & alarm_on:
+            cg.send('Looping back through Stage 3')
+            all_off()
+            time.sleep(10)
         current_time = 0
+    log_to_web_app(stage)
 
     # if shaker_val >= 0:
     #     # Determine Shaker Status:

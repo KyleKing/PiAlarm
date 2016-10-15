@@ -170,8 +170,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('new', () => {
-    initDebug(`(socket.new) Creating new alarm (${uniq})`);
     const uniq = db.generateUniq();
+    initDebug(`(socket.new) Creating new alarm (${uniq})`);
     const alarmState = {
       uniq,
       title: '_New_Alarm_',

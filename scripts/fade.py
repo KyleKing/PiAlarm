@@ -7,14 +7,21 @@ import config as cg
 # Globals:
 ###########################
 
-debug = False
-# debug = True
-cg.quiet_logging(debug)
+cg.quiet_logging(True)
 
 # Electronic Pin Numbering Globals:
-pin_blue = 21
-pin_red = 27
-pin_green = 22
+pin_blue = cg.get_pin('GPIO_Pins', 'pin_blue')
+pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
+pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
+# Just an indicator light
+pin_led = cg.get_pin('GPIO_Pins', 'pin_led')
+
+steps = 10
+# total_run_time = 60
+total_run_time = 20
+time_step = total_run_time / (6 * steps)  # 3 fades up, 3 down = 6
+
+max_brightness = 0.5
 
 ###########################
 # Functions and Stuff
@@ -30,21 +37,21 @@ def set_PWM(pin_num, percent):
 
 
 def fade_up(pin):
-    for i in range(100):
+    for i in range(steps):
         i = i + 1
-        set_PWM(pin, 0.1 - 0.1 / (i + 1))
-        time.sleep(0.2)
+        set_PWM(pin, max_brightness * (1 - 1 / (i + 1)))
+        time.sleep(time_step)
 
 
 def fade_down(pin):
-    for i in range(100):
+    for i in range(steps):
         i = i + 1
-        set_PWM(pin, 0.1 / (i + 1))
-        time.sleep(0.2)
+        set_PWM(pin, max_brightness / (i + 1))
+        time.sleep(time_step)
 
 
 def all_off():
-    cg.send('\nDeactivating all PWM pins')
+    cg.send('\nDeactivating SOME PWM pins')
     set_PWM(pin_red, 0)
     set_PWM(pin_blue, 0)
     set_PWM(pin_green, 0)
@@ -63,3 +70,7 @@ def fade_RGB_Strip():
     fade_down(pin_blue)
 
     all_off()
+
+
+# # Use to test the above module:
+# fade_RGB_Strip()

@@ -32,7 +32,7 @@ function exec_on_no_stdout(task, cb, altCB, quiet) {
 // Run Pi-Blaster if not already running for smooth PID control
 electronicDebug('Checking if pi-blaster should start');
 if (process.env.LOCAL === 'false') {
-  pyShellPiBlaster = new PythonShell('scripts/pyBootPiBlaster.py');
+  const pyShellPiBlaster = new PythonShell('scripts/pyBootPiBlaster.py');
   pyShellPiBlaster.on('message', (message) => {
     electronicDebug(`rcvd (pyShellPiBlaster): ${message}`);
   });
@@ -80,9 +80,9 @@ module.exports = {
     const updateClock = new CronJob('0 * * * * *', () => {
       const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
       exec_on_no_stdout(checkAlarm, () => {
-        this.updateClockDisplay('h:mm a        ddd - MMM Do');
+        this.updateClockDisplay('h:mm a           ddd - MMM Do');
       }, () => {
-        this.updateClockDisplay('h:mm a            [ALARM!]');
+        this.updateClockDisplay('h:mm a           [ALARM!]');
       }, true);
     }, () => {
       electronicDebug('Stopped updating Clock Display');
