@@ -98,6 +98,7 @@ if debug:
     alarm_stage_time = [0, 10, 10, 10]
 else:
     alarm_stage_time = [0, 90, 180, 60]
+    cg.ifttt('PiAlarm_StartAlarm')
 
 for stage in [1, 2, 3]:
     all_off()

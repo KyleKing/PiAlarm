@@ -1,4 +1,5 @@
 import sys
+import requests
 import ConfigParser
 
 quiet_STDOUT = True
@@ -16,14 +17,27 @@ def send(info):
         sys.stdout.flush()
 
 
-def get_pin(component, param):
+def get_pin(component, param, file="./scripts/pins.ini", raw=False):
     """Get pin numbering value from a shared ini file"""
     pin_numbering = ConfigParser.RawConfigParser()
     try:
-        pin_numbering.read("./scripts/pins.ini")
+        pin_numbering.read(file)
         raw_val = pin_numbering.get(component, param)
-        # Convert to number and return
-        return eval(raw_val)
+        if raw:
+            return raw_val
+        else:
+            # Convert to number and return
+            return eval(raw_val)
     except:
         print "Failed to load pins.ini"
         raise
+
+
+def ifttt(event, dataset={'value1': ''}):
+    key = get_pin('IFTTT', 'key', "./scripts/secret.ini", True)
+    requests.post("https://maker.ifttt.com/trigger/" +
+                  event + "/with/key/" + str(key), data=dataset)
+
+
+# ifttt('PiAlarm_StartAlarm')
+# ifttt('test', {'value1': 123, 'value2': 'Kyle', 'value3': 'OneMore'})

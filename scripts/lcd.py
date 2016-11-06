@@ -1,7 +1,8 @@
 # !/usr/bin/python
 
 import sys
-import time
+# import time
+import subprocess
 import config as cg
 import Adafruit_CharLCD as LCD
 
@@ -27,22 +28,40 @@ lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
 
 # TODO: lcd.set_color(1.0, 0.0, 1.0) - Magenta (see more below)
 lcd.clear()
-lcd.set_color(1.0, 0.0, 1.0)
+lcd.set_color(0, 0, 0)
 lcd.message('Initialized')
+
+
+def set_PWM(pin_num, percent):
+    """Run PWM commands through Pi-Blaster"""
+    # echo "22=0" > /dev/pi-blaster
+    cmd = 'echo "' + str(pin_num) + "=" + str(percent)
+    cg.send(cmd + '" > /dev/pi-blaster')
+    return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
+
+
+print 'Manually set brightness through pi-blaster'
+print 'Note all values are inverse logic (1 - high = off)'
+set_PWM(lcd_red, 0.98)
+set_PWM(lcd_green, 1.0)
+set_PWM(lcd_blue, 0.98)
 
 
 def full_message(message):
     lcd.clear()
-    if len(message) < lcd_columns:
-        lcd.message(message)
-    else:
-        lcd.message(message)
-        for i in range(lcd_columns - len(message)):
-            time.sleep(0.2)
-            lcd.move_right()
-        for i in range(lcd_columns - len(message)):
-            time.sleep(0.2)
-            lcd.move_left()
+    # # Print a two line message
+    # lcd.message('Hello\nworld!')
+    lcd.message(message)
+    # if len(message) < lcd_columns:
+    #     lcd.message(message)
+    # else:
+    #     lcd.message(message)
+    #     for i in range(lcd_columns - len(message)):
+    #         time.sleep(0.2)
+    #         lcd.move_right()
+    #     for i in range(lcd_columns - len(message)):
+    #         time.sleep(0.2)
+    #         lcd.move_left()
 
 
 while True:

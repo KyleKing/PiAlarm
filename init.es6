@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-// Another Node.js Alarm Clock
-// by Kyle King
-
-
 /**
  * General Configuration
  */
@@ -27,20 +23,88 @@ const initDebug = debug.init('init');
 initDebug('Debugger initialized!');
 
 /* Now everything else */
+const path = require('path');
+const secret = require('./secret.json');
 const bodyParser = require('body-parser');
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const session = require('cookie-session');
+// const flash = require('connect-flash');
+// // const nunjucks = require('nunjucks');
+// // const resourcesPath = path.join(__dirname, '..', 'common');
 const app = express();
 app.set('port', 3000);
 app.use(express.static('dist'));
 app.use(bodyParser.urlencoded({ extended: false }));
+
+const users = require('express-users');
+const userRouter = users({
+  store: 'nedb',
+  nedb: { filename: `${__dirname}/data/users` },
+  data: [
+    { username: secret.username, pwd: secret.pwd},
+  ],
+});
+
+app.use(cookieParser());
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: secret.passport,
+}));
+app.use(userRouter.passport.initialize());
+app.use(userRouter.passport.session());
+app.use(userRouter);
+
+// app.use(flash());
+// // nunjucks.configure(path.join(resourcesPath, 'views'), {
+// //   autoescape: true,
+// //   express: app,
+// // });
+// app.use((req, res, next) => {
+//   const messages = {
+//     error: req.flash('error'),
+//     success: req.flash('success'),
+//     info: req.flash('info'),
+//   };
+//   res.locals.flash = messages;
+//   next();
+// });
+
+
+// ////////////////////////////
+// Set Routes and Launch Server
+// ////////////////////////////
+
+app.get('/', (req, res) => {
+  if (req.isAuthenticated())
+    return res.redirect('/app');
+  return res.sendFile(path.resolve(`${__dirname}/views/login.html`));
+});
+app.get('/app', (req, res) => {
+  if (req.isAuthenticated() && req.user.username === secret.username) {
+    initDebug(`User (${secret.username}) logged in to /app`);
+    return res.sendFile(path.resolve(`${__dirname}/views/index.html`));
+  }
+  return res.sendFile(path.resolve(`${__dirname}/views/login.html`));
+  // return res.redirect('/');
+});
+
+// Respond to Maker requests:
+app.get(`/${secret.maker}/:id`, (req) => {
+  if (req.params.id === 'enter')
+    console.log('Make sure Alarm is activated');
+  else if (req.params.id === 'exit')
+    console.log('Make sure Alarm is activated');
+  else
+    console.log('WARN: Unknown Maker http get request');
+});
+
 const http = require('http').Server(app); // eslint-disable-line
 const io = require('socket.io')(http);
 const interfaceAddresses = require('interface-addresses');
 const addresses = interfaceAddresses();
 // const inspect = require('eyespect').inspector();
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/views/index.html`);
-});
 
 http.listen(app.get('port'), () => {
   // Filter through possible IP addresses
@@ -71,7 +135,6 @@ const alarms = db.alarms;
 const sched = require('./modules/scheduler.es6');
 const electronics = require('./modules/electronics.es6');
 electronics.startClock();
-
 const PythonShell = require('python-shell');
 
 if (process.env.LOCAL === 'false') {
@@ -88,12 +151,11 @@ if (process.env.LOCAL === 'false') {
   pyshell.on('error', (err) => { throw err; });
 }
 
-////////////////////////////
+// ////////////////////////////
 // Initialize Alarms
-////////////////////////////
+// //////////////////////////
 
 const ClockAlarms = {};
-
 // Create alarms only once:
 alarms.find({}, (err, allAlarms) => {
   initDebug('Registering all alarms (forEach loop):');
@@ -115,11 +177,12 @@ alarms.find({}, (err, allAlarms) => {
   });
 });
 
-////////////////////////////
-// Reused Functions
-////////////////////////////
 
-function deleteAlarm (uniq) {
+// ////////////////////////////
+// Alarm Operations
+// ////////////////////////////
+
+function deleteAlarm(uniq) {
   alarms.remove({ uniq }, {}, (err, numRemoved) => {
     if (err)
       throw err;
@@ -128,37 +191,37 @@ function deleteAlarm (uniq) {
   });
 }
 
-function eraseAlarm (uniq) {
-    initDebug(`(eraseAlarm) x Stopped: ${ClockAlarms[uniq].title}`);
-    initDebug(`    - ${uniq} (is running? ${ClockAlarms[uniq].running})`);
-    ClockAlarms[uniq].stop();
-    ClockAlarms[uniq] = null;
-    deleteAlarm(uniq);
+function eraseAlarm(uniq) {
+  initDebug(`(eraseAlarm) x Stopped: ${ClockAlarms[uniq].title}`);
+  initDebug(`    - ${uniq} (is running? ${ClockAlarms[uniq].running})`);
+  ClockAlarms[uniq].stop();
+  ClockAlarms[uniq] = null;
+  deleteAlarm(uniq);
 }
 
-function createAlarm (alarmState, socket) {
-    alarms.insert(alarmState, (err, alarm) => {
-      if (err)
-        throw err;
-      if (alarm) {
-        ClockAlarms[alarm.uniq] = sched.scheduleCron(alarm.title, alarm.schedule);
-        if (alarm.running === true) {
-          ClockAlarms[alarm.uniq].start();
-          initDebug(`(createAlarm) ^ Started: ${alarm.title}`);
-          initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
-        } else {
-          initDebug(`(createAlarm) x Didn't start: ${alarm.title}`);
-          initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
-        }
-        socket.emit('alarm event', alarm);
-      } else
-        initDebug('WARN: No alarm in insert callback');
-    });
+function createAlarm(alarmState, socket) {
+  alarms.insert(alarmState, (err, alarm) => {
+    if (err)
+      throw err;
+    if (alarm) {
+      ClockAlarms[alarm.uniq] = sched.scheduleCron(alarm.title, alarm.schedule);
+      if (alarm.running === true) {
+        ClockAlarms[alarm.uniq].start();
+        initDebug(`(createAlarm) ^ Started: ${alarm.title}`);
+        initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+      } else {
+        initDebug(`(createAlarm) x Didn't start: ${alarm.title}`);
+        initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+      }
+      socket.emit('alarm event', alarm);
+    } else
+      initDebug('WARN: No alarm in insert callback');
+  });
 }
 
-////////////////////////////
+// ////////////////////////////
 // Socket Actions
-////////////////////////////
+// ////////////////////////////
 
 io.on('connection', (socket) => {
   alarms.find({}, (err, allAlarms) => {
@@ -175,7 +238,7 @@ io.on('connection', (socket) => {
     const alarmState = {
       uniq,
       title: '_New_Alarm_',
-      schedule: '20 * * * * *',
+      schedule: '10 0 5 * * 1-5',
       running: false,
       saved: false,
     };
@@ -183,13 +246,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('update', (newState) => {
-    initDebug(`(socket.update) Is updated alarm in ClockAlarms? ${ClockAlarms.hasOwnProperty(newState.uniq)}`);
+    initDebug(`(socket.update) Is updated alarm in ClockAlarms? ${ClockAlarms.hasOwnProperty(newState.uniq)}`);  // eslint-disable-line
     eraseAlarm(newState.uniq);
     createAlarm(newState, socket);
-    // alarms.update({ uniq: newState.uniq }, newState, {}, (err) => {
-    //   if (err)
-    //     throw err;
-    // }):
   });
 
   socket.on('remove', (uniq) => {

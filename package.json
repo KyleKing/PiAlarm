@@ -26,16 +26,23 @@
     "child_process": "^1.0.2",
     "cli-color": "^1.1.0",
     "commander": "^2.9.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-alpha.1",
     "cron": "^1.1.0",
     "debug": "^2.2.0",
     "express": "^4.13.3",
+    "express-session": "^1.14.2",
+    "express-users": "^0.3.2",
     "eyespect": "^0.1.10",
     "fs-extra": "^0.30.0",
     "interface-addresses": "0.0.5",
+    "method-override": "^2.3.6",
     "moment": "^2.14.1",
     "nedb": "^1.8.0",
     "node-pid-controller": "^1.0.0",
     "onoff": "^1.1.1",
+    "passport": "^0.3.2",
     "pi-blaster.js": "^0.1.1",
     "python-shell": "^0.4.0",
     "react": "^15.3.0",
@@ -49,6 +56,7 @@
     "babel-loader": "^6.0.1",
     "babel-preset-es2015": "^6.0.12",
     "babel-preset-react": "^6.0.15",
+    "pre-commit": "^1.1.3",
     "eslint": "^3.2.2",
     "eslint-config-airbnb": "^10.0.0",
     "eslint-plugin-import": "^1.6.1",
@@ -56,5 +64,107 @@
     "eslint-plugin-react": "^6.0.0",
     "webpack": "^1.12.1",
     "webpack-dev-server": "^1.12.1"
+  },
+  "eslintConfig": {
+    "extends": "airbnb",
+    "env": {
+      "browser": true,
+      "node": true,
+      "jasmine": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "globals": {
+      "NylasEnv": true
+    },
+    "rules": {
+      "react/prop-types": [
+        2,
+        {
+          "ignore": [
+            "children"
+          ]
+        }
+      ],
+      "react/no-multi-comp": [
+        0
+      ],
+      "react/sort-comp": [
+        2
+      ],
+      "react/jsx-no-bind": [
+        2,
+        {
+          "allowBind": true
+        }
+      ],
+      "no-alert": [
+        0
+      ],
+      "class-methods-use-this": [
+        0
+      ],
+      "eqeqeq": [
+        2,
+        "smart"
+      ],
+      "id-length": [
+        0
+      ],
+      "object-curly-spacing": [
+        0
+      ],
+      "curly": [
+        "error",
+        "multi-or-nest"
+      ],
+      "no-console": [
+        0
+      ],
+      "no-loop-func": [
+        0
+      ],
+      "no-constant-condition": [
+        0
+      ],
+      "new-cap": [
+        2,
+        {
+          "capIsNew": false
+        }
+      ],
+      "no-shadow": [
+        1
+      ],
+      "quotes": [
+        0
+      ],
+      "semi": [
+        0
+      ],
+      "import/no-unresolved": [
+        0
+      ],
+      "no-param-reassign": [
+        0
+      ],
+      "no-underscore-dangle": [
+        "error",
+        {
+          "allowAfterThis": true
+        }
+      ],
+      "import/newline-after-import": [
+        0
+      ],
+      "react/require-extension": [
+        0
+      ]
+    },
+    "parser": "babel-eslint"
   }
 }
