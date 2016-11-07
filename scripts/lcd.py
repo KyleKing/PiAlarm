@@ -17,19 +17,14 @@ lcd_red = cg.get_pin('LCD_Pins', 'lcd_red')
 lcd_green = cg.get_pin('LCD_Pins', 'lcd_green')
 lcd_blue = cg.get_pin('LCD_Pins', 'lcd_blue')
 
-# Define LCD column and row size for 16x2 LCD.
-lcd_columns = 32
-lcd_rows = 2
+# Define LCD column and row size for 16x4 LCD.
+lcd_columns = 16
+lcd_rows = 4
 
 # Initialize the LCD using the pins above.
 lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                               lcd_columns, lcd_rows, lcd_red, lcd_green,
                               lcd_blue)
-
-# TODO: lcd.set_color(1.0, 0.0, 1.0) - Magenta (see more below)
-lcd.clear()
-lcd.set_color(0, 0, 0)
-lcd.message('Initialized')
 
 
 def set_PWM(pin_num, percent):
@@ -40,17 +35,18 @@ def set_PWM(pin_num, percent):
     return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
 
 
+lcd.set_color(0, 0, 0)
 print 'Manually set brightness through pi-blaster'
-print 'Note all values are inverse logic (1 - high = off)'
+print 'Note all values are inverse logic (0 - high, 1 - off)'
+lcd.clear()
 set_PWM(lcd_red, 0.98)
 set_PWM(lcd_green, 1.0)
 set_PWM(lcd_blue, 0.98)
+lcd.message('Initialized')
 
 
 def full_message(message):
     lcd.clear()
-    # # Print a two line message
-    # lcd.message('Hello\nworld!')
     lcd.message(message)
     # if len(message) < lcd_columns:
     #     lcd.message(message)

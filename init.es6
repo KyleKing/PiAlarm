@@ -90,14 +90,23 @@ app.get('/app', (req, res) => {
   // return res.redirect('/');
 });
 
+
 // Respond to Maker requests:
+const PythonShell = require('python-shell');
+function updateAlarm(arg) {
+  PythonShell.run('./scripts/alarm_status.py', { args: [arg] }, (err, results) => {
+    if (err)
+      throw err;
+    initDebug('Alarm status update results: %j', results);
+  });
+}
 app.get(`/${secret.maker}/:id`, (req) => {
   if (req.params.id === 'enter')
-    console.log('Make sure Alarm is activated');
+    updateAlarm('true');
   else if (req.params.id === 'exit')
-    console.log('Make sure Alarm is activated');
+    updateAlarm('false');
   else
-    console.log('WARN: Unknown Maker http get request');
+    console.log('ERROR: Unknown Maker http get request');
 });
 
 const http = require('http').Server(app); // eslint-disable-line
@@ -135,7 +144,6 @@ const alarms = db.alarms;
 const sched = require('./modules/scheduler.es6');
 const electronics = require('./modules/electronics.es6');
 electronics.startClock();
-const PythonShell = require('python-shell');
 
 if (process.env.LOCAL === 'false') {
   const pyshell = new PythonShell('scripts/all_off.py');

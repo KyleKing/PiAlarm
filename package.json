@@ -1,6 +1,6 @@
 {
   "name": "alarm_clock",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Alarm Clock App",
   "main": "init.es6",
   "scripts": {

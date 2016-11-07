@@ -82,6 +82,12 @@ def all_off():
     set_PWM(pin_green, 0)
 
 
+def check_status():
+    """Returns True, if alarm is to continue running, else is False"""
+    stat = cg.get_pin('Alarm_Status', 'running', "./scripts/pins.ini", True)
+    return 'true' in stat.lower()
+
+
 ###########################
 # Alarm logic!
 ###########################
@@ -132,7 +138,8 @@ for stage in [1, 2, 3]:
             set_PWM(pin_led, 1)
 
         # Run alarm and check for button interrupt:
-        while alarm_on and current_time < alarm_stage_time[stage]:
+        while (alarm_on and current_time < alarm_stage_time[stage] and
+               check_status()):
             current_time += 1
             time.sleep(1)
 

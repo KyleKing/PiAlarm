@@ -33,6 +33,14 @@ def get_pin(component, param, file="./scripts/pins.ini", raw=False):
         raise
 
 
+def write_ini(component, param, value, file="./scripts/pins.ini"):
+    pin_config = ConfigParser.RawConfigParser()
+    pin_config.read(file)
+    with open(file, 'w') as cfgfile:
+        pin_config.set(component, param, value)
+        pin_config.write(cfgfile)
+
+
 def ifttt(event, dataset={'value1': ''}):
     key = get_pin('IFTTT', 'key', "./scripts/secret.ini", True)
     requests.post("https://maker.ifttt.com/trigger/" +
