@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys
 import time
-import subprocess
 import RPi.GPIO as GPIO
 import config as cg
 # import fade
@@ -23,34 +21,11 @@ pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
 pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 
 # Just an indicator light
-pin_led = cg.get_pin('GPIO_Pins', 'pin_led')
+# pin_led = cg.get_pin('GPIO_Pins', 'pin_led')
 
 ###########################
 # Functions and Stuff
 ###########################
-
-
-def log_to_web_app(counter):
-    """Prep a string to send to the controlling node application"""
-    log_str = 'Completed Step #{0}'
-    print log_str.format(counter)
-    sys.stdout.flush()
-
-
-def set_PWM(pin_num, percent):
-    """Run PWM commands through Pi-Blaster"""
-    # echo "22=0" > /dev/pi-blaster
-    cmd = 'echo "' + str(pin_num) + "=" + str(percent)
-    cg.send(cmd + '" > /dev/pi-blaster')
-    return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
-
-
-def release_PWM(pin_num):
-    """Run PWM commands through Pi-Blaster"""
-    # echo "release 22" > /dev/pi-blaster
-    cmd = 'echo "release ' + str(pin_num)
-    cg.send(cmd + '" > /dev/pi-blaster')
-    return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
 
 
 def alarm_deactivate(pin_num):
@@ -74,12 +49,12 @@ def gen_button_cb(pin_num):
 
 def all_off():
     cg.send('\nDeactivating all PWM pins')
-    set_PWM(pin_shaker, 1)
-    set_PWM(pin_buzzer, 0)
-    set_PWM(pin_led, 0)
-    set_PWM(pin_red, 0)
-    set_PWM(pin_blue, 0)
-    set_PWM(pin_green, 0)
+    cg.set_PWM(pin_shaker, 1)
+    cg.set_PWM(pin_buzzer, 0)
+    # cg.set_PWM(pin_led, 0)
+    cg.set_PWM(pin_red, 0)
+    cg.set_PWM(pin_blue, 0)
+    cg.set_PWM(pin_green, 0)
 
 
 def check_status():
@@ -116,26 +91,26 @@ for stage in [1, 2, 3]:
         # Stage 1 - Blue LED for 1 minute
         if stage == 1:
             cg.send('Configuring Stage 1')
-            set_PWM(pin_green, 0.2)
-            set_PWM(pin_red, 0.2)
-            set_PWM(pin_led, 1)
+            cg.set_PWM(pin_green, 0.2)
+            cg.set_PWM(pin_red, 0.2)
+            # cg.set_PWM(pin_led, 1)
         # Stage 2 - Purple LED and Bed Shaker for 2 minutes
         if stage == 2:
             cg.send('Configuring Stage 2')
-            set_PWM(pin_blue, 0.5)
-            set_PWM(pin_red, 0.5)
-            set_PWM(pin_buzzer, 0.1)
-            set_PWM(pin_led, 0.2)
+            cg.set_PWM(pin_blue, 0.5)
+            cg.set_PWM(pin_red, 0.5)
+            cg.set_PWM(pin_buzzer, 0.1)
+            # cg.set_PWM(pin_led, 0.2)
         # Stage 3 - FADE LED Strip, Bed Shaker, and Buzzer for 5 minutes
         if stage == 3:
             cg.send('Configuring Stage 3')
             # THIS IS THE PROBLEM:
             # fade.fade_RGB_Strip()
-            set_PWM(pin_blue, 0.5)
-            set_PWM(pin_red, 0.5)
-            set_PWM(pin_shaker, 0)
-            set_PWM(pin_buzzer, 0.5)
-            set_PWM(pin_led, 1)
+            cg.set_PWM(pin_blue, 0.5)
+            cg.set_PWM(pin_red, 0.5)
+            cg.set_PWM(pin_shaker, 0)
+            cg.set_PWM(pin_buzzer, 0.5)
+            # cg.set_PWM(pin_led, 1)
 
         # Run alarm and check for button interrupt:
         while (alarm_on and current_time < alarm_stage_time[stage] and
@@ -149,7 +124,7 @@ for stage in [1, 2, 3]:
             all_off()
             time.sleep(10)
         current_time = 0
-    log_to_web_app(stage)
+    cg.log_to_web_app(stage)
 
     # if shaker_val >= 0:
     #     # Determine Shaker Status:
@@ -164,7 +139,7 @@ for stage in [1, 2, 3]:
     #         cg.send('+   (Alarm = ' + str(cur_time) +
     #                 ') Turning Shaker to: ' +
     #                 str(shaker_val))
-    #         set_PWM(pin_shaker, shaker_val)
+    #         cg.set_PWM(pin_shaker, shaker_val)
 
 # Cleanup GPIO Pins:
 all_off()
@@ -175,7 +150,7 @@ cg.send("\nAlarm Cycles Finished\n")
 # release_PWM(pin_shaker)
 # release_PWM(pin_buzzer)
 # release_PWM(pin_button)
-# release_PWM(pin_led)
+# # release_PWM(pin_led)
 # release_PWM(pin_blue)
 # release_PWM(pin_red)
 # release_PWM(pin_green)
