@@ -74,9 +74,10 @@ if debug:
 else:
     alarm_stage_time = [0, 120, 70, 60]
     if cg.check_status():
-        cg.ifttt('PiAlarm_StartAlarm')
+        cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
     else:
-        cg.ifttt('Pi Alarm not starting while user away')
+        cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm not running ' +
+                                      'while user away'})
 
 timeout = 1
 stage = 1
@@ -147,6 +148,7 @@ while stage < 4 and timeout < 4:
     #         cg.set_PWM(pin_shaker, shaker_val)
 
 cg.send("\nAlarm Cycles Finished\n")
+cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
 # Cleanup tasks:
 all_off()

@@ -5,10 +5,21 @@ import config as cg
 cg.quiet_logging(False)
 
 # Parse STDIN
-arg = str(sys.argv[1]).lower()
-if 'true' or 'false' in arg:
+if len(sys.argv) > 1:
+    arg = str(sys.argv[1]).lower()
+else:
+    arg = 'update_LED_only'
+
+# except:
+#     message = 'No arg sent to alarm_status.py'
+#     cg.ifttt('PiAlarm_SendText', {'value1': message})
+#     raise Exception(message)
+
+if 'true' in arg or 'false' in arg:
     cg.send('Setting alarm status to: ' + arg)
     cg.write_ini('Alarm_Status', 'running', arg)
+else:
+    cg.send('Checking alarm status with: ' + arg)
 
 # Check status of user and update an LED:
 a_led = cg.get_pin('Alarm_Status', 'led')

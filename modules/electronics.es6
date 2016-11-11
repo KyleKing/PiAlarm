@@ -9,19 +9,19 @@ const moment = require('moment');
 const CronJob = require('cron').CronJob;
 const PythonShell = require('python-shell');
 
-function execNoOnSTDOUT(task, cb, altCB, quiet) {
+function execOnNoSTDOUT(task, cb, altCB, quiet) {
   exec(task, (childerr, stdout, stderr) => {
-    if (quiet === null)
+    if (quiet !== null)
       electronicDebug(`EXEC: ${task}`);
     if (childerr) electronicDebug(warn(childerr));
     if (stderr) electronicDebug(error(`stderr: ${stderr}`));
     if (!stdout) {
-      if (quiet === null)
+      if (quiet !== null)
         electronicDebug('No STDOUT returned, calling `cb`')
       cb()
     } else {
-      if (quiet === null)
-        console.log(stdout);
+      if (quiet !== null)
+        electronicDebug(stdout);
       if (altCB)
         altCB()
     }
@@ -32,7 +32,7 @@ function execNoOnSTDOUT(task, cb, altCB, quiet) {
 // Run Pi-Blaster if not already running for smooth PID control
 electronicDebug('Checking if pi-blaster should start');
 if (process.env.LOCAL === 'false') {
-  const pyShellPiBlaster = new PythonShell('scripts/pyBootPiBlaster.py');
+  const pyShellPiBlaster = new PythonShell('scripts/bootPiBlaster.py');
   pyShellPiBlaster.on('message', (message) => {
     electronicDebug(`rcvd (pyShellPiBlaster): ${message}`);
   });
@@ -45,14 +45,22 @@ if (process.env.LOCAL === 'false') {
 }
 
 
-let pyShellLCD = {};
-if (process.env.LOCAL === 'false')
-  pyShellLCD = new PythonShell('scripts/lcd.py');
+const pyShellLCD = new PythonShell('scripts/lcd.py');
+pyShellLCD.on('message', (message) => {
+  electronicDebug(`rcvd (pyShellLCD): ${message}`);
+});
+pyShellLCD.on('close', (err) => {
+  if (err)
+    throw err;
+  electronicDebug('Completed running pyShellLCD.py');
+});
+pyShellLCD.on('error', (err) => { throw err; });
+
 
 module.exports = {
   startAlarm() {
-    const listProc = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
-    execNoOnSTDOUT(listProc, () => {
+    const listProc = "ps aux | grep '[a]larm.py' | awk '{print $2}'";
+    execOnNoSTDOUT(listProc, () => {
       this.triggerAlarm();
     });
   },
@@ -61,7 +69,7 @@ module.exports = {
   triggerAlarm() {
     electronicDebug('Starting Python Alarm Script');
     if (process.env.LOCAL === 'false') {
-      const pyShellAlarm = new PythonShell('scripts/alarm.py');
+      const pyShellAlarm = new PythonShell('./scripts/alarm.py');
       // pyShellAlarm.send('THIS COULD BE USEFUL!');
       pyShellAlarm.on('message', (message) => {
         electronicDebug(`rcvd (ALARM): ${message}`);
@@ -78,11 +86,11 @@ module.exports = {
   // Update display on 1 minute intervals:
   startClock() {
     const updateClock = new CronJob('0 * * * * *', () => {
-      const checkAlarm = "ps aux | grep '[p]ython alarm.py' | awk '{print $2}'";
-      execNoOnSTDOUT(checkAlarm, () => {
-        this.updateClockDisplay('h:mm a               ddd - MMM Do');
+      const checkAlarm = "ps aux | grep '[a]larm.py' | awk '{print $2}'";
+      execOnNoSTDOUT(checkAlarm, () => {
+        this.updateClockDisplay(['ddd MMM Do', 'h:mm a']);
       }, () => {
-        this.updateClockDisplay('h:mm a               [ALARM!]');
+        this.updateClockDisplay(['[** Alarm! **]', 'h:mm a']);
       }, true);
     }, () => {
       electronicDebug('Stopped updating Clock Display');
@@ -90,12 +98,39 @@ module.exports = {
     return updateClock;
   },
 
+  // Check alarm status:
+  checkUserStatus() {
+    const task = 'python scripts/alarm_status.py';
+    exec(task, (childerr, stdout, stderr) => {
+      electronicDebug(`EXECUTING: ${task}`);
+      if (childerr) electronicDebug(warn(childerr));
+      if (stderr) electronicDebug(error(`stderr: ${stderr}`));
+      if (stdout) electronicDebug(error(`stdout: ${stdout}`));
+    });
+  },
+
+  // Toggle LCD Brightness
+  brightenLCD() {
+    pyShellLCD.send('turn lcd screen for alarm clock on');
+  },
+  dimLCD() {
+    pyShellLCD.send('turn lcd screen for alarm clock off');
+  },
+
   // Universal Method for Interfacing with LCD Display
-  updateClockDisplay(format) {
-    const displayText = moment().format(format);
-    if (process.env.LOCAL === 'false')
-      pyShellLCD.send(displayText);
-    electronicDebug(`Set New Clock Text: ${displayText}`);
+  updateClockDisplay(raw) {
+    if (typeof raw === 'object') {
+      let formattedText = '['
+      for (let i = 0; i < raw.length; i++)
+        formattedText = `${formattedText}'${moment().format(raw[i])}',`;
+      formattedText = `${formattedText.slice(0, -1)}]`;
+      electronicDebug(`Setting new clock text as: ${formattedText}`);
+      pyShellLCD.send(formattedText);
+      return formattedText
+    }
+    const displayText = moment().format(raw);
+    electronicDebug(`Setting new clock text as: ${displayText}`);
+    pyShellLCD.send(displayText);
     return displayText;
   },
 };

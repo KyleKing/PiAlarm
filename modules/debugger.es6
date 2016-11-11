@@ -12,7 +12,7 @@ module.exports = {
   info: clc.blue,
   ignore: clc.xterm(8),
   init: (app) => {
-    if (process.env.DEBUG === 'true') debug.enable('app:*');
+    if (process.env.VERBOSE !== 'false') debug.enable('app:*');
     return debug(`app:${app}`);
   },
   existsSync(filename) {

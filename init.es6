@@ -9,11 +9,11 @@ const fs = require('fs-extra');
 const program = require('commander');
 program
   .version(fs.readJsonSync('package.json'))
-  .option('-d, --debug', 'run in debug mode (verbose)')
+  .option('-v, --verbose', 'run in verbose mode (verbose)')
   .option('-l, --local', 'when not a Raspberry Pi, run in \'local\' mode')
-  .option('--alarm', 'Start an alarm right away for testing')
+  .option('-a --alarm', 'Start an alarm right away for testing')
   .parse(process.argv);
-process.env.DEBUG = program.debug || 'false';
+process.env.VEBOSE = program.verbose || 'false';
 process.env.LOCAL = program.local || 'false';
 process.env.ALARM = program.alarm || 'false';
 
@@ -21,6 +21,11 @@ process.env.ALARM = program.alarm || 'false';
 const debug = require('./modules/debugger.es6');
 const initDebug = debug.init('init');
 initDebug('Debugger initialized!');
+
+initDebug('Checking node arguments:');
+initDebug(`VEBOSE  - ${process.env.VEBOSE}`);
+initDebug(`LOCAL  - ${process.env.LOCAL}`);
+initDebug(`ALARM  - ${process.env.ALARM}`);
 
 /* Now everything else */
 const path = require('path');
@@ -100,13 +105,16 @@ function updateAlarm(arg) {
     initDebug('Alarm status update results: %j', results);
   });
 }
-app.get(`/${secret.maker}/:id`, (req) => {
-  if (req.params.id === 'enter')
+app.get(`/${secret.maker}/:id`, (req, res) => {
+  if (req.params.id === 'enter') {
     updateAlarm('true');
-  else if (req.params.id === 'exit')
+    return res.sendFile(path.resolve(`${__dirname}/views/enter.html`));
+  } else if (req.params.id === 'exit') {
     updateAlarm('false');
-  else
-    console.log('ERROR: Unknown Maker http get request');
+    return res.sendFile(path.resolve(`${__dirname}/views/exit.html`));
+  }
+  initDebug('ERROR: Unknown Maker http get request');
+  return res.sendFile(path.resolve(`${__dirname}/views/404.html`));
 });
 
 const http = require('http').Server(app); // eslint-disable-line

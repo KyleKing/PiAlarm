@@ -2,6 +2,8 @@ import subprocess
 import os
 import config as cg
 
+cg.quiet_logging(False)
+
 # output = 256 if running, else = 0
 output = os.system("ps aux | grep 'pi-blaster\/[p]i-blaster'")
 cg.send('Pi-Blaster ps aux task returned: ' + str(output))

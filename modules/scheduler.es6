@@ -18,16 +18,47 @@ const CronJob = require('cron').CronJob;
 // Allow immediate alarm test:
 if (process.env.ALARM !== 'false')
   electronics.startAlarm();
+else
+  schedDebug(`process.env.ALARM is false - ${process.env.ALARM}`);
+
+
+// Turn the display on when people should be around
+function controlDisplay(schedule, task, activate) {
+  const JOB = new CronJob(schedule, () => {
+    schedDebug(`Starting ${task}`);
+    if (activate)
+      electronics.brightenLCD()
+    else
+      electronics.dimLCD()
+  }, () => {
+    schedDebug('Completed a task to change the LCD display')
+  }, false);
+  return JOB;
+}
+const activate = controlDisplay('0 15 5 * * *', true);
+const deactivate = controlDisplay('0 30 9 * * *', false);
+activate.start()
+deactivate.start()
+
+
+const checkUserStatus = new CronJob('0 0 * * * *', () => {
+  schedDebug('Starting checkUserStatus');
+  electronics.checkUserStatus()
+}, () => {
+  schedDebug('Completed checkUserStatus()')
+}, false);
+checkUserStatus.start()
+
 
 module.exports = {
   scheduleCron(title, cronSchedule) {
     schedDebug(`Scheduling '${title}' (with sched: ${cronSchedule})`);
     return new CronJob(cronSchedule, () => {
       schedDebug(` ! Starting Alarm ('${title}') ! `);
-      electronics.updateClockDisplay(`h:mm:ss a   [${title}]`);
+      electronics.updateClockDisplay([`[${title}]`, 'h:mm:ss a']);
       electronics.startAlarm();
     }, () => {
-      schedDebug(`Alarm ('${title}') canceled.`);
+      schedDebug(`Alarm ('${title}') stopped.`);
     }, false);
   },
 };
