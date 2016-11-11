@@ -37,8 +37,7 @@ def get_pin(component, param, file="./scripts/pins.ini", raw=False):
             # Convert to number and return
             return eval(raw_val)
     except:
-        print "Failed to load pins.ini"
-        raise
+        raise Exception("Failed to load " + file)
 
 
 def write_ini(component, param, value, file="./scripts/pins.ini"):
@@ -47,6 +46,12 @@ def write_ini(component, param, value, file="./scripts/pins.ini"):
     with open(file, 'w') as cfgfile:
         pin_config.set(component, param, value)
         pin_config.write(cfgfile)
+
+
+def check_status():
+    """Returns True, if alarm is to continue running, else is False"""
+    stat = get_pin('Alarm_Status', 'running', "./scripts/pins.ini", True)
+    return 'true' in stat.lower()
 
 
 def ifttt(event, dataset={'value1': ''}):

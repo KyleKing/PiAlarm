@@ -57,12 +57,6 @@ def all_off():
     cg.set_PWM(pin_green, 0)
 
 
-def check_status():
-    """Returns True, if alarm is to continue running, else is False"""
-    stat = cg.get_pin('Alarm_Status', 'running', "./scripts/pins.ini", True)
-    return 'true' in stat.lower()
-
-
 ###########################
 # Alarm logic!
 ###########################
@@ -78,54 +72,65 @@ GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate,
 if debug:
     alarm_stage_time = [0, 10, 10, 10]
 else:
-    alarm_stage_time = [0, 90, 180, 60]
-    cg.ifttt('PiAlarm_StartAlarm')
+    alarm_stage_time = [0, 120, 70, 60]
+    if cg.check_status():
+        cg.ifttt('PiAlarm_StartAlarm')
+    else:
+        cg.ifttt('Pi Alarm not starting while user away')
 
-for stage in [1, 2, 3]:
+timeout = 1
+stage = 1
+ifttt = True
+while stage < 4 and timeout < 4:
     all_off()
     cg.send('\nStarting Stage: ' + str(stage) + ' for ' +
             str(alarm_stage_time[stage]) + ' seconds')
 
     current_time = 0
-    if alarm_on:
-        # Stage 1 - Blue LED for 1 minute
-        if stage == 1:
-            cg.send('Configuring Stage 1')
-            cg.set_PWM(pin_green, 0.2)
-            cg.set_PWM(pin_red, 0.2)
-            # cg.set_PWM(pin_led, 1)
-        # Stage 2 - Purple LED and Bed Shaker for 2 minutes
-        if stage == 2:
-            cg.send('Configuring Stage 2')
-            cg.set_PWM(pin_blue, 0.5)
-            cg.set_PWM(pin_red, 0.5)
-            cg.set_PWM(pin_buzzer, 0.1)
-            # cg.set_PWM(pin_led, 0.2)
-        # Stage 3 - FADE LED Strip, Bed Shaker, and Buzzer for 5 minutes
-        if stage == 3:
-            cg.send('Configuring Stage 3')
-            # THIS IS THE PROBLEM:
-            # fade.fade_RGB_Strip()
-            cg.set_PWM(pin_blue, 0.5)
-            cg.set_PWM(pin_red, 0.5)
-            cg.set_PWM(pin_shaker, 0)
-            cg.set_PWM(pin_buzzer, 0.5)
-            # cg.set_PWM(pin_led, 1)
+    # Stage 1 - Green LED Strip for 1 minute
+    if stage == 1:
+        cg.send('Configuring Stage 1')
+        cg.set_PWM(pin_green, 0.2)
+        cg.set_PWM(pin_red, 0.2)
+        # cg.set_PWM(pin_led, 1)
+    # Stage 2 - Purple LED Strip and Buzzer
+    if stage == 2:
+        cg.send('Configuring Stage 2')
+        cg.set_PWM(pin_blue, 0.5)
+        cg.set_PWM(pin_red, 0.5)
+        cg.set_PWM(pin_buzzer, 0.1)
+        # cg.set_PWM(pin_led, 0.2)
+    # Stage 3 - FADE LED Strip, Bed Shaker, and Buzzer
+    if stage == 3:
+        cg.send('Configuring Stage 3')
+        # THIS IS THE PROBLEM:
+        # fade.fade_RGB_Strip()
+        cg.set_PWM(pin_blue, 0.5)
+        cg.set_PWM(pin_red, 0.5)
+        cg.set_PWM(pin_shaker, 0)
+        cg.set_PWM(pin_buzzer, 0.5)
+        # cg.set_PWM(pin_led, 1)
 
-        # Run alarm and check for button interrupt:
-        while (alarm_on and current_time < alarm_stage_time[stage] and
-               check_status()):
-            current_time += 1
-            time.sleep(1)
-
-        # Prep for the next loop:
-        if stage == 3 & alarm_on:
-            cg.send('Looping back through Stage 3')
-            all_off()
-            time.sleep(10)
-        current_time = 0
+    # Run alarm and check for button interrupt:
+    while (alarm_on and current_time < alarm_stage_time[stage] and ifttt):
+        current_time += 1
+        time.sleep(1)
+        if stage != 1:
+            ifttt = cg.check_status()
     cg.log_to_web_app(stage)
 
+    # Prep for the next loop:
+    if stage == 3 and alarm_on:
+        all_off()
+        cg.send('\nLooping back through Stage 3')
+        time.sleep(5)
+        timeout += 1
+    else:
+        stage += 1
+
+    current_time = 0
+
+    # TODO: Create a variable frequency for the buzzer:
     # if shaker_val >= 0:
     #     # Determine Shaker Status:
     #     if (cur_time % (shaker_interval * 2)) <= shaker_interval:
@@ -141,12 +146,12 @@ for stage in [1, 2, 3]:
     #                 str(shaker_val))
     #         cg.set_PWM(pin_shaker, shaker_val)
 
-# Cleanup GPIO Pins:
-all_off()
-GPIO.remove_event_detect(pin_button)
-
 cg.send("\nAlarm Cycles Finished\n")
 
+# Cleanup tasks:
+all_off()
+GPIO.remove_event_detect(pin_button)
+GPIO.cleanup()
 # release_PWM(pin_shaker)
 # release_PWM(pin_buzzer)
 # release_PWM(pin_button)
@@ -154,8 +159,6 @@ cg.send("\nAlarm Cycles Finished\n")
 # release_PWM(pin_blue)
 # release_PWM(pin_red)
 # release_PWM(pin_green)
-
-GPIO.cleanup()
 
 # # Then stop pi-blaster for good measure:
 # stopPiB = "sudo kill $(ps aux | grep [b]laster | awk '{print $2}')"
