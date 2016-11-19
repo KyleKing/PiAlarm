@@ -63,7 +63,7 @@ def ifttt(event, dataset={'value1': ''}):
 def set_PWM(pin_num, percent):
     """Run PWM commands through Pi-Blaster"""
     # echo "22=0" > /dev/pi-blaster
-    cmd = 'echo "' + str(pin_num) + "=" + str(percent)
+    cmd = 'echo "' + str(pin_num).zfill(2) + "=" + "{0:.2f}".format(percent)
     send(cmd + '" > /dev/pi-blaster')
     return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
 

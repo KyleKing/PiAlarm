@@ -11,15 +11,15 @@ const PythonShell = require('python-shell');
 
 function execOnNoSTDOUT(task, cb, altCB, quiet) {
   exec(task, (childerr, stdout, stderr) => {
-    if (quiet !== null)
-      electronicDebug(`EXEC: ${task}`);
+    // if (quiet !== null)
+    //   electronicDebug(`EXEC: ${task}`);
     if (childerr) electronicDebug(warn(childerr));
     if (stderr) electronicDebug(error(`stderr: ${stderr}`));
-    if (!stdout) {
-      if (quiet !== null)
-        electronicDebug('No STDOUT returned, calling `cb`')
+    if (!stdout)
+      // if (quiet !== null)
+      //   electronicDebug('No STDOUT returned, calling `cb`')
       cb()
-    } else {
+    else {
       if (quiet !== null)
         electronicDebug(stdout);
       if (altCB)

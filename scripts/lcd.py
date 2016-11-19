@@ -108,10 +108,10 @@ def set_disp(r, g, b):
 
 
 def Initialize():
-    lcd.set_color(0, 0, 0)
+    # lcd.set_color(0, 0, 0)
     cg.send('Manually set LCD brightness through pi-blaster')
     cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
-    set_disp(0.98, 1.0, 0.98)
+    set_disp(0.5, 1.0, 0.5)
     parse_message('Initialized')
 
 
@@ -123,11 +123,11 @@ while True:
     # message = 'testing atesting btesting ctesting v'
     if 'turn lcd screen for alarm clock' in message:
         if 'on' in message:
-            set_disp(0.9, 1.0, 0.95)
-            print 'Turned display on'
+            set_disp(0.4, 0.7, 0.4)
+            cg.send('Turned display on')
         elif 'off' in message:
             set_disp(1.0, 1.0, 1.0)
-            print 'Turned display off'
+            cg.send('Turned display off')
     else:
         try:
             sections = eval(message)
@@ -138,10 +138,10 @@ while True:
             comp = ''
             for section in sections:
                 comp = comp + section + ext(lcd_columns - len(section))
-            cg.send('Received pre-parsed message: ' + comp)
+            # cg.send('Received pre-parsed message: ' + comp)
         except:
             comp = parse_message(message)
-            cg.send('Auto-parsed message: ' + str(comp))
+            # cg.send('Auto-parsed message: ' + str(comp))
         lcd.clear()
         lcd.message(comp)
     # # Force buffer to close and send all data to Node application

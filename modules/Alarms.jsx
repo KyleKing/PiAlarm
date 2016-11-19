@@ -24,6 +24,7 @@ class AlarmContainer extends React.Component {
     if (isNewAlarm)
       alarms.push(newAlarm);
 
+    // FIXME: Sort alarms by schedule
     // alarms.sort((a, b) => {
     //   // console.log(a.timestamp >= b.timestamp);
     //   // return a.timestamp >= b.timestamp;
@@ -38,8 +39,8 @@ class AlarmContainer extends React.Component {
   }
 
   render() {
-    let alarms = this.state.alarms.map((alarm) => {
-      return (
+    const alarms = this.state.alarms.map((alarm) =>
+      (
         <li key={alarm.uniq}>
           <Alarm
             uniq={alarm.uniq}
@@ -47,8 +48,9 @@ class AlarmContainer extends React.Component {
             schedule={alarm.schedule}
             running={alarm.running}
           />
-        </li>);
-    });
+        </li>
+      )
+    );
 
     return (
       <div className="row">

@@ -35,9 +35,11 @@ function controlDisplay(schedule, task, activate) {
   }, false);
   return JOB;
 }
-const activate = controlDisplay('0 15 5 * * *', true);
-const deactivate = controlDisplay('0 30 9 * * *', false);
-activate.start()
+const weekendActivate = controlDisplay('0 30 8 * * 0,6', 'activate lcd display', true);
+const weekdayActivate = controlDisplay('0 15 5 * * 1-5', 'activate lcd display', true);
+const deactivate = controlDisplay('0 30 21 * * *', 'deactivate lcd display', false);
+weekendActivate.start()
+weekdayActivate.start()
 deactivate.start()
 
 
@@ -55,6 +57,7 @@ module.exports = {
     schedDebug(`Scheduling '${title}' (with sched: ${cronSchedule})`);
     return new CronJob(cronSchedule, () => {
       schedDebug(` ! Starting Alarm ('${title}') ! `);
+      electronics.brightenLCD()
       electronics.updateClockDisplay([`[${title}]`, 'h:mm:ss a']);
       electronics.startAlarm();
     }, () => {
