@@ -9,7 +9,6 @@ import fade
 ###########################
 
 alarm_on = True
-debug = True
 cg.quiet_logging(False)
 
 # Electronic Pin Numbering Globals:
@@ -20,10 +19,8 @@ pin_blue = cg.get_pin('GPIO_Pins', 'pin_blue')
 pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
 pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 
-if debug:
-    alarm_stage_time = [0, 4, 8, 12 + 3]
-else:
-    alarm_stage_time = [0, 120, 70, 60]
+# alarm_stage_time = [0, 4, 8, 12 + 3]
+alarm_stage_time = [0, 120, 120, 60]
 
 
 ###########################
@@ -90,12 +87,12 @@ def fade_led_strip(counter):
 
     # Update the Alarm Electronics
     if fade_stage < len(fade_stages):
-        cg.set_PWM(pin_buzzer, ((counter % 2) + 1.0) / 4)
+        # cg.set_PWM(pin_buzzer, ((counter % 2) + 1.0) / 4)
         cg.set_PWM(fade_stages[fade_stage], max_brightness * value)
         if time_step == time_total:
             fade_stage += 1
     else:
-        cg.set_PWM(pin_buzzer, 0.75)
+        # cg.set_PWM(pin_buzzer, 0.5)
         fade.all_on(max_brightness)
 
 
@@ -113,7 +110,7 @@ GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate,
 
 user_home = cg.check_status()
 if user_home:
-    # cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
+    cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
     stage = 1
     stage3_rep_counter = 0
 
@@ -134,8 +131,9 @@ if user_home:
             cg.send('Configuring Stage 2')
             cg.set_PWM(pin_blue, 0.5)
             cg.set_PWM(pin_red, 0.5)
-            # cg.set_PWM(pin_buzzer, 0.1)
-            cb = beep
+            cg.set_PWM(pin_buzzer, 0.1)
+            # cb = beep
+            cb = False
         # Stage 3 - LED Strip, Bed Shaker, and Buzzer
         if stage == 3:
             cg.send('Configuring Stage 3')
@@ -164,7 +162,7 @@ if user_home:
         user_home = cg.check_status()
 
     cg.send("\nAlarm Cycles Finished\n")
-    # cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
+    cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
     # Cleanup tasks:
     all_off()

@@ -1,39 +1,42 @@
 # PiAlarm
-Turn on LEDs, motors, etc. with Node, Cron, React, etc!
+> Raspberry Pi-powered smart alarm clock. A RGB Light Strip, loud buzzer, bed shaker, web app, geo-location knowledge, and Character LCD display
 
+## The alarm
 
-[Based on React example apps published by Twilio](https://www.twilio.com/blog/2015/08/setting-up-react-for-es6-with-webpack-and-babel-2.html)
+I'm a heavy sleeper, so I designed the alarm clock around a cycle that goes from pleasant to effective. When the alarm starts, an RGB LED strip is activated that gently increases in brightness. The second stage adds a quiet buzzer and increase the LED strips brightness. The third stage initiates the bed shaker, buzzer, and fades the RGB LED strip at full brightness. At any point, I can press the off button and turn off the alarm.
 
+<p align="center">
+  <img width="550" height=auto src="./README/cover.jpg" alt="above view">
+</p>
+<p align="center">The prototype alarm</p>
 
-## Port Forwarding:
+## Display
 
-> Add sudo nano /etc/dhcpcd.conf:
-```
-interface wlan0
+The current display is a simple character LCD that I had lying around. I'm working on replacing it with a 4 custom RGB LED digits. I'm using shift registers to control the insane number of pins necessary to set each LED individually. I'll update the progress on the new display sometime soon.
 
-static ip_address=192.168.0.106/24
-static routers=192.168.0.1
-static domain_name_servers=192.168.0.1
-```
+## Location Smarts
 
-> Add /etc/rc.local:
-```
-# Forward port 80 to 3000, so the web server can run with normal permissions
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
-```
+Using If This Then That (IFTTT), I setup a recipe that makes a web request when I'm away to turn off the alarm and when I return to activate the alarm. This way, the alarm won't run unless I'm present.
 
-Then under 'Forwarding' -> 'Virtual Servers' create:
+## Web app
 
-Service Port (80 - http)
-Internal Port (leave blank to match service port)
-IP Address (192.168.0.106)
-Protocol (TCP)
+Using react and socket.io, I built a simple web app accessible anywhere. Once in the app, new alarms can be set using basic cron syntax. The back end of the app handles scheduling, starting, and deleting alarms as I modify the database of alarms.
 
-Google `what is my ip` and copy that number into your browser
+<p align="center">
+  <img width="550" height=auto src="./README/webapp.png" alt="web app">
+</p>
+<p align="center">The web app</p>
 
-[Add port 22 if you want remote ssh access...although probably not wise]
+## How to run your own version
 
+<!-- FIXME -->
 
-## TODO
+*(TODO) I'm currently in the midst of revamping the clock display and refactoring the app, so I'll add a guide upon request. Open an issue to let me know that you're interested!*
 
-- Consider adding a button that sets an alarm to go off at 8 hours from that moment. Would need to stop all alarms and store the pointers in an array, then a cron task running each night would have to restart them
+## Acknowledgments
+
+[Web app based on React example apps published by Twilio](https://www.twilio.com/blog/2015/08/setting-up-react-for-es6-with-webpack-and-babel-2.html)
+
+## Made by
+
+[Kyle King](http://kyleking.me)
