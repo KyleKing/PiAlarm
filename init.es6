@@ -240,6 +240,13 @@ function createAlarm(alarmState, socket) {
 // ////////////////////////////
 
 io.on('connection', (socket) => {
+  PythonShell.run('scripts/alarm_status.py', (err, results) => {
+    if (err)
+      throw err;
+    initDebug(`rcvd (pyShellUserStatus): ${results}`);
+    socket.emit('IFTTT event', results);
+  });
+
   alarms.find({}, (err, allAlarms) => {
     if (err)
       throw err;

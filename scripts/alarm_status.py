@@ -19,7 +19,8 @@ if 'true' in arg or 'false' in arg:
     cg.send('Setting alarm status to: ' + arg)
     cg.write_ini('Alarm_Status', 'running', arg)
 else:
-    cg.send('Checking alarm status with: ' + arg)
+    cg.send(cg.check_status())
+    # cg.send('Current status is: ' + cg.check_status())
 
 # Check status of user and update an LED:
 a_led = cg.get_pin('Alarm_Status', 'led')

@@ -100,6 +100,7 @@ module.exports = {
 
   // Check alarm status:
   checkUserStatus() {
+    // Deprecated in favor of version in init.es6
     const task = 'python scripts/alarm_status.py';
     exec(task, (childerr, stdout, stderr) => {
       electronicDebug(`EXECUTING: ${task}`);

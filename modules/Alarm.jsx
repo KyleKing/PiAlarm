@@ -45,14 +45,14 @@ class Alarm extends React.Component {
 
   handleScheduleChange(event) {
     const newSched = event.target.value.trim();
-    if (/^((\S+\s+){5}\S+)$/.test(newSched))
+    if (/^((\S+\s+){5}\S+)$/.test(newSched)) {
       // console.log(event.target.value);
       this.setState({
         schedule: newSched,
         changed: true,
         error: false,
       });
-    else {
+    } else {
       this.setState({
         error: true,
       });
@@ -60,8 +60,7 @@ class Alarm extends React.Component {
     }
   }
 
-  handleSubmit(e) {
-    // e.preventDefault();
+  handleSubmit() {
     const newState = {
       uniq: this.state.uniq,
       title: this.state.title,

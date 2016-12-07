@@ -3,7 +3,7 @@
 
 ## The alarm
 
-I'm a heavy sleeper, so I designed the alarm clock around a cycle that goes from pleasant to effective. When the alarm starts, an RGB LED strip is activated that gently increases in brightness. The second stage adds a quiet buzzer and increase the LED strips brightness. The third stage initiates the bed shaker, buzzer, and fades the RGB LED strip at full brightness. At any point, I can press the off button and turn off the alarm.
+I'm a heavy sleeper, so I designed the alarm clock to go from pleasant to effective. When the alarm starts, a RGB LED strip lights up and gently increases in brightness. The second stage starts a buzzer and increase the LED strips brightness. The third stage initiates the bed shaker, buzzer, and fades the RGB LED strip between color values at full brightness. At any point, I can press the push button button and turn off the alarm.
 
 <p align="center">
   <img width="550" height=auto src="./README/cover.jpg" alt="above view">

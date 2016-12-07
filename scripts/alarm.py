@@ -20,7 +20,7 @@ pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
 pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 
 # alarm_stage_time = [0, 4, 8, 12 + 3]
-alarm_stage_time = [0, 120, 120, 60]
+alarm_stage_time = [0, 100, 80, 60]
 
 
 ###########################
@@ -131,9 +131,8 @@ if user_home:
             cg.send('Configuring Stage 2')
             cg.set_PWM(pin_blue, 0.5)
             cg.set_PWM(pin_red, 0.5)
-            cg.set_PWM(pin_buzzer, 0.1)
-            # cb = beep
-            cb = False
+            # cg.set_PWM(pin_buzzer, 0.1)
+            cb = beep
         # Stage 3 - LED Strip, Bed Shaker, and Buzzer
         if stage == 3:
             cg.send('Configuring Stage 3')
@@ -142,9 +141,9 @@ if user_home:
             cb = fade_led_strip
 
         # Run alarm and check for button interrupt:
-        while alarm_on and current_time < alarm_stage_time[stage]:
+        while alarm_on and current_time < alarm_stage_time[stage] * 10:
+            time.sleep(0.1)
             current_time += 1
-            time.sleep(1)
             if cb:
                 cb(current_time)
         cg.log_to_web_app(stage)

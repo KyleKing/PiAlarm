@@ -43,13 +43,14 @@ weekdayActivate.start()
 deactivate.start()
 
 
-const checkUserStatus = new CronJob('0 0 * * * *', () => {
-  schedDebug('Starting checkUserStatus');
-  electronics.checkUserStatus()
-}, () => {
-  schedDebug('Completed checkUserStatus()')
-}, false);
-checkUserStatus.start()
+// Not necessary
+// const checkUserStatus = new CronJob('0 0 * * * *', () => {
+//   schedDebug('Starting checkUserStatus');
+//   electronics.checkUserStatus()
+// }, () => {
+//   schedDebug('Completed checkUserStatus()')
+// }, false);
+// checkUserStatus.start()
 
 
 module.exports = {
