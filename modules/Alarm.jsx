@@ -1,5 +1,5 @@
 import React from 'react';
-const socket = io();
+const socket = io();  // eslint-disable-line
 
 class Alarm extends React.Component {
   constructor(props) {
@@ -13,11 +13,14 @@ class Alarm extends React.Component {
       changed: false,
       error: false,
     };
-    // Until I setup es2016...
+
+    // More efficient bind to onClick event:
     // https://github.com/goatslacker/alt/issues/283#issuecomment-122650637
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleScheduleChange = this.handleScheduleChange.bind(this);
+    this.toggleButton = this.toggleButton.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.removeAlarm = this.removeAlarm.bind(this);
   }
 
   toggleButton() {
@@ -99,14 +102,12 @@ class Alarm extends React.Component {
     const removed = this.state.removed ? 'removed' : 'alarm-exists';
     const changed = this.state.changed ? 'changed' : 'unchanged';
 
-    // <form className={`${fi} ${fc}`} style={{ display: 'inline' }} onSubmit={this.handleSubmit}>
-
     return (
       <div className={`alarm ${removed} ${fc}`}>
         <button
           type="button"
           className={`${fi} ${buttonClasses}`}
-          onClick={() => this.toggleButton()}
+          onClick={this.toggleButton}
         >{buttonValue}</button>
 
         <input
@@ -123,7 +124,7 @@ class Alarm extends React.Component {
         />
         <button
           className={`${fi} ${buttonBase} ${changed}`}
-          onClick={() => this.handleSubmit()}
+          onClick={this.handleSubmit}
           type="submit"
         >Save</button>
 
@@ -131,7 +132,7 @@ class Alarm extends React.Component {
           type="button"
           className={`${fi} ${buttonBase} btn-danger remove`}
           id={this.props.uniq}
-          onClick={() => this.removeAlarm()}
+          onClick={this.removeAlarm}
         >REMOVE</button>
       </div>
     );

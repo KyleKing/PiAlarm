@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import config as cg
 import fade
 
+
 ###########################
 # Globals:
 ###########################
@@ -21,6 +22,7 @@ pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 
 # alarm_stage_time = [0, 4, 8, 12 + 3]
 alarm_stage_time = [0, 100, 80, 60]
+step_size = 0.2
 
 
 ###########################
@@ -58,11 +60,9 @@ def all_off():
 
 def beep(counter):
     """Cycle through different low frequencies"""
-    if counter % 3 == 0:
-        cg.set_PWM(pin_buzzer, 0.1)
-    elif counter % 3 == 1:
+    if counter % 2 == 0:
         cg.set_PWM(pin_buzzer, 0.2)
-    elif counter % 3 == 2:
+    elif counter % 2 == 1:
         cg.set_PWM(pin_buzzer, 0.0)
 
 
@@ -100,6 +100,7 @@ def fade_led_strip(counter):
 # Alarm logic!
 ###########################
 
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin_button, GPIO.IN)
@@ -121,29 +122,29 @@ if user_home:
 
         current_time = 0
         # Stage 1 - Green LED Strip for 1 minute
-        if stage == 1:
+        if stage == 1 and alarm_on:
             cg.send('Configuring Stage 1')
             cg.set_PWM(pin_green, 0.2)
             cg.set_PWM(pin_red, 0.2)
             cb = False
         # Stage 2 - Purple LED Strip and Buzzer
-        if stage == 2:
+        if stage == 2 and alarm_on:
             cg.send('Configuring Stage 2')
             cg.set_PWM(pin_blue, 0.5)
             cg.set_PWM(pin_red, 0.5)
             # cg.set_PWM(pin_buzzer, 0.1)
             cb = beep
         # Stage 3 - LED Strip, Bed Shaker, and Buzzer
-        if stage == 3:
+        if stage == 3 and alarm_on:
             cg.send('Configuring Stage 3')
             cg.set_PWM(pin_shaker, 0)
             cg.set_PWM(pin_buzzer, 0.5)
             cb = fade_led_strip
 
         # Run alarm and check for button interrupt:
-        while alarm_on and current_time < alarm_stage_time[stage] * 10:
-            time.sleep(0.1)
-            current_time += 1
+        while alarm_on and current_time < alarm_stage_time[stage]:
+            time.sleep(step_size)
+            current_time += step_size
             if cb:
                 cb(current_time)
         cg.log_to_web_app(stage)

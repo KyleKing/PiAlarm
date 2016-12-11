@@ -3,10 +3,13 @@ import sys
 import config as cg
 
 cg.quiet_logging(False)
+quiet = False
 
 # Parse STDIN
 if len(sys.argv) > 1:
     arg = str(sys.argv[1]).lower()
+    if 'quiet' in arg:
+        quiet = True
 else:
     arg = 'update_LED_only'
 
@@ -19,14 +22,17 @@ if 'true' in arg or 'false' in arg:
     cg.send('Setting alarm status to: ' + arg)
     cg.write_ini('Alarm_Status', 'running', arg)
 else:
-    cg.send(cg.check_status())
+    userStatus = 'Away'
+    if cg.check_status():
+        userStatus = 'Present'
+    cg.send(userStatus)
     # cg.send('Current status is: ' + cg.check_status())
 
 # Check status of user and update an LED:
 a_led = cg.get_pin('Alarm_Status', 'led')
 if cg.check_status():
-    cg.set_PWM(a_led, 0)
+    cg.set_PWM(a_led, 0, quiet)
 else:
-    cg.set_PWM(a_led, 1)
+    cg.set_PWM(a_led, 1, quiet)
 
 sys.exit()

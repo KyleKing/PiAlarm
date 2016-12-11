@@ -60,11 +60,12 @@ def ifttt(event, dataset={'value1': ''}):
                   event + "/with/key/" + str(key), data=dataset)
 
 
-def set_PWM(pin_num, percent):
+def set_PWM(pin_num, percent, quiet=False):
     """Run PWM commands through Pi-Blaster"""
     # echo "22=0" > /dev/pi-blaster
     cmd = 'echo "' + str(pin_num).zfill(2) + "=" + "{0:.2f}".format(percent)
-    send(cmd + '" > /dev/pi-blaster')
+    if not quiet:
+        send(cmd + '" > /dev/pi-blaster')
     return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
 
 

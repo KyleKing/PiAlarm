@@ -33,13 +33,19 @@ function parseCron(cron) {
 class AlarmContainer extends React.Component {
   constructor() {
     super();
-    this.state = { alarms: [] };
+    this.state = {
+      alarms: [],
+      userStatus: 'Away',
+    };
     socket.on("alarm event", (newAlarm) => this.handleStateChange(newAlarm));
     socket.on("IFTTT event", (value) => this.updateIFTTTInfo(value));
+
+    // More efficient bind to onClick event:
+    this.newAlarm = this.newAlarm.bind(this);
   }
 
   updateIFTTTInfo(value) {
-    this.setState({ dormant: value });
+    this.setState({ userStatus: value });
   }
 
   handleStateChange(newAlarm) {
@@ -64,7 +70,7 @@ class AlarmContainer extends React.Component {
   }
 
   render() {
-    const whereUser = this.state.dormant ? "Away" : "Present";
+    const whereUser = this.state.userStatus;
     const alarms = this.state.alarms.map((alarm) =>
       (
         <li key={alarm.uniq}>
@@ -81,7 +87,7 @@ class AlarmContainer extends React.Component {
     return (
       <div className="row">
         <div className="alarm-container col-md-12">
-          <h3 className="text-center">Alarms</h3>
+          <h3 className="text-center">Alarms ({whereUser})</h3>
           <ul className="alarm-list">
             {alarms}
           </ul>
@@ -89,11 +95,7 @@ class AlarmContainer extends React.Component {
         <button
           type="button"
           className="btn custom-button-formatting btn-info button-oversized"
-        >{whereUser}</button>
-        <button
-          type="button"
-          className="btn custom-button-formatting btn-info button-oversized"
-          onClick={() => this.newAlarm()}
+          onClick={this.newAlarm}
         ><h5>Add New</h5></button>
       </div>
     );

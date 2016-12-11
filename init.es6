@@ -240,11 +240,12 @@ function createAlarm(alarmState, socket) {
 // ////////////////////////////
 
 io.on('connection', (socket) => {
-  PythonShell.run('scripts/alarm_status.py', (err, results) => {
+  PythonShell.run('scripts/alarm_status.py', { args: ['quiet'] }, (err, results) => {
     if (err)
       throw err;
     initDebug(`rcvd (pyShellUserStatus): ${results}`);
-    socket.emit('IFTTT event', results);
+    const userStatus = results[0];
+    socket.emit('IFTTT event', userStatus);
   });
 
   alarms.find({}, (err, allAlarms) => {
@@ -261,7 +262,7 @@ io.on('connection', (socket) => {
     const alarmState = {
       uniq,
       title: '_New_Alarm_',
-      schedule: '10 0 5 * * 1-5',
+      schedule: '0 0 0 * * 0-7',
       running: false,
       saved: false,
     };
@@ -269,7 +270,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('update', (newState) => {
-    initDebug(`(socket.update) Is updated alarm in ClockAlarms? ${ClockAlarms.hasOwnProperty(newState.uniq)}`);  // eslint-disable-line
+    initDebug('(socket.update) Is updated alarm in ClockAlarms? ' +
+      `${ClockAlarms.hasOwnProperty(newState.uniq)}`);  // eslint-disable-line
     eraseAlarm(newState.uniq);
     createAlarm(newState, socket);
   });
