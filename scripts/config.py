@@ -56,14 +56,17 @@ def check_status():
 
 def ifttt(event, dataset={'value1': ''}):
     key = get_pin('IFTTT', 'key', "./scripts/secret.ini", True)
-    requests.post("https://maker.ifttt.com/trigger/" +
-                  event + "/with/key/" + str(key), data=dataset)
+    try:
+        requests.post("https://maker.ifttt.com/trigger/" +
+                      event + "/with/key/" + str(key), data=dataset)
+    except:
+        print 'IFTTT Failed - possible loss of INTERNET connection'
 
 
 def set_PWM(pin_num, percent, quiet=False):
     """Run PWM commands through Pi-Blaster"""
     # echo "22=0" > /dev/pi-blaster
-    cmd = 'echo "' + str(pin_num).zfill(2) + "=" + "{0:.2f}".format(percent)
+    cmd = 'echo "' + str(pin_num).zfill(2) + "={0:.2f}".format(percent)
     if not quiet:
         send(cmd + '" > /dev/pi-blaster')
     return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)

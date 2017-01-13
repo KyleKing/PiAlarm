@@ -15,3 +15,6 @@ if output == 0:
 else:
     cg.send('Starting fresh instance of Pi-Blaster')
     cg.send(subprocess.call(['bash', './scripts/bootPiBlaster.sh']))
+
+
+# sudo kill $(ps aux | grep 'pi-blaster\/[p]i-blaster' | awk '{print $2}')

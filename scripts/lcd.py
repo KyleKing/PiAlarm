@@ -8,7 +8,6 @@ import Adafruit_GPIO.MCP230xx as MCP  # Only for I2C Config
 
 # FIXME: Trims last word in longer strings...
 # Also can't handle longer words that don't have spaces inside (just cut)
-# Probably transform this into a class?
 
 
 cg.quiet_logging(False)
@@ -16,6 +15,8 @@ cg.quiet_logging(False)
 # Define LCD column and row size for 20x4 LCD.
 lcd_columns = 20
 lcd_rows = 4
+
+# >> ################### <<
 
 # #######################
 # Regular COnfig:
@@ -39,17 +40,30 @@ lcd_rows = 4
 #                               lcd_green, lcd_blue)
 
 # #######################
-# #######################
 # I2C COnfig:
 
-# Define MCP pins connected to the LCD.
-lcd_rs = 0
-lcd_en = 1
-lcd_d4 = 2
-lcd_d5 = 3
-lcd_d6 = 4
-lcd_d7 = 5
-lcd_backlight = 0  # Don't assign to any pin b/c over-ridden with PWM pins
+# Raspberry Pi pin configuration:
+file = "./scripts/pins.ini"
+lcd_red = cg.get_pin('LCD_I2C_Pins', 'lcd_red', file)
+lcd_green = cg.get_pin('LCD_I2C_Pins', 'lcd_green', file)
+lcd_blue = cg.get_pin('LCD_I2C_Pins', 'lcd_blue', file)
+
+# > (Tutorial) Define MCP pins connected to the LCD:
+# lcd_rs = 0
+# lcd_en = 1
+# lcd_d4 = 2
+# lcd_d5 = 3
+# lcd_d6 = 4
+# lcd_d7 = 5
+# lcd_backlight = 6  # Note: over-ridden with PWM pins
+# > Adjusted for soldered circuit:
+lcd_rs = 6
+lcd_en = 7
+lcd_d4 = 3
+lcd_d5 = 2
+lcd_d6 = 1
+lcd_d7 = 0
+lcd_backlight = 4  # Note: over-ridden with PWM pins
 
 gpio = MCP.MCP23008()
 
@@ -57,7 +71,7 @@ gpio = MCP.MCP23008()
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows, lcd_backlight, gpio=gpio)
 
-# #######################
+# >> ################### <<
 
 
 def ext(count, unit=' '):
@@ -140,7 +154,7 @@ def Initialize():
     # lcd.set_color(0, 0, 0)
     cg.send('Manually set LCD brightness through pi-blaster')
     cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
-    set_disp(0.5, 1.0, 0.5)
+    set_disp(0.4, 0.7, 0.4)
     parse_message('Initialized')
 
 
