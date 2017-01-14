@@ -18,24 +18,13 @@ def send(info):
         sys.stdout.flush()
 
 
-def log_to_web_app(counter):
-    """Prep a string to send to the controlling node application"""
-    log_str = 'Completed Step #{0}'
-    print log_str.format(counter)
-    sys.stdout.flush()
-
-
-def get_pin(component, param, file="./scripts/pins.ini", raw=False):
+def get_pin(component, param, file="./scripts/pins.ini", return_int=False):
     """Get pin numbering value from a shared ini file"""
     pin_numbering = ConfigParser.RawConfigParser()
     try:
         pin_numbering.read(file)
-        raw_val = pin_numbering.get(component, param)
-        if raw:
-            return raw_val
-        else:
-            # Convert to number and return
-            return eval(raw_val)
+        raw = pin_numbering.get(component, param)
+        return eval(raw) if return_int else raw
     except:
         raise Exception("Failed to load " + file)
 
@@ -55,26 +44,31 @@ def check_status():
 
 
 def ifttt(event, dataset={'value1': ''}):
+    """Trigger IFTTT Maker Event"""
     key = get_pin('IFTTT', 'key', "./scripts/secret.ini", True)
     try:
         requests.post("https://maker.ifttt.com/trigger/" +
-                      event + "/with/key/" + str(key), data=dataset)
+                      "{}/with/key/{}".format(event, key), data=dataset)
     except:
         print 'IFTTT Failed - possible loss of INTERNET connection'
 
 
 def set_PWM(pin_num, percent, quiet=False):
-    """Run PWM commands through Pi-Blaster"""
-    # echo "22=0" > /dev/pi-blaster
-    cmd = 'echo "' + str(pin_num).zfill(2) + "={0:.2f}".format(percent)
+    """Run PWM commands through Pi-Blaster
+        echo "22=0" > /dev/pi-blaster
+    """
+    cmd = 'echo "' + str(pin_num).zfill(2) + \
+        '={0:0.2f}" > /dev/pi-blaster'.format(percent * 1.0)
+    # cmd = 'echo "{:02}={:0.2}" > /dev/pi-blaster'.format(pin_num, percent)
     if not quiet:
-        send(cmd + '" > /dev/pi-blaster')
-    return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
+        send(cmd)
+    return subprocess.call(cmd, shell=True)
 
 
 def release_PWM(pin_num):
-    """Run PWM commands through Pi-Blaster"""
-    # echo "release 22" > /dev/pi-blaster
-    cmd = 'echo "release ' + str(pin_num)
-    send(cmd + '" > /dev/pi-blaster')
-    return subprocess.call(cmd + '" > /dev/pi-blaster', shell=True)
+    """Release pin from Pi-Blaster
+        echo "release 22" > /dev/pi-blaster
+    """
+    cmd = 'echo "release {:02}" > /dev/pi-blaster'.format(pin_num)
+    send(cmd)
+    return subprocess.call(cmd, shell=True)

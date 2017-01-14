@@ -42,17 +42,6 @@ weekendActivate.start()
 weekdayActivate.start()
 deactivate.start()
 
-
-// Not necessary
-// const checkUserStatus = new CronJob('0 0 * * * *', () => {
-//   schedDebug('Starting checkUserStatus');
-//   electronics.checkUserStatus()
-// }, () => {
-//   schedDebug('Completed checkUserStatus()')
-// }, false);
-// checkUserStatus.start()
-
-
 module.exports = {
   scheduleCron(title, cronSchedule) {
     schedDebug(`Scheduling '${title}' (with sched: ${cronSchedule})`);

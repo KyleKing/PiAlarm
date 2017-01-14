@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import time
 import RPi.GPIO as GPIO
-import config as cg
-import fade
+
+from modules import config as cg
+from modules import fade
 
 
 ###########################
@@ -24,6 +25,13 @@ pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
 alarm_stage_time = [0, 100, 80, 60]
 step_size = 0.2
 
+# Settings for fade_led_strip()
+max_brightness = 0.6
+fade_stage = 0
+fade_stages = [pin_green, pin_red, pin_blue,
+               pin_green, pin_red, pin_blue]
+time_total = alarm_stage_time[3] / len(fade_stages)
+
 
 ###########################
 # Functions and Stuff
@@ -33,16 +41,15 @@ step_size = 0.2
 def alarm_deactivate(pin_num):
     """Button callback on rising edge"""
     global alarm_on
-    print '\nAlarm Deactivate Script called with: ' + str(GPIO.input(pin_num))
-    if GPIO.input(pin_num):
+    val = GPIO.input(pin_num)
+    cg.send('Alarm Deactivate Script called with: {}'.format(val))
+    if val:
         cg.send('Deactivating Alarm')
         alarm_on = False
 
 
 def gen_button_cb(pin_num):
-    """Button callback on rising edge:
-       ex: GPIO.add_event_detect(pin_button, GPIO.BOTH,
-                                 callback=gen_button_cb)"""
+    """For testing the cb function"""
     if GPIO.input(pin_num):
         cg.send("Triggered on a rising edge from pin: " + str(pin_num))
     else:
@@ -64,13 +71,6 @@ def beep(counter):
         cg.set_PWM(pin_buzzer, 0.2)
     elif counter % 2 == 1:
         cg.set_PWM(pin_buzzer, 0.0)
-
-
-max_brightness = 0.6
-fade_stage = 0
-fade_stages = [pin_green, pin_red, pin_blue,
-               pin_green, pin_red, pin_blue]
-time_total = alarm_stage_time[3] / len(fade_stages)
 
 
 def fade_led_strip(counter):
@@ -106,8 +106,6 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin_button, GPIO.IN)
 GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate,
                       bouncetime=300)
-# Implemented hardware bouncetime with 0.1uf capacitor, so use this instead:
-# GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate)
 
 user_home = cg.check_status()
 if user_home:
@@ -117,7 +115,7 @@ if user_home:
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
         all_off()
-        cg.send('\nStarting Stage: ' + str(stage) + ' for ' +
+        cg.send('\nStarting Stage: {}'.format(stage) + ' for ' +
                 str(alarm_stage_time[stage]) + ' seconds')
 
         current_time = 0
@@ -147,7 +145,7 @@ if user_home:
             current_time += step_size
             if cb:
                 cb(current_time)
-        cg.log_to_web_app(stage)
+        cg.send('Completed Step #{0}'.format(stage))
 
         # Prep for the next loop:
         if stage == 3 and alarm_on:

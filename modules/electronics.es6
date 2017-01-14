@@ -83,8 +83,24 @@ module.exports = {
     }
   },
 
-  // Update display on 1 minute intervals:
+  // 7-Segment and LCD Controller:
   startClock() {
+    // 7 Segment Clock
+    electronicDebug('Starting 7-Segment Clock');
+    if (process.env.LOCAL === 'false') {
+      const pyShellAlarm = new PythonShell('./scripts/clock.py');
+      pyShellAlarm.on('message', (message) => {
+        electronicDebug(`rcvd (ALARM): ${message}`);
+      });
+      pyShellAlarm.on('close', (err) => {
+        if (err)
+          throw err;
+        electronicDebug('Clock stopped (clock.py)');
+      });
+      pyShellAlarm.on('error', (err) => { throw err; });
+    }
+
+    // Update LCD display on 1 minute intervals:
     const updateClock = new CronJob('0 * * * * *', () => {
       const checkAlarm = "ps aux | grep '[a]larm.py' | awk '{print $2}'";
       execOnNoSTDOUT(checkAlarm, () => {

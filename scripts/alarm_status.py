@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-import config as cg
+from modules import config as cg
 
 cg.quiet_logging(False)
 quiet = False

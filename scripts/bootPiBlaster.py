@@ -1,6 +1,7 @@
 import subprocess
 import os
-import config as cg
+
+from modules import config as cg
 
 cg.quiet_logging(False)
 
