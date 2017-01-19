@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 # from time import sleep
 # try:
 #     import thread
@@ -12,11 +9,12 @@ from modules import config as cg
 
 
 # Initialize the clock (GND, VCC=3.3V, Example Pins are DIO-20 and CLK21)
-Display = tm1637.TM1637(CLK=24, DIO=23, brightness=1.0)
-
+clock = cg.get_pin('7Segment', 'clk', _eval=True)
+digital = cg.get_pin('7Segment', 'dio', _eval=True)
+Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
 
 cg.send("Starting 7-segment clock in the background")
-Display.StartClock(military_time=False)
+Display.StartClock(military_time=True)
 
 # try:
 #     print "Starting clock in the background (press CTRL + C to stop):"

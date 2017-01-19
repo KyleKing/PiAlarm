@@ -97,7 +97,10 @@ module.exports = {
           throw err;
         electronicDebug('Clock stopped (clock.py)');
       });
-      pyShellAlarm.on('error', (err) => { throw err; });
+      pyShellAlarm.on('error', (err) => {
+        console.log('Error thrown from clock?');
+        throw err;
+      });
     }
 
     // Update LCD display on 1 minute intervals:

@@ -65,5 +65,6 @@ def fade_RGB_Strip():
     all_off()
 
 
-# # Use to test the above module:
-# fade_RGB_Strip()
+if __name__ == "__main__":
+    # Test the above module:
+    fade_RGB_Strip()

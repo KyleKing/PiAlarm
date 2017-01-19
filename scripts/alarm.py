@@ -14,12 +14,16 @@ alarm_on = True
 cg.quiet_logging(False)
 
 # Electronic Pin Numbering Globals:
-pin_button = cg.get_pin('Input_Pins', 'pin_button')
-pin_buzzer = cg.get_pin('GPIO_Pins', 'pin_buzzer')
-pin_shaker = cg.get_pin('GPIO_Pins', 'pin_shaker')
-pin_blue = cg.get_pin('GPIO_Pins', 'pin_blue')
-pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
-pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
+off_button = cg.get_pin('Input_Pins', 'off_button')
+pin_buzzer = cg.get_pin('Haptics', 'pin_buzzer')
+pin_shaker = cg.get_pin('Haptics', 'pin_shaker')
+pin_blue = cg.get_pin('RGB_Strip', 'pin_blue')
+pin_red = cg.get_pin('RGB_Strip', 'pin_red')
+pin_green = cg.get_pin('RGB_Strip', 'pin_green')
+# # TODO
+# pin_blue2 = cg.get_pin('RGB_Strip', 'pin_blue2')
+# pin_red2 = cg.get_pin('RGB_Strip', 'pin_red2')
+# pin_green2 = cg.get_pin('RGB_Strip', 'pin_green2')
 
 # alarm_stage_time = [0, 4, 8, 12 + 3]
 alarm_stage_time = [0, 100, 80, 60]
@@ -103,8 +107,8 @@ def fade_led_strip(counter):
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin_button, GPIO.IN)
-GPIO.add_event_detect(pin_button, GPIO.RISING, callback=alarm_deactivate,
+GPIO.setup(off_button, GPIO.IN)
+GPIO.add_event_detect(off_button, GPIO.RISING, callback=alarm_deactivate,
                       bouncetime=300)
 
 user_home = cg.check_status()
@@ -164,7 +168,7 @@ if user_home:
 
     # Cleanup tasks:
     all_off()
-    GPIO.remove_event_detect(pin_button)
+    GPIO.remove_event_detect(off_button)
     GPIO.cleanup()
 
     # release_PWM(pin_shaker)

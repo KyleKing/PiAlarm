@@ -3,6 +3,7 @@
 import sys
 import Adafruit_CharLCD as LCD
 import Adafruit_GPIO.MCP230xx as MCP
+import datetime
 
 from modules import config as cg
 
@@ -24,14 +25,19 @@ lcd_d5 = 2
 lcd_d6 = 1
 lcd_d7 = 0
 lcd_backlight = 4  # Disconnected -PWM are used instead
-file = "./scripts/pins.ini"
-lcd_red = cg.get_pin('LCD_I2C_Pins', 'lcd_red', file)
-lcd_green = cg.get_pin('LCD_I2C_Pins', 'lcd_green', file)
-lcd_blue = cg.get_pin('LCD_I2C_Pins', 'lcd_blue', file)
+lcd_red = cg.get_pin('LCD_I2C_Pins', 'lcd_red')
+lcd_green = cg.get_pin('LCD_I2C_Pins', 'lcd_green')
+lcd_blue = cg.get_pin('LCD_I2C_Pins', 'lcd_blue')
 
 gpio = MCP.MCP23008()
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows, lcd_backlight, gpio=gpio)
+
+# Set brightness to something reasonable based on time of day
+now = datetime.datetime.now()
+default_b = (0.4, 0.4, 0.4)
+dimmed_b = (0.7, 0.7, 0.7)
+brightness = default_b if now.hour < 6 or now.hour > 9 else dimmed_b
 
 
 def ext(count, unit=' '):
@@ -109,39 +115,40 @@ def Initialize():
     """Set color & initial value to display"""
     cg.send('Manually set LCD brightness through pi-blaster')
     cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
-    set_disp(0.7, 0.4, 0.7)
+    set_disp(brightness)
     parse_message('Initialized')
 
 
-Initialize()
-while True:
-    line = sys.stdin.readline()
-    message = line.rstrip()
+if __name__ == "__main__":
+    Initialize()
+    while True:
+        line = sys.stdin.readline()
+        message = line.rstrip()
 
-    if 'turn lcd screen for alarm clock' in message:
-        if 'on' in message:
-            set_disp(0.4, 0.7, 0.4)
-            cg.send('Turned display on')
-        elif 'off' in message:
-            set_disp(1.0, 1.0, 1.0)
-            cg.send('Turned display off')
-    else:
-        try:
-            # Try to accept a message already in a list format (i.e. ['1','2'])
-            segments = eval(message)
-            if len(segments) == 2:
-                segments.insert(1, ext(lcd_columns))
-            elif len(segments) > 2:
-                flip(segments)
-            comp = ''
-            for segment in segments:
-                comp += segment + ext(lcd_columns - len(segment))
-            # cg.send('Received pre-parsed message: ' + comp)
-        except:
-            # Otherwise parse whatever string was sent
-            comp = parse_message(message)
-            # cg.send('Auto-parsed message: {}'.format(comp))
-        lcd.clear()
-        lcd.message(comp)
-    # Force buffer to close and send all data to Node application
-    sys.stdout.flush()
+        if 'turn lcd screen for alarm clock' in message:
+            if 'on' in message:
+                set_disp(0.4, 0.7, 0.4)
+                cg.send('Turned display on')
+            elif 'off' in message:
+                set_disp(1.0, 1.0, 1.0)
+                cg.send('Turned display off')
+        else:
+            try:
+                # Accept a message already in a list (i.e. ['1','2'])
+                segments = eval(message)
+                if len(segments) == 2:
+                    segments.insert(1, ext(lcd_columns))
+                elif len(segments) > 2:
+                    flip(segments)
+                comp = ''
+                for segment in segments:
+                    comp += segment + ext(lcd_columns - len(segment))
+                # cg.send('Received pre-parsed message: ' + comp)
+            except:
+                # Otherwise parse whatever string was sent
+                comp = parse_message(message)
+                # cg.send('Auto-parsed message: {}'.format(comp))
+            lcd.clear()
+            lcd.message(comp)
+        # Force buffer to close and send all data to Node application
+        sys.stdout.flush()

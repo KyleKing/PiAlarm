@@ -21,17 +21,15 @@ lcd_rows = 4
 # Regular COnfig:
 
 # # Raspberry Pi pin configuration:
-# # file = "./pins.ini"
-# file = "./scripts/pins.ini"
-# lcd_rs = cg.get_pin('LCD_Pins', 'lcd_rs', file)
-# lcd_en = cg.get_pin('LCD_Pins', 'lcd_en', file)
-# lcd_d4 = cg.get_pin('LCD_Pins', 'lcd_d4', file)
-# lcd_d5 = cg.get_pin('LCD_Pins', 'lcd_d5', file)
-# lcd_d6 = cg.get_pin('LCD_Pins', 'lcd_d6', file)
-# lcd_d7 = cg.get_pin('LCD_Pins', 'lcd_d7', file)
-# lcd_red = cg.get_pin('LCD_Pins', 'lcd_red', file)
-# lcd_green = cg.get_pin('LCD_Pins', 'lcd_green', file)
-# lcd_blue = cg.get_pin('LCD_Pins', 'lcd_blue', file)
+# lcd_rs = cg.get_pin('LCD_Pins', 'lcd_rs')
+# lcd_en = cg.get_pin('LCD_Pins', 'lcd_en')
+# lcd_d4 = cg.get_pin('LCD_Pins', 'lcd_d4')
+# lcd_d5 = cg.get_pin('LCD_Pins', 'lcd_d5')
+# lcd_d6 = cg.get_pin('LCD_Pins', 'lcd_d6')
+# lcd_d7 = cg.get_pin('LCD_Pins', 'lcd_d7')
+# lcd_red = cg.get_pin('LCD_Pins', 'lcd_red')
+# lcd_green = cg.get_pin('LCD_Pins', 'lcd_green')
+# lcd_blue = cg.get_pin('LCD_Pins', 'lcd_blue')
 
 # # Initialize the LCD using the pins above.
 # lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,

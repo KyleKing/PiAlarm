@@ -1,9 +1,8 @@
-#!/usr/bin/env node
-
 /**
  * General Configuration
  */
 
+// Configure environmental variables (debugging mode, etc.)
 require('babel-register');
 const fs = require('fs-extra');
 const program = require('commander');
@@ -16,41 +15,38 @@ program
 process.env.VEBOSE = program.verbose || 'false';
 process.env.LOCAL = program.local || 'false';
 process.env.ALARM = program.alarm || 'false';
-
-/* initialize debugger */
+// initialize debugger
 const debug = require('./modules/debugger.es6');
 const initDebug = debug.init('init');
 initDebug('Debugger initialized!');
-
 initDebug('Checking node arguments:');
 initDebug(`VEBOSE  - ${process.env.VEBOSE}`);
 initDebug(`LOCAL  - ${process.env.LOCAL}`);
 initDebug(`ALARM  - ${process.env.ALARM}`);
 
-/* Now everything else */
+// Incorporate dependencies
 const path = require('path');
 const secret = require('./secret.json');
 const bodyParser = require('body-parser');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const session = require('cookie-session');
-// const flash = require('connect-flash');
-// // const nunjucks = require('nunjucks');
-// // const resourcesPath = path.join(__dirname, '..', 'common');
 const app = express();
-app.set('port', 3000);
-app.use(express.static('dist'));
-app.use(bodyParser.urlencoded({ extended: false }));
-
+// This is already set with /register from express-routers,
+//    so not sure what this does:
 const users = require('express-users');
 const userRouter = users({
   store: 'nedb',
   nedb: { filename: `${__dirname}/data/users` },
   data: [
-    { username: secret.username, pwd: secret.pwd},
+    { username: secret.username, pwd: secret.pwd, email: secret.email},
   ],
 });
 
+// Configure the app port, etc.
+app.set('port', 3000);
+app.use(express.static('dist'));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
   resave: false,
@@ -61,26 +57,11 @@ app.use(userRouter.passport.initialize());
 app.use(userRouter.passport.session());
 app.use(userRouter);
 
-// app.use(flash());
-// // nunjucks.configure(path.join(resourcesPath, 'views'), {
-// //   autoescape: true,
-// //   express: app,
-// // });
-// app.use((req, res, next) => {
-//   const messages = {
-//     error: req.flash('error'),
-//     success: req.flash('success'),
-//     info: req.flash('info'),
-//   };
-//   res.locals.flash = messages;
-//   next();
-// });
+/**
+ * Initialize Routes and Launch Server
+ */
 
-
-// ////////////////////////////
-// Set Routes and Launch Server
-// ////////////////////////////
-
+// Main routes:
 app.get('/', (req, res) => {
   if (req.isAuthenticated())
     return res.redirect('/app');
@@ -92,9 +73,7 @@ app.get('/app', (req, res) => {
     return res.sendFile(path.resolve(`${__dirname}/views/index.html`));
   }
   return res.sendFile(path.resolve(`${__dirname}/views/login.html`));
-  // return res.redirect('/');
 });
-
 
 // Respond to Maker requests:
 const PythonShell = require('python-shell');
@@ -117,6 +96,7 @@ app.get(`/${secret.maker}/:id`, (req, res) => {
   return res.sendFile(path.resolve(`${__dirname}/views/404.html`));
 });
 
+// Launch server:
 const http = require('http').Server(app); // eslint-disable-line
 const io = require('socket.io')(http);
 const interfaceAddresses = require('interface-addresses');
@@ -152,9 +132,8 @@ const alarms = db.alarms;
 const sched = require('./modules/scheduler.es6');
 const electronics = require('./modules/electronics.es6');
 electronics.startClock();
-
 if (process.env.LOCAL === 'false') {
-  const pyshell = new PythonShell('scripts/all_off.py');
+  const pyshell = new PythonShell('scripts/modules/all_off.py');
   initDebug('Started all_off.py');
   pyshell.on('message', (message) => {
     initDebug(`rcvd (ALL_OFF): ${message}`);
@@ -167,9 +146,9 @@ if (process.env.LOCAL === 'false') {
   pyshell.on('error', (err) => { throw err; });
 }
 
-// ////////////////////////////
-// Initialize Alarms
-// //////////////////////////
+/**
+ * Initialize Alarms
+ */
 
 const ClockAlarms = {};
 // Create alarms only once:
@@ -193,10 +172,9 @@ alarms.find({}, (err, allAlarms) => {
   });
 });
 
-
-// ////////////////////////////
-// Alarm Operations
-// ////////////////////////////
+/**
+ * Alarm Operations
+ */
 
 function deleteAlarm(uniq) {
   alarms.remove({ uniq }, {}, (err, numRemoved) => {
@@ -226,7 +204,7 @@ function createAlarm(alarmState, socket) {
         initDebug(`(createAlarm) ^ Started: ${alarm.title}`);
         initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
       } else {
-        initDebug(`(createAlarm) x Didn't start: ${alarm.title}`);
+        initDebug(`(createAlarm) x Didnt start: ${alarm.title}`);
         initDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
       }
       socket.emit('alarm event', alarm);
@@ -235,9 +213,9 @@ function createAlarm(alarmState, socket) {
   });
 }
 
-// ////////////////////////////
-// Socket Actions
-// ////////////////////////////
+/**
+ * Socket Operations
+ */
 
 io.on('connection', (socket) => {
   PythonShell.run('scripts/alarm_status.py', { args: ['quiet'] }, (err, results) => {
@@ -247,7 +225,6 @@ io.on('connection', (socket) => {
     const userStatus = results[0];
     socket.emit('IFTTT event', userStatus);
   });
-
   alarms.find({}, (err, allAlarms) => {
     if (err)
       throw err;
@@ -268,14 +245,12 @@ io.on('connection', (socket) => {
     };
     createAlarm(alarmState, socket);
   });
-
   socket.on('update', (newState) => {
     initDebug('(socket.update) Is updated alarm in ClockAlarms? ' +
       `${ClockAlarms.hasOwnProperty(newState.uniq)}`);  // eslint-disable-line
     eraseAlarm(newState.uniq);
     createAlarm(newState, socket);
   });
-
   socket.on('remove', (uniq) => {
     initDebug(`(socket.remove) Deleting alarm (${uniq})`);
     eraseAlarm(uniq);
