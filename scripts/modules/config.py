@@ -12,34 +12,40 @@ def quiet_logging(new_value=True):
     quiet_STDOUT = new_value
 
 
-def send(info):
+def send(info, force=False):
     """Force output to parent application"""
-    if not quiet_STDOUT:
+    if not quiet_STDOUT or force:
         print info
         sys.stdout.flush()
 
 
-def _ini_path():
+def _ini_path(filename='pins'):
     if 'scripts' in os.getcwd():
-        return os.getcwd() + '/pins.ini'
+        return '{}/{}.ini'.format(os.getcwd(), filename)
     else:
-        return os.getcwd() + '/scripts/pins.ini'
+        return '{}/scripts/{}.ini'.format(os.getcwd(), filename)
 
 
-def get_pin(component, param, _eval=False):
+def get_pin(component, param, _eval=True):
     """Get pin numbering value from a shared ini file"""
-    pin_numbering = ConfigParser.RawConfigParser()
-    file = _ini_path()
+    raw = read_ini(component, param, filename='pins')
+    return eval(raw) if _eval else raw
+
+
+def read_ini(component, param, filename='pins'):
+    config = ConfigParser.RawConfigParser()
+    file = _ini_path(filename)
     try:
-        pin_numbering.read(file)
-        raw = pin_numbering.get(component, param)
-        return eval(raw) if _eval else raw
+        config.read(file)
+        return config.get(component, param)
     except:
-        raise Exception("Failed to load " + file)
+        raise Exception("Failed to load `{}` and `{}` from: {}".format(
+            component, param, file))
 
 
-def write_ini(component, param, value, file="./scripts/pins.ini"):
+def write_ini(component, param, value):
     pin_config = ConfigParser.RawConfigParser()
+    file = _ini_path()
     pin_config.read(file)
     with open(file, 'w') as cfgfile:
         pin_config.set(component, param, value)
@@ -48,13 +54,13 @@ def write_ini(component, param, value, file="./scripts/pins.ini"):
 
 def check_status():
     """Returns True, if alarm is to continue running, else is False"""
-    stat = get_pin('Alarm_Status', 'running')
+    stat = get_pin('Alarm_Status', 'running', _eval=False)
     return 'true' in stat.lower()
 
 
 def ifttt(event, dataset={'value1': ''}):
     """Trigger IFTTT Maker Event"""
-    key = get_pin('IFTTT', 'key', _eval=True)
+    key = read_ini('IFTTT', 'key', filename='secret')
     try:
         requests.post("https://maker.ifttt.com/trigger/" +
                       "{}/with/key/{}".format(event, key), data=dataset)

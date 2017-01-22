@@ -78,22 +78,36 @@ app.get('/app', (req, res) => {
 // Respond to Maker requests:
 const PythonShell = require('python-shell');
 function updateAlarm(arg) {
+  initDebug('Sending param to update away/pres state: ' + arg);
   PythonShell.run('./scripts/alarm_status.py', { args: [arg] }, (err, results) => {
     if (err)
       throw err;
     initDebug('Alarm status update results: %j', results);
   });
 }
+
+// FIXME: Why is the file output logged multiple times?
+// const status_shell = new PythonShell('scripts/alarm_status.py');
+// status_shell.on('message', (message) => {
+//   initDebug(`rcvd (alarm_status): ${message}`);
+// });
+// status_shell.on('close', (err) => {
+//   if (err)
+//     throw err;
+//   initDebug('Finished and closed alarm_status.py');
+// });
+// status_shell.on('error', (err) => { throw err; });
+
 app.get(`/${secret.maker}/:id`, (req, res) => {
-  if (req.params.id === 'enter') {
-    updateAlarm('true');
-    return res.sendFile(path.resolve(`${__dirname}/views/enter.html`));
-  } else if (req.params.id === 'exit') {
-    updateAlarm('false');
-    return res.sendFile(path.resolve(`${__dirname}/views/exit.html`));
+  const id = req.params.id
+  if (id === 'enter' || id === 'exit') {
+    updateAlarm(id);
+    const filepath = path.resolve(`${__dirname}/views/${id}.html`);
+    return res.sendFile(filepath);
+  } else {
+    initDebug('Param not enter or exit: ' + req.params.id);
+    return res.sendFile(path.resolve(`${__dirname}/views/404.html`));
   }
-  initDebug('ERROR: Unknown Maker http get request');
-  return res.sendFile(path.resolve(`${__dirname}/views/404.html`));
 });
 
 // Launch server:
@@ -222,7 +236,8 @@ io.on('connection', (socket) => {
     if (err)
       throw err;
     initDebug(`rcvd (pyShellUserStatus): ${results}`);
-    const userStatus = results[0];
+    const userStatus = results;
+    // const userStatus = results[0];
     socket.emit('IFTTT event', userStatus);
   });
   alarms.find({}, (err, allAlarms) => {

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import sys
 import RPi.GPIO as GPIO
 
 from modules import config as cg
@@ -7,7 +8,7 @@ from modules import fade
 
 
 ###########################
-# Globals:
+# Configuration:
 ###########################
 
 alarm_on = True
@@ -25,8 +26,13 @@ pin_green = cg.get_pin('RGB_Strip', 'pin_green')
 # pin_red2 = cg.get_pin('RGB_Strip', 'pin_red2')
 # pin_green2 = cg.get_pin('RGB_Strip', 'pin_green2')
 
-# alarm_stage_time = [0, 4, 8, 12 + 3]
-alarm_stage_time = [0, 100, 80, 60]
+# Allow shorter run time for testing with ANY argument
+if len(sys.argv) > 1:
+    # arg = str(sys.argv[1]).strip().lower()
+    alarm_stage_time = [0, 10, 8, 6]
+else:
+    alarm_stage_time = [0, 100, 80, 60]
+
 step_size = 0.2
 
 # Settings for fade_led_strip()
@@ -45,19 +51,17 @@ time_total = alarm_stage_time[3] / len(fade_stages)
 def alarm_deactivate(pin_num):
     """Button callback on rising edge"""
     global alarm_on
-    val = GPIO.input(pin_num)
-    cg.send('Alarm Deactivate Script called with: {}'.format(val))
-    if val:
-        cg.send('Deactivating Alarm')
+    if GPIO.input(pin_num):
+        cg.send('Deactivating Alarm on {}'.format(GPIO.input(pin_num)))
         alarm_on = False
 
 
 def gen_button_cb(pin_num):
     """For testing the cb function"""
     if GPIO.input(pin_num):
-        cg.send("Triggered on a rising edge from pin: " + str(pin_num))
+        cg.send("Triggered on a rising edge from pin: {}".format(pin_num))
     else:
-        cg.send("Triggered on a falling edge from pin: " + str(pin_num))
+        cg.send("Triggered on a falling edge from pin: {}".format(pin_num))
 
 
 def all_off():
@@ -110,6 +114,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(off_button, GPIO.IN)
 GPIO.add_event_detect(off_button, GPIO.RISING, callback=alarm_deactivate,
                       bouncetime=300)
+
 
 user_home = cg.check_status()
 if user_home:

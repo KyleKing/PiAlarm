@@ -7,7 +7,6 @@ import datetime
 
 from modules import config as cg
 
-
 # FIXME: Trims last word in longer strings...
 # TODO: Can't handle longer words that don't have spaces inside (just cut)
 
@@ -35,7 +34,8 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
 
 # Set brightness to something reasonable based on time of day
 now = datetime.datetime.now()
-default_b = (0.4, 0.4, 0.4)
+default_b = (0.4, 0.7, 0.4)
+off_b = (1.0, 1.0, 1.0)
 dimmed_b = (0.7, 0.7, 0.7)
 brightness = default_b if now.hour < 6 or now.hour > 9 else dimmed_b
 
@@ -115,7 +115,7 @@ def Initialize():
     """Set color & initial value to display"""
     cg.send('Manually set LCD brightness through pi-blaster')
     cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
-    set_disp(brightness)
+    set_disp(*brightness)
     parse_message('Initialized')
 
 
@@ -127,10 +127,10 @@ if __name__ == "__main__":
 
         if 'turn lcd screen for alarm clock' in message:
             if 'on' in message:
-                set_disp(0.4, 0.7, 0.4)
+                set_disp(*default_b)
                 cg.send('Turned display on')
             elif 'off' in message:
-                set_disp(1.0, 1.0, 1.0)
+                set_disp(*off_b)
                 cg.send('Turned display off')
         else:
             try:
@@ -150,5 +150,4 @@ if __name__ == "__main__":
                 # cg.send('Auto-parsed message: {}'.format(comp))
             lcd.clear()
             lcd.message(comp)
-        # Force buffer to close and send all data to Node application
         sys.stdout.flush()

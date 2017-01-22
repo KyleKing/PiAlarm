@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-import time
+from time import sleep
+
 import config as cg
 
 ###########################
 # Globals:
 ###########################
 
+# cg.quiet_logging(False)
 cg.quiet_logging(True)
 
 # Electronic Pin Numbering Globals:
-pin_blue = cg.get_pin('GPIO_Pins', 'pin_blue')
-pin_red = cg.get_pin('GPIO_Pins', 'pin_red')
-pin_green = cg.get_pin('GPIO_Pins', 'pin_green')
+pin_blue = cg.get_pin('RGB_Strip', 'pin_blue')
+pin_red = cg.get_pin('RGB_Strip', 'pin_red')
+pin_green = cg.get_pin('RGB_Strip', 'pin_green')
 
-max_brightness = 0.5
-steps = 10
-total_run_time = 20
+max_brightness = 1.0
+steps = 30
+total_run_time = 60
 time_step = total_run_time / (6 * steps)  # 3 fades up, 3 down = 6
 
 
@@ -27,13 +29,13 @@ time_step = total_run_time / (6 * steps)  # 3 fades up, 3 down = 6
 def fade_up(pin):
     for i in range(steps):
         cg.set_PWM(pin, max_brightness * (1 - (1 / (i + 2))))
-        time.sleep(time_step)
+        sleep(time_step)
 
 
 def fade_down(pin):
     for i in range(steps):
         cg.set_PWM(pin, max_brightness / (i + 2))
-        time.sleep(time_step)
+        sleep(time_step)
 
 
 def all_off():
