@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 
 from modules import config as cg
 from modules import fade
-
+from modules import all_off
 
 ###########################
 # Configuration:
@@ -29,18 +29,23 @@ pin_green = cg.get_pin('RGB_Strip', 'pin_green')
 # Allow shorter run time for testing with ANY argument
 if len(sys.argv) > 1:
     # arg = str(sys.argv[1]).strip().lower()
-    alarm_stage_time = [0, 10, 8, 6]
+    alarm_stage_time = [0, 5, 10, 15]
 else:
     alarm_stage_time = [0, 100, 80, 60]
 
 step_size = 0.2
 
 # Settings for fade_led_strip()
+last_beep = 0
 max_brightness = 0.6
 fade_stage = 0
 fade_stages = [pin_green, pin_red, pin_blue,
                pin_green, pin_red, pin_blue]
-time_total = alarm_stage_time[3] / len(fade_stages)
+a_s_t = alarm_stage_time[3]
+l_f_s = len(fade_stages)
+if a_s_t < l_f_s:
+    raise ValueError('a_s_t({}) not > len({})'.format(a_s_t, l_f_s))
+time_total = a_s_t / l_f_s
 
 
 ###########################
@@ -64,27 +69,24 @@ def gen_button_cb(pin_num):
         cg.send("Triggered on a falling edge from pin: {}".format(pin_num))
 
 
-def all_off():
-    cg.send('\nDeactivating all PWM pins')
-    cg.set_PWM(pin_shaker, 1)
-    cg.set_PWM(pin_buzzer, 0)
-    cg.set_PWM(pin_red, 0)
-    cg.set_PWM(pin_blue, 0)
-    cg.set_PWM(pin_green, 0)
-
-
 def beep(counter):
     """Cycle through different low frequencies"""
-    if counter % 2 == 0:
+    global last_beep
+    if counter % 2 <= 1 and last_beep == 0:
         cg.set_PWM(pin_buzzer, 0.2)
-    elif counter % 2 == 1:
+        last_beep = 0.2
+    elif counter % 2 > 1 and last_beep == 0.2:
         cg.set_PWM(pin_buzzer, 0.0)
+        last_beep = 0
 
 
 def fade_led_strip(counter):
     """Cycle the LED Strip through various colors"""
     global fade_stage
-    time_step = (counter % time_total) + 1.0
+    if time_total < 0.1:
+        time_step = 1
+    else:
+        time_step = (counter % time_total) + 1.0
 
     # Increment the LED value
     if fade_stage % 2 == 0:
@@ -123,7 +125,7 @@ if user_home:
     stage3_rep_counter = 0
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
-        all_off()
+        all_off.all_off()
         cg.send('\nStarting Stage: {}'.format(stage) + ' for ' +
                 str(alarm_stage_time[stage]) + ' seconds')
 
@@ -139,12 +141,12 @@ if user_home:
             cg.send('Configuring Stage 2')
             cg.set_PWM(pin_blue, 0.5)
             cg.set_PWM(pin_red, 0.5)
-            # cg.set_PWM(pin_buzzer, 0.1)
+            cg.set_PWM(pin_buzzer, 0.1)
             cb = beep
         # Stage 3 - LED Strip, Bed Shaker, and Buzzer
         if stage == 3 and alarm_on:
             cg.send('Configuring Stage 3')
-            cg.set_PWM(pin_shaker, 0)
+            cg.set_PWM(pin_shaker, 1)
             cg.set_PWM(pin_buzzer, 0.5)
             cb = fade_led_strip
 
@@ -158,9 +160,9 @@ if user_home:
 
         # Prep for the next loop:
         if stage == 3 and alarm_on:
-            all_off()
+            all_off.all_off()
             cg.send('\nLooping back through Stage 3')
-            time.sleep(5)
+            time.sleep(7)
             fade_stage = 0
             stage3_rep_counter += 1
         else:
@@ -172,7 +174,7 @@ if user_home:
     cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
     # Cleanup tasks:
-    all_off()
+    all_off.all_off()
     GPIO.remove_event_detect(off_button)
     GPIO.cleanup()
 

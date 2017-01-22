@@ -2,7 +2,7 @@
 import sys
 from modules import config as cg
 
-quiet = True
+quiet = False
 cg.quiet_logging(quiet)
 
 

@@ -1,6 +1,7 @@
 import os
 import json
-# import requests
+from time import sleep
+import RPi.GPIO as GPIO
 
 import lcd
 from modules import fade
@@ -17,17 +18,37 @@ def ask(question):
 
 def test_passed(correct, output):
     """Automate some of manual testing"""
-    if (correct == output) or (correct in output):
+    if correct == output:
+        return True
+    elif type(output) is not bool and correct in output:
         return True
     raise ValueError('Failed test > E: {} vs. A: {}'.format(correct, output))
 
 
+def gen_button_cb(pin_num):
+    """For testing the cb function"""
+    if GPIO.input(pin_num):
+        print "Triggered on a rising edge from pin: {}".format(pin_num)
+        cg.send("Triggered on a rising edge from pin: {}".format(pin_num))
+    else:
+        print "Triggered on a falling edge from pin: {}".format(pin_num)
+        cg.send("Triggered on a falling edge from pin: {}".format(pin_num))
+
+
 if __name__ == '__main__':
 
+    print 'Checking that the alarm off button works'
+    off_button = cg.get_pin('Input_Pins', 'off_button')
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(off_button, GPIO.IN)
+    GPIO.add_event_detect(off_button, GPIO.BOTH, callback=gen_button_cb)
+    sleep(5)
+
+    print 'Checking that Pi-Blaster is booted'
+    os.system('sudo python ./bootPiBlaster.py')
     print '** Getting started! Turning everything off **'
     all_off.all_off()
-    print 'Booting Pi-Blaster'
-    os.system('sudo python ./bootPiBlaster.py')
     print ''
 
     #####################
@@ -42,7 +63,7 @@ if __name__ == '__main__':
     # Test the script called by the Node Application:
     print "User home/away status currently is: {}".format(cg.check_status())
     os.system('python alarm_status.py exit')
-    pass_exit = test_passed(True, cg.check_status())
+    pass_exit = test_passed(False, cg.check_status())
     print "Set status to Away: {}".format(pass_exit)
     ask('Is the away LED on?')
 

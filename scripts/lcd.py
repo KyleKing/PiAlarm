@@ -34,10 +34,10 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
 
 # Set brightness to something reasonable based on time of day
 now = datetime.datetime.now()
-default_b = (0.4, 0.7, 0.4)
+default_b = (0.0, 0.0, 1.0)
 off_b = (1.0, 1.0, 1.0)
-dimmed_b = (0.7, 0.7, 0.7)
-brightness = default_b if now.hour < 6 or now.hour > 9 else dimmed_b
+dimmed_b = (0.7, 1.0, 0.7)
+brightness = dimmed_b if now.hour < 6 or now.hour > 21 else default_b
 
 
 def ext(count, unit=' '):

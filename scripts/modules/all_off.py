@@ -17,7 +17,7 @@ pin_green = cg.get_pin('RGB_Strip', 'pin_green')
 def all_off():
     cg.send('\nDeactivating all PWM pins')
     cg.set_PWM(pin_buzzer, 0)
-    cg.set_PWM(pin_shaker, 1)
+    cg.set_PWM(pin_shaker, 0)
     cg.set_PWM(pin_red, 0)
     cg.set_PWM(pin_blue, 0)
     cg.set_PWM(pin_green, 0)
