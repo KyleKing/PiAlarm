@@ -1,12 +1,19 @@
 import os
-import json
 from time import sleep
-import RPi.GPIO as GPIO
 
 import lcd
-from modules import fade
-from modules import all_off
-from modules import config as cg
+import fade
+import all_off
+import weather
+import config as cg
+
+if cg.is_pi():
+    import RPi.GPIO as GPIO
+
+
+#
+# Utilities
+#
 
 
 def ask(question):
@@ -35,8 +42,21 @@ def gen_button_cb(pin_num):
         cg.send("Triggered on a falling edge from pin: {}".format(pin_num))
 
 
-if __name__ == '__main__':
+#
+# Actual Tests
+#
 
+
+def t_hw():
+    print 'Hey! This module is working!'
+
+
+def t_weather():
+    """Output the commute-weather format"""
+    print weather.hourly(quiet=False)
+
+
+def test_off_btn():
     print 'Checking that the alarm off button works'
     off_button = cg.get_pin('Input_Pins', 'off_button')
     GPIO.setwarnings(False)
@@ -51,15 +71,9 @@ if __name__ == '__main__':
     all_off.all_off()
     print ''
 
-    #####################
-    # Test exit/enter capabilities
-    #####################
 
-    with open('../secret.json') as secrets_file:
-        secrets = json.load(secrets_file)
-        key = secrets["maker"]
-        ip = secrets["ip"]
-
+def toggle_status():
+    """Test exit/enter status"""
     # Test the script called by the Node Application:
     print "User home/away status currently is: {}".format(cg.check_status())
     os.system('python alarm_status.py exit')
@@ -71,10 +85,8 @@ if __name__ == '__main__':
     pass_enter = test_passed(True, cg.check_status())
     print "Set status to Present: {}".format(pass_enter)
 
-    #####################
-    # Test the hardware:
-    #####################
 
+def test_hardware():
     print 'Fading the RGB Strip'
     fade.fade_RGB_Strip()
     ask('Did the RGB strip fade?')
@@ -87,9 +99,7 @@ if __name__ == '__main__':
     lcd.Initialize()
     ask('Does the character display have some text?')
 
-    #####################
-    # Final Tests:
-    #####################
 
+def run_alarm():
     ask('Ready to start full alarm?')
     os.system('python alarm.py someargthat_allowsforshortsequence')

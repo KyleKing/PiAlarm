@@ -1,0 +1,80 @@
+{
+   "windchill":{
+      "metric":"-9999",
+      "english":"-9999"
+   },
+   "heatindex":{
+      "metric":"-9999",
+      "english":"-9999"
+   },
+   "mslp":{
+      "metric":"1005",
+      "english":"29.68"
+   },
+   "temp":{
+      "metric":"9",
+      "english":"49"
+   },
+   "dewpoint":{
+      "metric":"6",
+      "english":"43"
+   },
+   "feelslike":{
+      "metric":"9",
+      "english":"49"
+   },
+   "wdir":{
+      "degrees":"304",
+      "dir":"NW"
+   },
+   "icon_url":"http://icons.wxug.com/i/c/k/chancerain.gif",
+   "qpf":{
+      "metric":"0",
+      "english":"0.0"
+   },
+   "fctcode":"12",
+   "sky":"97",
+   "snow":{
+      "metric":"0",
+      "english":"0.0"
+   },
+   "wx":"Few Showers",
+   "humidity":"80",
+   "uvi":"0",
+   "pop":"30",
+   "wspd":{
+      "metric":"11",
+      "english":"7"
+   },
+   "FCTTIME":{
+      "min_unpadded":"0",
+      "civil":"4:00 PM",
+      "mon_padded":"02",
+      "sec":"0",
+      "month_name_abbrev":"Feb",
+      "year":"2017",
+      "yday":"42",
+      "weekday_name_night":"Sunday Night",
+      "isdst":"0",
+      "min":"00",
+      "mday_padded":"12",
+      "weekday_name":"Sunday",
+      "epoch":"1486933200",
+      "month_name":"February",
+      "pretty":"4:00 PM EST on February 12, 2017",
+      "mon_abbrev":"Feb",
+      "weekday_name_night_unlang":"Sunday Night",
+      "tz":"",
+      "UTCDATE":"",
+      "hour_padded":"16",
+      "mon":"2",
+      "weekday_name_unlang":"Sunday",
+      "mday":"12",
+      "hour":"16",
+      "ampm":"PM",
+      "age":"",
+      "weekday_name_abbrev":"Sun"
+   },
+   "condition":"Chance of Rain",
+   "icon":"chancerain"
+}

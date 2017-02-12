@@ -1,11 +1,13 @@
 # !/usr/bin/python
 
-import sys
-import Adafruit_CharLCD as LCD
-import Adafruit_GPIO.MCP230xx as MCP
 import datetime
 
-from modules import config as cg
+import config as cg
+import weather
+
+if cg.is_pi():
+    import Adafruit_CharLCD as LCD
+    import Adafruit_GPIO.MCP230xx as MCP
 
 # FIXME: Trims last word in longer strings...
 # TODO: Can't handle longer words that don't have spaces inside (just cut)
@@ -28,15 +30,18 @@ lcd_red = cg.get_pin('LCD_I2C_Pins', 'lcd_red')
 lcd_green = cg.get_pin('LCD_I2C_Pins', 'lcd_green')
 lcd_blue = cg.get_pin('LCD_I2C_Pins', 'lcd_blue')
 
-gpio = MCP.MCP23008()
-lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
-                           lcd_columns, lcd_rows, lcd_backlight, gpio=gpio)
+if cg.is_pi():
+    gpio = MCP.MCP23008()
+    lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
+                               lcd_columns, lcd_rows, lcd_backlight, gpio=gpio)
 
 # Set brightness to something reasonable based on time of day
 now = datetime.datetime.now()
-default_b = (0.0, 0.0, 1.0)
+# default_b = (0.5, 0.0, 1.0)
+default_b = (1.0, 0.0, 1.0)
 off_b = (1.0, 1.0, 1.0)
-dimmed_b = (0.7, 1.0, 0.7)
+# dimmed_b = (0.7, 1.0, 0.7)
+dimmed_b = (0.0, 1.0, 1.0)
 brightness = dimmed_b if now.hour < 6 or now.hour > 21 else default_b
 
 
@@ -119,35 +124,16 @@ def Initialize():
     parse_message('Initialized')
 
 
+def display_weather():
+    commute_weather = weather.hourly()
+    for commute in commute_weather:
+        print commute
+
+
+def run():
+    print 'display!'
+
+
 if __name__ == "__main__":
     Initialize()
-    while True:
-        line = sys.stdin.readline()
-        message = line.rstrip()
-
-        if 'turn lcd screen for alarm clock' in message:
-            if 'on' in message:
-                set_disp(*default_b)
-                cg.send('Turned display on')
-            elif 'off' in message:
-                set_disp(*off_b)
-                cg.send('Turned display off')
-        else:
-            try:
-                # Accept a message already in a list (i.e. ['1','2'])
-                segments = eval(message)
-                if len(segments) == 2:
-                    segments.insert(1, ext(lcd_columns))
-                elif len(segments) > 2:
-                    flip(segments)
-                comp = ''
-                for segment in segments:
-                    comp += segment + ext(lcd_columns - len(segment))
-                # cg.send('Received pre-parsed message: ' + comp)
-            except:
-                # Otherwise parse whatever string was sent
-                comp = parse_message(message)
-                # cg.send('Auto-parsed message: {}'.format(comp))
-            lcd.clear()
-            lcd.message(comp)
-        sys.stdout.flush()
+    run()

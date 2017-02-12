@@ -78,7 +78,7 @@ app.get('/app', (req, res) => {
 // Respond to Maker requests:
 const PythonShell = require('python-shell');
 function updateAlarm(arg) {
-  initDebug('Sending param to update away/pres state: ' + arg);
+  initDebug(`Sending param to update away/pres state: ${arg}`);
   PythonShell.run('./scripts/alarm_status.py', { args: [arg] }, (err, results) => {
     if (err)
       throw err;
@@ -104,10 +104,9 @@ app.get(`/${secret.maker}/:id`, (req, res) => {
     updateAlarm(id);
     const filepath = path.resolve(`${__dirname}/views/${id}.html`);
     return res.sendFile(filepath);
-  } else {
-    initDebug('Param not enter or exit: ' + req.params.id);
-    return res.sendFile(path.resolve(`${__dirname}/views/404.html`));
   }
+  initDebug(`Param not enter or exit: ${req.params.id}`);
+  return res.sendFile(path.resolve(`${__dirname}/views/404.html`));
 });
 
 // Launch server:

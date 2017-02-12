@@ -20,10 +20,14 @@ def send(info, force=False):
 
 
 def _ini_path(filename='pins'):
-    if 'scripts' in os.getcwd():
-        return '{}/{}.ini'.format(os.getcwd(), filename)
+    cwd = os.getcwd()
+    if 'scripts' in cwd:
+        if 'modules' in cwd:
+            return '{}/../{}.ini'.format(cwd, filename)
+        else:
+            return '{}/{}.ini'.format(cwd, filename)
     else:
-        return '{}/scripts/{}.ini'.format(os.getcwd(), filename)
+        return '{}/scripts/{}.ini'.format(cwd, filename)
 
 
 def get_pin(component, param, _eval=True):

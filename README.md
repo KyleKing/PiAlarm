@@ -40,3 +40,22 @@ Using react and socket.io, I built a simple web app accessible anywhere. Once in
 ## Made by
 
 [Kyle King](http://kyleking.me)
+
+<!--
+
+### TODO
+
+> Long Term
+- Use heat shrink tubing to better organize the wires with masking tape labels
+- Add a plastic surface that presses the button like in my old alarm clock
+- *Add the second light strip!
+- Figure out what do to with the final housing
+....
+- Add a sleep button to allow the alarm to be turned off for an hour when I'm up before the first alarm > just one alarm per day
+- Setup the dip switch to toggle between regular boot or with the alarm clock > too much work for little reward
+- Use the spade connectors with matching gauge wire, find the seam on the spade terminal (usually top), and place seam up to crimp
+    > https://www.youtube.com/watch?v=eg9hjqkJWmg
+- Cut perf by etching a box cutter fix times along a line of holes. Then snap. Sand as needed, but fiberglass is dangerous to sand FYI
+- Setup strain relief on the lead wires
+
+-->

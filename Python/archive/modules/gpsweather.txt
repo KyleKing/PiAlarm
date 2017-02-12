@@ -1,0 +1,1 @@
+{"age":6357,"latitude":"38.1234","longitude":"-80.1234","elevation":"1234.5","course":"12.34","speed":"N"}

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import time
 import sys
-import RPi.GPIO as GPIO
 
-from modules import config as cg
-from modules import fade
-from modules import all_off
+import fade
+import all_off
+import config as cg
+
+if cg.is_pi():
+    import RPi.GPIO as GPIO
 
 ###########################
 # Configuration:
@@ -28,7 +30,7 @@ pin_green = cg.get_pin('RGB_Strip', 'pin_green')
 
 # Allow shorter run time for testing with ANY argument
 if len(sys.argv) > 1:
-    # arg = str(sys.argv[1]).strip().lower()
+    # arg = cg.parse_argv(sys)
     alarm_stage_time = [0, 5, 10, 15]
 else:
     alarm_stage_time = [0, 100, 80, 60]
@@ -110,24 +112,40 @@ def fade_led_strip(counter):
 # Alarm logic!
 ###########################
 
+if cg.is_pi():
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(off_button, GPIO.IN)
+    GPIO.add_event_detect(off_button, GPIO.RISING, callback=alarm_deactivate,
+                          bouncetime=300)
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(off_button, GPIO.IN)
-GPIO.add_event_detect(off_button, GPIO.RISING, callback=alarm_deactivate,
-                      bouncetime=300)
+
+def stop():
+    cg.send("\nAlarm Cycles Finished\n")
+    cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
+
+    # Cleanup tasks:
+    all_off.all_off()
+    GPIO.remove_event_detect(off_button)
+    GPIO.cleanup()
+
+    # release_PWM(pin_shaker)
+    # etc...
+    # # Then stop pi-blaster for good measure:
+    # stopPiB = "sudo kill $(ps aux | grep [b]laster | awk '{print $2}')"
+    # subprocess.call(stopPiB, shell=True)
 
 
-user_home = cg.check_status()
-if user_home:
+def start(user_home):
+    global fade_stage
     cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
     stage = 1
     stage3_rep_counter = 0
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
         all_off.all_off()
-        cg.send('\nStarting Stage: {}'.format(stage) + ' for ' +
-                str(alarm_stage_time[stage]) + ' seconds')
+        cg.send('\nStarting Stage: {}'.format(stage) +
+                ' for {} seconds'.format(alarm_stage_time[stage]))
 
         current_time = 0
         # Stage 1 - Green LED Strip for 1 minute
@@ -169,20 +187,12 @@ if user_home:
             stage += 1
         current_time = 0
         user_home = cg.check_status()
+    stop()
 
-    cg.send("\nAlarm Cycles Finished\n")
-    cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
-    # Cleanup tasks:
-    all_off.all_off()
-    GPIO.remove_event_detect(off_button)
-    GPIO.cleanup()
-
-    # release_PWM(pin_shaker)
-    # etc...
-    # # Then stop pi-blaster for good measure:
-    # stopPiB = "sudo kill $(ps aux | grep [b]laster | awk '{print $2}')"
-    # subprocess.call(stopPiB, shell=True)
-
-else:
-    cg.ifttt('PiAlarm_SendText', {'value1': 'User away, no PiAlarm'})
+def run(user_home):
+    user_home = cg.check_status()
+    if user_home:
+        start()
+    else:
+        cg.ifttt('PiAlarm_SendText', {'value1': 'User away, no PiAlarm'})
