@@ -102,7 +102,7 @@ def set_PWM(pin_num, percent, quiet=False):
     #        pin_num, percent * 1.0)
     if not quiet:
         send(cmd)
-    return subprocess.call(cmd, shell=True)
+    return False if not is_pi() else subprocess.call(cmd, shell=True)
 
 
 def release_PWM(pin_num):

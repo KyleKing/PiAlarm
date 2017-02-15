@@ -190,7 +190,7 @@ def start(user_home):
     stop()
 
 
-def run(user_home):
+def run():
     user_home = cg.check_status()
     if user_home:
         start()

@@ -2,6 +2,10 @@
 import sys
 from modules import config as cg
 
+# FYI
+# For a synchronous status query, call this file with an arg of:
+#    exit, enter, false, or true respectively
+
 quiet = False
 cg.quiet_logging(quiet)
 
@@ -30,6 +34,8 @@ def run(arg):
 
 
 if __name__ == "__main__":
+    # Quiet logging, so the only output is "forced"
+    cg.quiet_logging(True)
     # Parse STDIN:
     if len(sys.argv) > 1:
         arg = cg.parse_argv(sys)

@@ -1,6 +1,8 @@
 # !/usr/bin/python
-
+import schedule
 import datetime
+import re
+
 
 import config as cg
 import weather
@@ -116,12 +118,26 @@ def set_disp(r, g, b):
     cg.set_PWM(lcd_blue, b)
 
 
-def Initialize():
-    """Set color & initial value to display"""
-    cg.send('Manually set LCD brightness through pi-blaster')
-    cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
-    set_disp(*brightness)
-    parse_message('Initialized')
+def disp(status):
+    """Parse text input for display state"""
+    status = status.lower()
+    if re.match('on', status):
+        set_disp(0.4, 0.7, 0.4)
+        cg.send('Turned display on')
+    elif re.match('off', status):
+        set_disp(1.0, 1.0, 1.0)
+        cg.send('Turned display off')
+    elif re.match('alt', status):
+        set_disp(0.5, 0.1, 0.2)
+        cg.send('Turned display to alt state')
+
+
+def custom_msg(raw):
+    """External call to update the display with a custom message"""
+    if cg.is_pi():
+        parse_message(raw)
+    else:
+        cg.send('LCD would display `{}`'.format(raw))
 
 
 def display_weather():
@@ -130,10 +146,15 @@ def display_weather():
         print commute
 
 
-def run():
-    print 'display!'
+def Initialize():
+    """Set color & initial value to display"""
+    cg.send('Manually set LCD brightness through pi-blaster')
+    cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
+    set_disp(*brightness)
+    parse_message('Initialized')
 
 
 if __name__ == "__main__":
     Initialize()
-    run()
+    custom_msg('THIS PROBABLY WORKS!')
+    disp('alt')
