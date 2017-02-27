@@ -8,10 +8,6 @@ import ConfigParser
 quiet_STDOUT = True
 
 
-def is_pi():
-    return 'pi' in os.path.abspath('')
-
-
 #
 # Interactions
 #
@@ -113,6 +109,54 @@ def release_PWM(pin_num):
     send(cmd)
     return subprocess.call(cmd, shell=True)
 
+#
+# Try evaluating unknown inputs:
+#
+
+
+def try_eval(raw):
+    """Try to find a True/False, Integer, etc. value in str input"""
+    raw = raw.strip()
+    try:
+        return eval(raw)
+    except:
+        return raw
+
+
+def dict_arg(args, key):
+    """Try to decode the dictionary key or return False"""
+    try:
+        return args[key]
+    except:
+        send('{} not found in `{}`'.format(key, args))
+        return False
+
+#
+# File system
+#
+
+
+def is_pi():
+    return 'pi' in os.path.abspath('')
+
+
+def get_path(raw):
+    if 'Python' not in raw:
+        full = os.path.abspath('') + '/' + raw
+        send('Setting r: {} to f: {}'.format(raw, full))
+        return full
+    else:
+        return raw
+
+
+def is_running(task):
+    """Use ps aux to check if a script is actively running"""
+    # output = 256 if running, else = 0
+    output = os.system("ps aux | grep {}".format(task))
+    is_active = output == 0
+    send('Is `{}` running? > {} ({})'.format(task, is_active, output))
+    return is_active
+
 
 #
 # Other
@@ -123,20 +167,13 @@ def parse_argv(sys_in, arg_num=1):
     return str(sys_in.argv[arg_num]).strip().lower()
 
 
-def thread(target):
+def thread(target, args=()):
     """Start thread for parallel processes"""
-    this = threading.Thread(target=target)
+    this = threading.Thread(target=target, args=args)
+    this.daemon = True  # will only run if main thread running
     this.start()
     return this
 
-
-def is_running(task):
-    """Use ps aux to check if a script is actively running"""
-    # output = 256 if running, else = 0
-    output = os.system("ps aux | grep {}".format(task))
-    is_active = output == 0
-    send('Is `{}` running? > {} ({})'.format(task, is_active, output))
-    return is_active
 
 # # Stop pi-blaster / or any process:
 # print os.system("sudo kill $(ps aux | grep 'pi-blaster\/[p]" +

@@ -1,134 +1,153 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+from time import sleep
 
-# import display_controller as d_con
 from modules import config as cg
-from modules import tests, alarm, lcd
+from modules import tests, alarm, lcd, status
+
+if cg.is_pi():
+    from modules import tm1637
+
 
 cg.quiet_logging(False)
 
 
 class action_input():
+    """
+    Break input of [<>] into one of if statements listed below
+        (i.e. test, alarm, lcd, status, etc...)
+    Then act on supplied arguments
+    """
 
     def __init__(self, operation, args, message=''):
+        self.delay = 1
         self.msg = message
         """Determine the proper action based on the arguments"""
         if re.match(operation, 'test'):
-            self.mjr('Starting tests!')
+            self._mjr('Starting tests!')
             tests.t_hw()  # just hello world
             # tests.t_weather()  # *watch the 1 min. API limit
-
         elif re.match(operation, 'alarm'):
-            self.mjr('Starting alarm!')
+            self._mjr('Starting alarm!')
             alarm.run()
-
         elif re.match(operation, 'lcd'):
-            self.mjr('Updating Character lcd!')
+            self._mjr('Updating Character lcd!')
             self.lcd_logic(args)
-
         elif re.match(operation, 'status'):
-            self.mjr('Starting status!')
-            cg.send()
-
+            self._mjr('Starting status!')
+            arg = cg.dict_arg(args, "arg")
+            if arg:
+                status.run(arg)
+            else:
+                status.set_LED_state()
         else:
-            self.mjr('Error: No known op for: {}'.format(self.msg))
+            self._mjr('Error: No known op for: {}'.format(self.msg))
         # if any(re.match("weather", arg) for arg in args):
 
-    def mjr(self, msg):
+    def _mjr(self, msg):
+        """Easy extra line-break print"""
         cg.send('\n{}\n'.format(msg))
 
-    def exist(self, args, key):
-        try:
-            return args[key]
-        except:
-            cg.send('{} not found in `{}`'.format(key, args))
-            return False
+    def resume(self):
+        """Restart the LCD display at some delay"""
+        sleep(self.delay * 60)
+        lcd.cycle_weather()
 
     def lcd_logic(self, args):
-        print 'LCD....{}'.format(self.msg)
-        disp = self.exist(args, "display")
-        msg = self.exist(args, "message")
-        run = self.exist(args, "run")
+        """Toggle LCD back light / new text"""
+        cg.send('LCD Args: {}'.format(self.msg))
+        disp = cg.dict_arg(args, "display")
         if disp:
-            lcd.disp(disp)
+            lcd.brightness(disp)
+        msg = cg.dict_arg(args, "message")
         if msg:
-            lcd.custom_msg(msg)
-        if run:
-            lcd.run()
-
-
-class try_eval():
-
-    def val(self, raw):
-        """Try to find a True/False, Integer, etc. value in str input"""
-        raw = raw.strip()
-        try:
-            return eval(raw)
-        except:
-            return raw
+            # Prep the display for before/after the message
+            lcd.stop_weather()
+            delay = cg.dict_arg(args, "delay")
+            self.delay = delay if type(delay) is int else 1
+            lcd.text(msg)
+            self.resume()
+        start = cg.dict_arg(args, "start")
+        if start:
+            lcd.cycle_weather()
 
 
 class read_input():
+    """
+    Open read line that parses input in format:
+        [<>] @<>:<> @<>:<> ...etc
+    """
 
     def __init__(self):
         self.op_regex = ur'.*\[([^\]]*)\].*'
         self.parsed_sysarg = False
 
+        # Initialize the clock (GND, VCC=3.3V)
+        clock = cg.get_pin('7Segment', 'clk')
+        digital = cg.get_pin('7Segment', 'dio')
+        if cg.is_pi():
+            Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
+            Display.StartClock(military_time=True)
+        else:
+            cg.send('Would run TM1637 w/ C:{}, D:{}'.format(clock, digital))
+
     def start(self):
+        """Loop indefinitely"""
         while True:
-            self.check()
-
-    def check(self):
-        # Accept an optional sys arg or open a readline prompt
-        if not self.parsed_sysarg and len(sys.argv) > 1:
-            message = ''
-            for arg_num in range(len(sys.argv) - 1):
-                arg_num += 1
-                message += ' {}'.format(cg.parse_argv(sys, arg_num))
-            self.parsed_sysarg = True
-        else:
-            message = sys.stdin.readline()
-        message = message.strip()
-        print 'Raw Message: {}'.format(message)
-
-        # Parse the arguments received
-        if not re.match(self.op_regex, message):
-            raise ValueError('Argument passed does not have proper format')
-        else:
-            chunks = message.split('@')
-
-            # Parse operation and remove brackets:
-            # operation = chunks[0].strip()[1:-1]
-            matches = re.finditer(self.op_regex, chunks[0])
-            # 'next' - hack for iterable obj
-            operation = next(matches).group(1)
-            cg.send('Running Operation: {}'.format(operation))
-
-            # Organize the args into a dict:
-            if len(chunks) > 1:
-                te = try_eval()
-                args = [x.split(':') for x in chunks[1:]]
-                _arg = '{'
-                for arg in args:
-                    _arg += '"{}": "{}",'.format(
-                        te.val(arg[0]), te.val(arg[1]))
-                arguments = _arg[:-1] + '}'
-                cg.send('w/ Args: {}'.format(arguments))
-                try:
-                    arguments = te.val(arguments)
-                except:
-                    raise ValueError('Could not eval({})'.format(arguments))
+            # Accept an optional sys arg or open a readline prompt
+            if not self.parsed_sysarg and len(sys.argv) > 1:
+                message = ''
+                for arg_num in range(len(sys.argv) - 1):
+                    arg_num += 1
+                    message += ' {}'.format(cg.parse_argv(sys, arg_num))
+                self.parsed_sysarg = True
             else:
-                arguments = ''
-            # Decide on the appropriate action:
-            action_input(operation, arguments, message)
+                try:
+                    message = sys.stdin.readline()
+                except KeyboardInterrupt:
+                    sys.exit()
+                    # raise Exception('Trying to exit the app?')
+            self.message = message.strip()
+            cg.send('Raw Message: {}'.format(message))
+            if not re.match(self.op_regex, self.message):
+                raise ValueError('Argument passed does not have proper format')
+            else:
+                self.parse_input()
+
+    def parse_input(self):
+        # Parse the arguments received
+        chunks = self.message.split('@')
+
+        # Parse operation and remove brackets:
+        # operation = chunks[0].strip()[1:-1]
+        matches = re.finditer(self.op_regex, chunks[0])
+        # 'next' - hack for iterable obj
+        operation = next(matches).group(1)
+        cg.send('Running Operation: {}'.format(operation))
+
+        def parse(y):
+            return y.split(':') if ':' in y else [y, 'N/A']
+
+        # Organize the args into a dict:
+        if len(chunks) > 1:
+            te = cg.try_eval  # shorthand the f_name
+            args = [parse(x) for x in chunks[1:]]
+            _arg = '{'
+            for arg in args:
+                _arg += '"{}": "{}",'.format(te(arg[0]), te(arg[1]))
+            arguments = _arg[:-1] + '}'
+            cg.send('w/ Args: {}'.format(arguments))
+            try:
+                arguments = te(arguments)
+            except:
+                raise ValueError('Could not eval({})'.format(arguments))
+        else:
+            arguments = ''
+        # Decide on the appropriate action:
+        action_input(operation, arguments, self.message)
 
 
-#
 # Point of Entry
-#
-
-
-# d_con.start()
-read_input().start()
+if __name__ == "__main__":
+    read_input().start()

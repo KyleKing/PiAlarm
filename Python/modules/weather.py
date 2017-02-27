@@ -100,11 +100,13 @@ def hourly(quiet=True):
             "cnd": cnd[1],
             "temp": '{:3.1f}C'.format((np.mean(temp))),
             "tmp": '{:+d}C'.format(int(np.mean(tmp))),
-            "wspd": '{:2d} mph'.format(int(np.mean(wspd))),
+            "wspd": '{}mph'.format(int(np.mean(wspd))),
             "wdir": wdir[1],
-            "pop": np.amax(pop),
+            "pop": '{}%'.format(np.amax(pop)),
             "hm": '{:2d}%'.format(int(np.mean(hm))),
-            "snow": '{} cm'.format(np.amax(snow)),
+            "snow": 'SNOW! ' if np.amax(snow) > 0.1 else '',
             "precip": np.amax(qpf)
         })
+        # "snow": '{} cm'.format(np.amax(snow)),
+    # print 'Example (Wthr cnd):', commute_weather[0]["cnd"]
     return commute_weather

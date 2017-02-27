@@ -98,8 +98,3 @@ def test_hardware():
     print 'Initializing the LCD display'
     lcd.Initialize()
     ask('Does the character display have some text?')
-
-
-def run_alarm():
-    ask('Ready to start full alarm?')
-    os.system('python alarm.py someargthat_allowsforshortsequence')

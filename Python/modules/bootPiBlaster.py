@@ -9,4 +9,5 @@ if cg.is_running("'pi-blaster\/[p]i-blaster'"):
 else:
     cg.send('Starting fresh instance of Pi-Blaster')
     if cg.is_pi():
-        cg.send(subprocess.call(['bash', './Python/modules/bootPiBlaster.sh']))
+        cg.send(subprocess.call(
+            ['bash', cg.get_path('modules/bootPiBlaster.sh')]))

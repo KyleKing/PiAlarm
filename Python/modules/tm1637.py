@@ -182,6 +182,7 @@ class TM1637:
         self.__stop_event = threading.Event()
         self.__clock_thread = threading.Thread(
             target=self.clock, args=(military_time,))
+        self.__clock_thread.daemon = True  # stops w/ main thread
         self.__clock_thread.start()
 
     def StopClock(self):

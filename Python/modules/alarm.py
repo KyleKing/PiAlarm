@@ -4,6 +4,7 @@ import sys
 
 import fade
 import all_off
+import lcd
 import config as cg
 
 if cg.is_pi():
@@ -193,6 +194,7 @@ def start(user_home):
 def run():
     user_home = cg.check_status()
     if user_home:
+        lcd.brightness('alt')
         start()
     else:
         cg.ifttt('PiAlarm_SendText', {'value1': 'User away, no PiAlarm'})
