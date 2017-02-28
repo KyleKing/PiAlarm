@@ -35,7 +35,7 @@ class AlarmContainer extends React.Component {
     super();
     this.state = {
       alarms: [],
-      userStatus: 'Away',
+      userStatus: 'unknown..',
     };
     socket.on("alarm event", (newAlarm) => this.handleStateChange(newAlarm));
     socket.on("IFTTT event", (value) => this.updateIFTTTInfo(value));

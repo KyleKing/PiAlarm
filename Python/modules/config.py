@@ -126,9 +126,11 @@ def try_eval(raw):
 def dict_arg(args, key):
     """Try to decode the dictionary key or return False"""
     try:
-        return args[key]
+        this = args[key]
+        send('->- {} found in `{}`'.format(key, args))
+        return this
     except:
-        send('{} not found in `{}`'.format(key, args))
+        send('-X- {} not found in `{}`'.format(key, args))
         return False
 
 #

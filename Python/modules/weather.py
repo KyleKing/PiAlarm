@@ -81,7 +81,9 @@ def hourly(quiet=True):
         pop, hm, snow, qpf = [], [], [], []
         # Three hour window for each
         for j in [0, 1, 2]:
-            k = i + j + hours.index('5')  # Start everything at 5 am
+            # *Keep weather up to date up to 8 am of the same day
+            k = i + j + (hours.index('8') - 3)  # sort of solve for 5 am
+            k = k if k > 0 else 0
             hour = weatherdata[k]  # 15
             fc.append(hour['wx'])  # Clear/Wind
             cnd.append(hour['condition'])  # Chance of Rain

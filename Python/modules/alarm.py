@@ -15,6 +15,7 @@ if cg.is_pi():
 ###########################
 
 alarm_on = True
+_running = False
 cg.quiet_logging(False)
 
 # Electronic Pin Numbering Globals:
@@ -122,29 +123,30 @@ if cg.is_pi():
 
 
 def stop():
+    global _running
     cg.send("\nAlarm Cycles Finished\n")
     cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
     # Cleanup tasks:
-    all_off.all_off()
+    all_off.run()
     GPIO.remove_event_detect(off_button)
     GPIO.cleanup()
-
     # release_PWM(pin_shaker)
     # etc...
     # # Then stop pi-blaster for good measure:
     # stopPiB = "sudo kill $(ps aux | grep [b]laster | awk '{print $2}')"
     # subprocess.call(stopPiB, shell=True)
+    _running = False
 
 
 def start(user_home):
-    global fade_stage
+    global fade_stage, _running
     cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
-    stage = 1
-    stage3_rep_counter = 0
+    stage, stage3_rep_counter = 1, 0
+    _running = True
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
-        all_off.all_off()
+        all_off.run()
         cg.send('\nStarting Stage: {}'.format(stage) +
                 ' for {} seconds'.format(alarm_stage_time[stage]))
 
@@ -179,7 +181,7 @@ def start(user_home):
 
         # Prep for the next loop:
         if stage == 3 and alarm_on:
-            all_off.all_off()
+            all_off.run()
             cg.send('\nLooping back through Stage 3')
             time.sleep(7)
             fade_stage = 0
@@ -192,9 +194,14 @@ def start(user_home):
 
 
 def run():
+    global _running
     user_home = cg.check_status()
-    if user_home:
+    if _running:
+        _err = 'ERROR: ALARM IS ALREADY RUNNING!'
+        cg.send(_err)
+        cg.ifttt('PiAlarm_SendText', {'value1': _err})
+    elif user_home:
         lcd.brightness('alt')
-        start()
+        start(user_home)
     else:
         cg.ifttt('PiAlarm_SendText', {'value1': 'User away, no PiAlarm'})

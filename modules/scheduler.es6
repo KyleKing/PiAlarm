@@ -43,11 +43,12 @@ weekdayActivate.start()
 deactivate.start()
 
 module.exports = {
+  // Schedule the alarms in the database:
   scheduleCron(title, cronSchedule) {
     schedDebug(`Scheduling '${title}' (with sched: ${cronSchedule})`);
     return new CronJob(cronSchedule, () => {
       schedDebug(` ! Starting Alarm ('${title}') ! `);
-      electronics.brightenLCD()
+      electronics.brightenLCD();
       electronics.updateClockDisplay([`[${title}]`, 'h:mm:ss a']);
       electronics.startAlarm();
     }, () => {

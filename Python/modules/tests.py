@@ -68,7 +68,7 @@ def test_off_btn():
     print 'Checking that Pi-Blaster is booted'
     os.system('sudo python ./bootPiBlaster.py')
     print '** Getting started! Turning everything off **'
-    all_off.all_off()
+    all_off.run()
     print ''
 
 

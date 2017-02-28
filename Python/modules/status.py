@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-from modules import config as cg
+import config as cg
 
 # FYI
 # For a synchronous status query, call this file with an arg of:

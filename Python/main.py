@@ -5,6 +5,7 @@ from time import sleep
 
 from modules import config as cg
 from modules import tests, alarm, lcd, status
+from modules import all_off
 
 if cg.is_pi():
     from modules import tm1637
@@ -15,7 +16,7 @@ cg.quiet_logging(False)
 
 class action_input():
     """
-    Break input of [<>] into one of if statements listed below
+    Break input of [`cmd`] into one of if statements listed below
         (i.e. test, alarm, lcd, status, etc...)
     Then act on supplied arguments
     """
@@ -23,6 +24,7 @@ class action_input():
     def __init__(self, operation, args, message=''):
         self.delay = 1
         self.msg = message
+        operation = operation.lower().strip()
         """Determine the proper action based on the arguments"""
         if re.match(operation, 'test'):
             self._mjr('Starting tests!')
@@ -31,6 +33,9 @@ class action_input():
         elif re.match(operation, 'alarm'):
             self._mjr('Starting alarm!')
             alarm.run()
+        elif re.match(operation, 'all_off'):
+            self._mjr('Deactivating all pins')
+            all_off.run()
         elif re.match(operation, 'lcd'):
             self._mjr('Updating Character lcd!')
             self.lcd_logic(args)
@@ -47,7 +52,8 @@ class action_input():
 
     def _mjr(self, msg):
         """Easy extra line-break print"""
-        cg.send('\n{}\n'.format(msg))
+        # cg.send('\n{}\n'.format(msg))
+        cg.send('{}\n'.format(msg))
 
     def resume(self):
         """Restart the LCD display at some delay"""
@@ -65,7 +71,11 @@ class action_input():
             # Prep the display for before/after the message
             lcd.stop_weather()
             delay = cg.dict_arg(args, "delay")
-            self.delay = delay if type(delay) is int else 1
+            try:
+                # self.delay = int(delay) if type(delay) is int else 1
+                self.delay = int(delay)
+            except:
+                self.delay = 1
             lcd.text(msg)
             self.resume()
         start = cg.dict_arg(args, "start")
@@ -76,7 +86,7 @@ class action_input():
 class read_input():
     """
     Open read line that parses input in format:
-        [<>] @<>:<> @<>:<> ...etc
+        [`cmd`] @>`key`:>>`value` @>`key`:>>`value` ...etc
     """
 
     def __init__(self):
@@ -117,7 +127,7 @@ class read_input():
 
     def parse_input(self):
         # Parse the arguments received
-        chunks = self.message.split('@')
+        chunks = self.message.split('@>')
 
         # Parse operation and remove brackets:
         # operation = chunks[0].strip()[1:-1]
@@ -127,7 +137,7 @@ class read_input():
         cg.send('Running Operation: {}'.format(operation))
 
         def parse(y):
-            return y.split(':') if ':' in y else [y, 'N/A']
+            return y.split(':>>') if ':>>' in y else [y, 'N/A']
 
         # Organize the args into a dict:
         if len(chunks) > 1:
