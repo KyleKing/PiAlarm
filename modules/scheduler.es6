@@ -49,8 +49,8 @@ module.exports = {
     return new CronJob(cronSchedule, () => {
       schedDebug(` ! Starting Alarm ('${title}') ! `);
       electronics.brightenLCD();
-      electronics.updateClockDisplay([`[${title}]`, 'h:mm:ss a']);
       electronics.startAlarm();
+      electronics.updateClockDisplay([`[${title}]`, 'h:mm:ss a']);
     }, () => {
       schedDebug(`Alarm ('${title}') stopped.`);
     }, false);

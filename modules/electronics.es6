@@ -24,6 +24,7 @@ pyshell.on('close', (err) => {
 });
 pyshell.on('error', (err) => { throw err; });
 // Example: pyshell.send('[all_off]');
+pyshell.send('[lcd] @>start');
 
 // // Archived:
 // function execOnNoSTDOUT(task, cb, altCB, quiet) {

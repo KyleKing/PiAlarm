@@ -14,10 +14,6 @@ if cg.is_pi():
 # Configuration:
 ###########################
 
-alarm_on = True
-_running = False
-cg.quiet_logging(False)
-
 # Electronic Pin Numbering Globals:
 off_button = cg.get_pin('Input_Pins', 'off_button')
 pin_buzzer = cg.get_pin('Haptics', 'pin_buzzer')
@@ -38,11 +34,13 @@ else:
     alarm_stage_time = [0, 100, 80, 60]
 
 step_size = 0.2
+alarm_on = True
+_running = False
+cg.quiet_logging(False)
 
 # Settings for fade_led_strip()
-last_beep = 0
 max_brightness = 0.6
-fade_stage = 0
+last_beep, fade_stage = 0, 0
 fade_stages = [pin_green, pin_red, pin_blue,
                pin_green, pin_red, pin_blue]
 a_s_t = alarm_stage_time[3]
@@ -115,6 +113,7 @@ def fade_led_strip(counter):
 ###########################
 
 if cg.is_pi():
+    cg.send('Set GPIO mode and event detection')
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(off_button, GPIO.IN)
@@ -141,9 +140,9 @@ def stop():
 
 def start(user_home):
     global fade_stage, _running
-    cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
-    stage, stage3_rep_counter = 1, 0
     _running = True
+    stage, stage3_rep_counter = 1, 0
+    cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
         all_off.run()

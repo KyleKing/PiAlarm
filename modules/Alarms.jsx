@@ -39,7 +39,6 @@ class AlarmContainer extends React.Component {
     };
     socket.on("alarm event", (newAlarm) => this.handleStateChange(newAlarm));
     socket.on("IFTTT event", (value) => this.updateIFTTTInfo(value));
-
     // More efficient bind to onClick event:
     this.newAlarm = this.newAlarm.bind(this);
   }

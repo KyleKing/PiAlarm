@@ -4,8 +4,8 @@ import sys
 from time import sleep
 
 from modules import config as cg
-from modules import tests, alarm, lcd, status
-from modules import all_off
+from modules import tests, alarm, lcd
+from modules import status, all_off
 
 if cg.is_pi():
     from modules import tm1637
@@ -77,10 +77,13 @@ class action_input():
             except:
                 self.delay = 1
             lcd.text(msg)
-            self.resume()
+            cg.thread(self.resume)
         start = cg.dict_arg(args, "start")
         if start:
             lcd.cycle_weather()
+            import datetime
+            if int(datetime.datetime.now().hour) >= 20:
+                lcd.brightness('off')
 
 
 class read_input():

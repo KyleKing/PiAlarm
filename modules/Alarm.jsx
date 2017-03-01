@@ -1,3 +1,11 @@
+// Quick CRON guide
+// second         0-59
+// minute         0-59
+// hour           0-23
+// day of month   0-31
+// month          0-12
+// day of week    0-6 (Sun-Sat)
+
 import React from 'react';
 const socket = io();  // eslint-disable-line
 
@@ -13,17 +21,16 @@ class Alarm extends React.Component {
       changed: false,
       error: false,
     };
-
     // More efficient bind to onClick event:
     // https://github.com/goatslacker/alt/issues/283#issuecomment-122650637
+    this.EnDisableToggle = this.EnDisableToggle.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleScheduleChange = this.handleScheduleChange.bind(this);
-    this.toggleButton = this.toggleButton.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.removeAlarm = this.removeAlarm.bind(this);
   }
 
-  toggleButton() {
+  EnDisableToggle() {
     // console.log(`Toggled: ${this.props.uniq}, but no direct action!`);
     this.setState({
       running: !this.state.running,
@@ -37,14 +44,6 @@ class Alarm extends React.Component {
       changed: true,
     });
   }
-
-  // Quick CRON guide
-  // second         0-59
-  // minute         0-59
-  // hour           0-23
-  // day of month   0-31
-  // month          0-12
-  // day of week    0-6 (Sun-Sat)
 
   handleScheduleChange(event) {
     const newSched = event.target.value.trim();
@@ -107,7 +106,7 @@ class Alarm extends React.Component {
         <button
           type="button"
           className={`${fi} ${buttonClasses}`}
-          onClick={this.toggleButton}
+          onClick={this.EnDisableToggle}
         >{buttonValue}</button>
 
         <input
@@ -122,12 +121,12 @@ class Alarm extends React.Component {
           defaultValue={this.state.schedule}
           onChange={this.handleScheduleChange}
         />
+
         <button
           className={`${fi} ${buttonBase} ${changed}`}
           onClick={this.handleSubmit}
           type="submit"
         >Save</button>
-
         <button
           type="button"
           className={`${fi} ${buttonBase} btn-danger remove`}

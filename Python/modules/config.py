@@ -1,9 +1,10 @@
-import sys
 import os
+import sys
 import requests
 import threading
 import subprocess
 import ConfigParser
+# import datetime
 
 quiet_STDOUT = True
 
@@ -16,7 +17,10 @@ quiet_STDOUT = True
 def send(info, force=False):
     """Force output to parent application"""
     if not quiet_STDOUT or force:
-        print info
+        # now = datetime.datetime.now()
+        # print '{:02}:{:02}> {}'.format(int(now.hour),
+        #       int(now.minute), info)
+        print '{}'.format(info)
         sys.stdout.flush()
 
 
@@ -144,7 +148,7 @@ def is_pi():
 
 def get_path(raw):
     if 'Python' not in raw:
-        full = os.path.abspath('') + '/' + raw
+        full = '{}/Python/{}'.format(os.path.abspath(''), raw)
         send('Setting r: {} to f: {}'.format(raw, full))
         return full
     else:
