@@ -31,7 +31,7 @@ if len(sys.argv) > 1:
     # arg = cg.parse_argv(sys)
     alarm_stage_time = [0, 5, 10, 15]
 else:
-    alarm_stage_time = [0, 100, 80, 60]
+    alarm_stage_time = [30, 180, 80, 60]
 
 step_size = 0.2
 alarm_on = True
@@ -142,7 +142,6 @@ def start(user_home):
     global fade_stage, _running
     _running = True
     stage, stage3_rep_counter = 1, 0
-    cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
         all_off.run()
@@ -201,6 +200,8 @@ def run():
         cg.ifttt('PiAlarm_SendText', {'value1': _err})
     elif user_home:
         lcd.brightness('alt')
-        start(user_home)
+        cg.ifttt('PiAlarm_SendText', {'value1': '** PiAlarm Started! **'})
+        time.sleep(alarm_stage_time[0])  # let text alert go out
+        start(cg.check_status())
     else:
         cg.ifttt('PiAlarm_SendText', {'value1': 'User away, no PiAlarm'})

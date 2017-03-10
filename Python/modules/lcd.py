@@ -186,7 +186,7 @@ class char_disp():
 
     def display_weather(self):
         if not self._started:
-            schedule.every(1).minutes.do(self.update_weather)
+            schedule.every(5).minutes.do(self.update_weather)
             # schedule.every(1).hour.do(update_weather)
             cg.thread(self.run_sched)  # Start a separate thread
             self._started = True
@@ -204,13 +204,15 @@ class char_disp():
     def update_weather(self):
         """Meant to separate api/lcd..."""
         msg = []
-        both_commutes = weather.hourly()
+        both_commutes = weather.hourly(quiet=False)
         for wthr in both_commutes:
-            msg.append(['{} {}'.format(wthr["fc"], wthr["tmp"])[0:20]])
+            msg.append(['{}-{} {}'.format(wthr["day"],
+                                          wthr["fc"], wthr["tmp"])[0:20]])
             msg.append(['{}-{}p{} {}'.format(
                 wthr['pop'], wthr['snow'], wthr['precip'],
                 wthr['wspd'])[0:20]])
         self.custom_msg(msg)
+        cg.send('LCD Weather: {}'.format(msg))
         return msg
 
     def stop_weather(self):

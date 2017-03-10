@@ -1,5 +1,6 @@
 import os
 import sys
+import inspect
 import requests
 import threading
 import subprocess
@@ -131,10 +132,10 @@ def dict_arg(args, key):
     """Try to decode the dictionary key or return False"""
     try:
         this = args[key]
-        send('->- {} found in `{}`'.format(key, args))
+        send('@> {} found in `{}`'.format(key, args))
         return this
     except:
-        send('-X- {} not found in `{}`'.format(key, args))
+        # send('@X {} not found in `{}`'.format(key, args))
         return False
 
 #
@@ -185,3 +186,38 @@ def thread(target, args=()):
 # print os.system("sudo kill $(ps aux | grep 'pi-blaster\/[p]" +
 #                 "i-blaster' | awk '{print $2}')")
 # sudo kill $(ps aux | grep 'pi-blaster\/[p]i-blaster' | awk '{print $2}')
+
+
+# Simple Logger
+
+class logger:
+    """ Example:
+        lgr = cg.logger('name')
+        lgr.lit(lgr.ln(), 'A little alert!! With line number!')
+    """
+
+    def __init__(self, origin=False):
+        if len(origin) != 6:
+            print '\nOrigin must be 6 letters ({} - is not)\n'.format(origin)
+        self.__origin = origin if origin else "    br"
+
+    def ln(self):
+        """Get line number for logging"""
+        return "{:03d}".format(inspect.currentframe().f_back.f_lineno)
+
+    def _format(self, ln, message):
+        return '{} (#{}): {}'.format(self.__origin, ln, message.strip())
+
+    def lit(self, ln, message, print_out=True):
+        """Minor - two line comment"""
+        send(self._format(ln, message))
+        send(self._format(ln, ""))
+        send(self._format(ln, message))
+
+    def big(self, ln, message):
+        """Major - five line comment"""
+        send(self._format(ln, "__"))
+        send(self._format(ln, ""))
+        send(self._format(ln, message))
+        send(self._format(ln, ""))
+        send(self._format(ln, "__"))

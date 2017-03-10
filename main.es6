@@ -16,7 +16,7 @@ process.env.VEBOSE = program.verbose || 'false';
 process.env.LOCAL = program.local || 'false';
 process.env.ALARM = program.alarm || 'false';
 
-const PythonShell = require('python-shell');
+// const PythonShell = require('python-shell');
 const debug = require('./modules/debugger.es6');
 const mainDebug = debug.init('main');
 const init = require('./modules/initialize.es6');
@@ -57,7 +57,7 @@ http.listen(app.get('port'), () => {
 const db = require('./modules/data.es6');
 const alarms = db.alarms;
 const sched = require('./modules/scheduler.es6');
-// const electronics = require('./electronics.es6');
+const electronics = require('./electronics.es6');
 
 const ClockAlarms = {};
 // Create alarms only once:
@@ -128,14 +128,16 @@ function createAlarm(alarmState, socket) {
 
 io.on('connection', (socket) => {
   // Check alarm status (present/away)
-  PythonShell.run('./Python/modules/status.py', (err, results) => {
-    if (err)
-      throw err;
-    mainDebug(`rcvd (pyShellUserStatus): ${results}`);
-    const userStatus = results;
-    // const userStatus = results[0];
+  // PythonShell.run('./Python/modules/status.py', (err, results) => {
+  //   if (err)
+  //     throw err;
+  //   mainDebug(`rcvd (pyShellUserStatus): ${results}`);
+  //   const userStatus = results;
+  //   // const userStatus = results[0];
+  electronics.queryStaus((userStatus) => {
     socket.emit('IFTTT event', userStatus);
   });
+
   // Export all alarms:
   alarms.find({}, (err, allAlarms) => {
     if (err)

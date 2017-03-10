@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+import datetime
 from time import sleep
 
 from modules import config as cg
@@ -25,6 +26,7 @@ class action_input():
         self.delay = 1
         self.msg = message
         operation = operation.lower().strip()
+        cg.send('Acting on: {} w/ msg: {}'.format(operation, self.msg))
         """Determine the proper action based on the arguments"""
         if re.match(operation, 'test'):
             self._mjr('Starting tests!')
@@ -53,7 +55,7 @@ class action_input():
     def _mjr(self, msg):
         """Easy extra line-break print"""
         # cg.send('\n{}\n'.format(msg))
-        cg.send('{}\n'.format(msg))
+        cg.send('<*> {}'.format(msg))
 
     def resume(self):
         """Restart the LCD display at some delay"""
@@ -81,9 +83,9 @@ class action_input():
         start = cg.dict_arg(args, "start")
         if start:
             lcd.cycle_weather()
-            import datetime
-            if int(datetime.datetime.now().hour) >= 20:
-                lcd.brightness('off')
+        # insomnia = cg.dict_arg(args, "insomnia")
+        # if insomnia:
+        #     cg.send('INSOMNIA! Everything is running')
 
 
 class read_input():
@@ -104,6 +106,9 @@ class read_input():
             Display.StartClock(military_time=True)
         else:
             cg.send('Would run TM1637 w/ C:{}, D:{}'.format(clock, digital))
+        # Toggle display based on time of day
+        evening = int(datetime.datetime.now().hour) >= 20
+        lcd.brightness('off') if evening else lcd.brightness('on')
 
     def start(self):
         """Loop indefinitely"""

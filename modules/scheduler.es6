@@ -23,24 +23,37 @@ else
 
 
 // Turn the display on when people should be around
-function controlDisplay(schedule, task, activate) {
+function sendOnCron(schedule, msg) {
   const JOB = new CronJob(schedule, () => {
-    schedDebug(`Starting ${task}`);
-    if (activate)
-      electronics.brightenLCD()
-    else
-      electronics.dimLCD()
+    schedDebug(`Sending ${msg}`);
+    electronics.send(msg)
   }, () => {
-    schedDebug('Completed a task to change the LCD display')
+    schedDebug('Completed sending a msg to the main Python thread')
   }, false);
   return JOB;
 }
-const weekendActivate = controlDisplay('0 30 8 * * 0,6', 'activate lcd display', true);
-const weekdayActivate = controlDisplay('0 15 5 * * 1-5', 'activate lcd display', true);
-const deactivate = controlDisplay('0 30 21 * * *', 'deactivate lcd display', false);
-weekendActivate.start()
-weekdayActivate.start()
-deactivate.start()
+const weekendActivate = sendOnCron('50 30 8 * * 0,6', '[LCD] @>display:>>on');
+const weekdayActivate = sendOnCron('50 30 6 * * 1-5', '[LCD] @>display:>>on');
+const deactivate = sendOnCron('50 30 21 * * *', '[LCD] @>display:>>off');
+weekendActivate.start();
+weekdayActivate.start();
+deactivate.start();
+
+// Keep Pi and node app awake:
+const everyFive = '0,5,10,15,20,25,30,35,40,45,50,55'
+// const insomnia = sendOnCron(`20 ${everyFive} * * * *`, '[lcd] @>insomnia');
+// insomnia.start()
+
+function WOKE(schedule) {
+  const JOB = new CronJob(schedule, () => {
+    electronics.queryStaus();
+  }, () => {
+    schedDebug('Completed WOKE (Insonia V2) task')
+  }, false);
+  return JOB;
+}
+const insomnia = WOKE(`20 ${everyFive} * * * *`);
+insomnia.start()
 
 module.exports = {
   // Schedule the alarms in the database:

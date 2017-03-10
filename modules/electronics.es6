@@ -57,23 +57,23 @@ module.exports = {
     pyshell.send('[alarm]')
   },
 
-  // Create python shell to run the predefined alarm script
-  triggerAlarm() {
-    electronicDebug('Starting Python Alarm Script');
-    if (process.env.LOCAL === 'false') {
-      const pyShellAlarm = new PythonShell('./scripts/alarm.py');
-      // pyShellAlarm.send('THIS COULD BE USEFUL!');
-      pyShellAlarm.on('message', (message) => {
-        electronicDebug(`rcvd (ALARM): ${message}`);
-      });
-      pyShellAlarm.on('close', (err) => {
-        if (err)
-          throw err;
-        electronicDebug('Completed alarm and closed (ALARM.py)');
-      });
-      pyShellAlarm.on('error', (err) => { throw err; });
-    }
-  },
+  // // Create python shell to run the predefined alarm script
+  // triggerAlarm() {
+  //   electronicDebug('Starting Python Alarm Script');
+  //   if (process.env.LOCAL === 'false') {
+  //     const pyShellAlarm = new PythonShell('./scripts/alarm.py');
+  //     // pyShellAlarm.send('THIS COULD BE USEFUL!');
+  //     pyShellAlarm.on('message', (message) => {
+  //       electronicDebug(`rcvd (ALARM): ${message}`);
+  //     });
+  //     pyShellAlarm.on('close', (err) => {
+  //       if (err)
+  //         throw err;
+  //       electronicDebug('Completed alarm and closed (ALARM.py)');
+  //     });
+  //     pyShellAlarm.on('error', (err) => { throw err; });
+  //   }
+  // },
 
   // Toggle LCD Brightness
   brightenLCD() {
@@ -97,5 +97,16 @@ module.exports = {
     electronicDebug(`Setting char_disp as: ${displayText}`);
     pyshell.send(displayText);
     return displayText;
+  },
+
+  // Universal Method for Interfacing with LCD Display
+  queryStatus(cb = false) {
+    PythonShell.run('./Python/modules/status.py', (err, results) => {
+      if (err)
+        throw err;
+      electronicDebug(`rcvd (pyShellUserStatus): ${results}`);
+      if (cb)
+        cb(results)
+    });
   },
 };

@@ -36,7 +36,7 @@
     "express-users": "^0.3.2",
     "express-session": "^1.14.2",
     "eyespect": "^0.1.10",
-    "fs-extra": "^0.30.0",
+    "fs-extra": "^2.0.0",
     "interface-addresses": "0.0.5",
     "method-override": "^2.3.6",
     "moment": "^2.14.1",
@@ -53,18 +53,18 @@
   },
   "devDependencies": {
     "babel-core": "^6.0.12",
-    "babel-eslint": "^6.1.2",
+    "babel-eslint": "^7.1.1",
     "babel-loader": "^6.0.1",
     "babel-preset-es2015": "^6.0.12",
     "babel-preset-react": "^6.0.15",
     "pre-commit": "^1.1.3",
     "eslint": "^3.2.2",
-    "eslint-config-airbnb": "^10.0.0",
-    "eslint-plugin-import": "^1.6.1",
-    "eslint-plugin-jsx-a11y": "^2.0.1",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.0.0",
-    "webpack": "^1.12.1",
-    "webpack-dev-server": "^1.12.1"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
   },
   "eslintConfig": {
     "extends": "airbnb",

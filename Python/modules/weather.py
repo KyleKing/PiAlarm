@@ -1,6 +1,7 @@
 # Get weather conditions through WeatherUnderground (based on:
 # https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298)
 import json
+import random
 import urllib2
 import numpy as np
 
@@ -19,8 +20,8 @@ def fetch(req_type):
         "/{}/q/{},{}.json".format(req_type, lat, lon)
     weatherdict = urllib2.urlopen(GetURL).read()
     weatherinfo = json.loads(weatherdict)
-    # print '\nComplete weatherinfo JSON:'
-    # print weatherinfo
+    # cg.send('\nComplete weatherinfo JSON:')
+    # cg.send(weatherinfo)
     return weatherinfo
 
 
@@ -67,24 +68,27 @@ def hourly(quiet=True):
     """Get hourly data for a 36 hour window"""
     weatherinfo = fetch('hourly')
     weatherdata = weatherinfo['hourly_forecast']
-    if not quiet:
-        # print weatherdata[0]
-        print '\n Forecast for {} hours \n'.format(len(weatherdata))
 
-    # Determine the morning commute weather and when I would commute home
+    # Determine the morning commute weather and for when I commute home
     hours = [x['FCTTIME']['hour'] for x in weatherdata]
     commute_weather = []
     # For morning (0) and afternoon (8)
     for i in [0, 8]:
-        hour, fc, cnd, temp, tmp = [], [], [], [], []
+        k_init = False
         wspd, wdir = [], []
         pop, hm, snow, qpf = [], [], [], []
+        hour, fc, cnd, temp, tmp = [], [], [], [], []
         # Three hour window for each
-        for j in [0, 1, 2]:
-            # *Keep weather up to date up to 8 am of the same day
+        for j in range(3):
+            # **Keep weather up to date up to 8 am of the same day
             k = i + j + (hours.index('8') - 3)  # sort of solve for 5 am
             k = k if k > 0 else 0
             hour = weatherdata[k]  # 15
+            if type(k_init) is not int:
+                ts_start = hour['FCTTIME']['pretty']
+                h_start = hour['FCTTIME']['hour']
+                day = hour['FCTTIME']['weekday_name_abbrev']
+                k_init = k
             fc.append(hour['wx'])  # Clear/Wind
             cnd.append(hour['condition'])  # Chance of Rain
             temp.append(eval(hour['temp']['metric']))  # 9
@@ -97,7 +101,11 @@ def hourly(quiet=True):
             hm.append(eval(hour['humidity']))  # 46
             snow.append(eval(hour['snow']['metric']))  # 0
             qpf.append(eval(hour['qpf']['metric']))  # 0 {rain?}
+        # "snow": '{} cm'.format(np.amax(snow)),
         commute_weather.append({
+            "ts": ts_start,
+            "hr": h_start,
+            "day": day,
             "fc": fc[1],
             "cnd": cnd[1],
             "temp": '{:3.1f}C'.format((np.mean(temp))),
@@ -109,6 +117,8 @@ def hourly(quiet=True):
             "snow": 'SNOW! ' if np.amax(snow) > 0.1 else '',
             "precip": np.amax(qpf)
         })
-        # "snow": '{} cm'.format(np.amax(snow)),
-    # print 'Example (Wthr cnd):', commute_weather[0]["cnd"]
+    if not quiet:
+        # cg.send('Example (Wthr cnd):', commute_weather[0]["cnd"])
+        _r = random.randint(0, len(commute_weather) - 1)
+        cg.send('commute_weather[{}]: {}'.format(_r, commute_weather[_r]))
     return commute_weather
