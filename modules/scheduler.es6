@@ -46,7 +46,7 @@ const everyFive = '0,5,10,15,20,25,30,35,40,45,50,55'
 
 function WOKE(schedule) {
   const JOB = new CronJob(schedule, () => {
-    electronics.queryStaus();
+    electronics.queryStatus();
   }, () => {
     schedDebug('Completed WOKE (Insonia V2) task')
   }, false);
@@ -62,8 +62,8 @@ module.exports = {
     return new CronJob(cronSchedule, () => {
       schedDebug(` ! Starting Alarm ('${title}') ! `);
       electronics.brightenLCD();
-      electronics.startAlarm();
       electronics.updateClockDisplay([`[${title}]`, 'h:mm:ss a']);
+      electronics.startAlarm();
     }, () => {
       schedDebug(`Alarm ('${title}') stopped.`);
     }, false);

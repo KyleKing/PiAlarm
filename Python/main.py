@@ -59,7 +59,9 @@ class action_input():
 
     def resume(self):
         """Restart the LCD display at some delay"""
-        sleep(self.delay * 60)
+        _delay = int(round(self.delay * 60))
+        cg.send('Delaying Weather-LCD updates for {}sec'.format(_delay))
+        sleep(_delay)
         lcd.cycle_weather()
 
     def lcd_logic(self, args):
@@ -74,8 +76,7 @@ class action_input():
             lcd.stop_weather()
             delay = cg.dict_arg(args, "delay")
             try:
-                # self.delay = int(delay) if type(delay) is int else 1
-                self.delay = int(delay)
+                self.delay = float(delay)
             except:
                 self.delay = 1
             lcd.text(msg)
@@ -106,6 +107,7 @@ class read_input():
             Display.StartClock(military_time=True)
         else:
             cg.send('Would run TM1637 w/ C:{}, D:{}'.format(clock, digital))
+        all_off.run()
         # Toggle display based on time of day
         evening = int(datetime.datetime.now().hour) >= 20
         lcd.brightness('off') if evening else lcd.brightness('on')
@@ -114,6 +116,8 @@ class read_input():
         """Loop indefinitely"""
         while True:
             # Accept an optional sys arg or open a readline prompt
+            #   Warn: The sysarg must be escaped with single quotes
+            #   python main.py '[lcd] @>start'
             if not self.parsed_sysarg and len(sys.argv) > 1:
                 message = ''
                 for arg_num in range(len(sys.argv) - 1):

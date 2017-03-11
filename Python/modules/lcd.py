@@ -186,23 +186,30 @@ class char_disp():
 
     def display_weather(self):
         if not self._started:
-            schedule.every(5).minutes.do(self.update_weather)
-            # schedule.every(1).hour.do(update_weather)
-            cg.thread(self.run_sched)  # Start a separate thread
-            self._started = True
-            self._running = True
+            # Start a fresh thread for weather updates
             self.update_weather()
-        else:
+            self._running = True
+            self._started = True
+            schedule.every(5).minutes.do(self.update_weather)
+            cg.thread(self.run_sched)  # Start a separate thread
+            # cg.send('>> Started Thread')
+        elif self._running:
             cg.send('Error: Weather Update is already running')
+        else:
+            # Allow the weather updates to continue
+            self._running = True
+            cg.send('Toggling weather updates back on')
 
     def run_sched(self):
         """Loop through the schedule to check if new task"""
+        # cg.send('> Ran Thread')
         while self._running:
             schedule.run_pending()
+            # cg.send('> Still running')
             sleep(1)
 
     def update_weather(self):
-        """Meant to separate api/lcd..."""
+        """Request, then parse weather data for LCD display """
         msg = []
         both_commutes = weather.hourly(quiet=False)
         for wthr in both_commutes:
@@ -216,9 +223,10 @@ class char_disp():
         return msg
 
     def stop_weather(self):
-        """TODO"""
+        """Stop the schedule run pending loop"""
         self._running = False
-        # self._started = False
+        self._started = False
+        cg.send('Stopped weather thread')
 
 
 #

@@ -57,7 +57,7 @@ http.listen(app.get('port'), () => {
 const db = require('./modules/data.es6');
 const alarms = db.alarms;
 const sched = require('./modules/scheduler.es6');
-const electronics = require('./electronics.es6');
+const electronics = require('./modules/electronics.es6');
 
 const ClockAlarms = {};
 // Create alarms only once:
@@ -134,7 +134,7 @@ io.on('connection', (socket) => {
   //   mainDebug(`rcvd (pyShellUserStatus): ${results}`);
   //   const userStatus = results;
   //   // const userStatus = results[0];
-  electronics.queryStaus((userStatus) => {
+  electronics.queryStatus((userStatus) => {
     socket.emit('IFTTT event', userStatus);
   });
 

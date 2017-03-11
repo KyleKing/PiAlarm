@@ -88,7 +88,7 @@ module.exports = {
     let content = '';
     if (typeof raw === 'object') {
       let formattedText = '['
-      for (let i = 0; i < raw.length; i++)
+      for (let i = 0; i < raw.length; i += 1)
         formattedText = `${formattedText}'${moment().format(raw[i])}',`;
       content = `${formattedText.slice(0, -1)}]`;
     } else

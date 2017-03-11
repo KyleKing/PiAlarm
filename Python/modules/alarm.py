@@ -129,7 +129,9 @@ def stop():
     # Cleanup tasks:
     all_off.run()
     GPIO.remove_event_detect(off_button)
-    GPIO.cleanup()
+    #
+    # GPIO.cleanup()  # Removed to avoid interference with clock
+    #
     # release_PWM(pin_shaker)
     # etc...
     # # Then stop pi-blaster for good measure:
