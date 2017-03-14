@@ -123,6 +123,7 @@ if cg.is_pi():
 
 def stop():
     global _running
+    _running = False
     cg.send("\nAlarm Cycles Finished\n")
     cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
@@ -137,11 +138,10 @@ def stop():
     # # Then stop pi-blaster for good measure:
     # stopPiB = "sudo kill $(ps aux | grep [b]laster | awk '{print $2}')"
     # subprocess.call(stopPiB, shell=True)
-    _running = False
 
 
 def start(user_home):
-    global fade_stage, _running
+    global fade_stage, _running, alarm_on
     _running = True
     stage, stage3_rep_counter = 1, 0
 
@@ -194,8 +194,9 @@ def start(user_home):
 
 
 def run():
-    global _running
+    global _running, alarm_on
     user_home = cg.check_status()
+    alarm_on = True
     if _running:
         _err = 'ERROR: ALARM IS ALREADY RUNNING!'
         cg.send(_err)

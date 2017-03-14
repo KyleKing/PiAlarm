@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Alarm from './Alarm.jsx';
+import Alarm from './Alarm';
 const socket = io(); // eslint-disable-line
 
 function leadingZero(value) {
@@ -37,8 +37,8 @@ class AlarmContainer extends React.Component {
       alarms: [],
       userStatus: 'unknown..',
     };
-    socket.on("alarm event", (newAlarm) => this.handleStateChange(newAlarm));
-    socket.on("IFTTT event", (value) => this.updateIFTTTInfo(value));
+    socket.on("alarm event", newAlarm => this.handleStateChange(newAlarm));
+    socket.on("IFTTT event", value => this.updateIFTTTInfo(value));
     // More efficient bind to onClick event:
     this.newAlarm = this.newAlarm.bind(this);
   }
@@ -70,7 +70,7 @@ class AlarmContainer extends React.Component {
 
   render() {
     const whereUser = this.state.userStatus;
-    const alarms = this.state.alarms.map((alarm) =>
+    const alarms = this.state.alarms.map(alarm =>
       (
         <li key={alarm.uniq}>
           <Alarm
@@ -80,7 +80,7 @@ class AlarmContainer extends React.Component {
             running={alarm.running}
           />
         </li>
-      )
+      ),
     );
 
     return (

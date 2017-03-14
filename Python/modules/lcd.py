@@ -192,7 +192,6 @@ class char_disp():
             self._started = True
             schedule.every(5).minutes.do(self.update_weather)
             cg.thread(self.run_sched)  # Start a separate thread
-            # cg.send('>> Started Thread')
         elif self._running:
             cg.send('Error: Weather Update is already running')
         else:
@@ -202,10 +201,9 @@ class char_disp():
 
     def run_sched(self):
         """Loop through the schedule to check if new task"""
-        # cg.send('> Ran Thread')
+        cg.send('> Started Thread w/ _run = {}'.format(self._running))
         while self._running:
             schedule.run_pending()
-            # cg.send('> Still running')
             sleep(1)
 
     def update_weather(self):

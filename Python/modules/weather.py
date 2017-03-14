@@ -7,27 +7,38 @@ import numpy as np
 
 import config as cg
 
-# WUnderground API (https://www.wunderground.com/weather/api)
-apikey = cg.read_ini('WU', 'apikey', filename='secret')
-lat = cg.read_ini('WU', 'lat', filename='secret')
-lon = cg.read_ini('WU', 'lon', filename='secret')
-cg.send('> WU - Key {} / GPS ({}, {})'.format(apikey, lat, lon))
+
+class WUnderground():
+    # WUnderground API (https://www.wunderground.com/weather/api)
+    count = 0
+
+    def __init__(self):
+        self.apikey = cg.read_ini('WU', 'apikey', filename='secret')
+        self.lat = cg.read_ini('WU', 'lat', filename='secret')
+        self.lon = cg.read_ini('WU', 'lon', filename='secret')
+        cg.send('> WU - Key {} / GPS ({}, {})'.format(
+            self.apikey, self.lat, self.lon))
+
+    def fetch(self, req_type):
+        """Request Weather Data"""
+        GetURL = "http://api.wunderground.com/api/" + self.apikey + \
+            "/{}/q/{},{}.json".format(req_type, self.lat, self.lon)
+        weatherdict = urllib2.urlopen(GetURL).read()
+        weatherinfo = json.loads(weatherdict)
+        # cg.send('\nComplete weatherinfo JSON:')
+        # cg.send(weatherinfo)
+        self.count += 1
+        cg.send('New WU request, total: {}'.format(self.count))
+        return weatherinfo
 
 
-def fetch(req_type):
-    """Request Weather Data"""
-    GetURL = "http://api.wunderground.com/api/" + apikey + \
-        "/{}/q/{},{}.json".format(req_type, lat, lon)
-    weatherdict = urllib2.urlopen(GetURL).read()
-    weatherinfo = json.loads(weatherdict)
-    # cg.send('\nComplete weatherinfo JSON:')
-    # cg.send(weatherinfo)
-    return weatherinfo
+# Make sure this is only called once.
+WU = WUnderground()
 
 
 def conditions():
     """Get the day's summary"""
-    weatherinfo = fetch('conditions')
+    weatherinfo = WU.fetch('conditions')
     # For current conditions, everything is under current observation:
     weatherdata = weatherinfo['current_observation']
 
@@ -59,14 +70,14 @@ def conditions():
 
 
 def forecast():
-    weatherinfo = fetch('forecast')
+    weatherinfo = WU.fetch('forecast')
     print weatherinfo
     print "Error: forecast....isn't parsed yet"
 
 
 def hourly(quiet=True):
     """Get hourly data for a 36 hour window"""
-    weatherinfo = fetch('hourly')
+    weatherinfo = WU.fetch('hourly')
     weatherdata = weatherinfo['hourly_forecast']
 
     # Determine the morning commute weather and for when I commute home
