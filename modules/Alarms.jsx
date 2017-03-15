@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Alarm from './Alarm';
+import Alarm from './Alarm.jsx'; // eslint-disable-line
 const socket = io(); // eslint-disable-line
 
 function leadingZero(value) {

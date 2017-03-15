@@ -211,8 +211,8 @@ class char_disp():
         msg = []
         both_commutes = weather.hourly(quiet=False)
         for wthr in both_commutes:
-            msg.append(['{}-{} {}'.format(wthr["day"],
-                                          wthr["fc"], wthr["tmp"])[0:20]])
+            msg.append(['{}-{} {}'.format(wthr["day"], wthr["fc"][:10],
+                                          wthr["tmp"])[0:20]])
             msg.append(['{}-{}p{} {}'.format(
                 wthr['pop'], wthr['snow'], wthr['precip'],
                 wthr['wspd'])[0:20]])
