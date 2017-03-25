@@ -62,6 +62,7 @@ class action_input():
         _delay = int(round(self.delay * 60))
         cg.send('Delaying Weather-LCD updates for {}sec'.format(_delay))
         sleep(_delay)
+        cg.send('Resuming weather LCD updates')
         lcd.cycle_weather()
 
     def lcd_logic(self, args):

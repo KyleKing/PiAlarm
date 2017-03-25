@@ -112,14 +112,6 @@ def fade_led_strip(counter):
 # Alarm logic!
 ###########################
 
-if cg.is_pi():
-    cg.send('Set GPIO mode and event detection')
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(off_button, GPIO.IN)
-    GPIO.add_event_detect(off_button, GPIO.RISING, callback=alarm_deactivate,
-                          bouncetime=300)
-
 
 def stop():
     global _running
@@ -144,6 +136,15 @@ def start(user_home):
     global fade_stage, _running, alarm_on
     _running = True
     stage, stage3_rep_counter = 1, 0
+
+    cg.send('Set GPIO mode and event detection')
+    if cg.is_pi():
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(off_button, GPIO.IN)
+        GPIO.add_event_detect(off_button, GPIO.RISING,
+                              callback=alarm_deactivate,
+                              bouncetime=300)
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
         all_off.run()

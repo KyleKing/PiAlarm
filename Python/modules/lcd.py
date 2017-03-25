@@ -187,6 +187,7 @@ class char_disp():
     def display_weather(self):
         if not self._started:
             # Start a fresh thread for weather updates
+            cg.send('Starting update_weather()')
             self.update_weather()
             self._running = True
             self._started = True
@@ -213,8 +214,8 @@ class char_disp():
         for wthr in both_commutes:
             msg.append(['{}-{} {}'.format(wthr["day"], wthr["fc"][:10],
                                           wthr["tmp"])[0:20]])
-            msg.append(['{}-{}p{} {}'.format(
-                wthr['pop'], wthr['snow'], wthr['precip'],
+            msg.append(['{}{}-{}mm {}'.format(
+                wthr['snow'], wthr['pop'], wthr['precip'],
                 wthr['wspd'])[0:20]])
         self.custom_msg(msg)
         cg.send('LCD Weather: {}'.format(msg))
