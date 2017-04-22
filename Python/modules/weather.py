@@ -83,6 +83,8 @@ def hourly(quiet=True):
     # Determine the morning commute weather and for when I commute home
     hours = [x['FCTTIME']['hour'] for x in weatherdata]
     commute_weather = []
+    # window = 3  # hours
+    window = 2  # hours
     # For morning (0) and afternoon (8)
     for i in [0, 8]:
         k_init = False
@@ -90,11 +92,14 @@ def hourly(quiet=True):
         pop, hm, snow, qpf = [], [], [], []
         hour, fc, cnd, temp, tmp = [], [], [], [], []
         # Three hour window for each
-        for j in range(3):
+        for j in range(window):
             # **Keep weather up to date up to 8 am of the same day
-            k = i + j + (hours.index('8') - 3)  # sort of solve for 5 am
+            hi = hours.index('8') - window
+            k = i + j + (hi)  # sort of solve for 5 am
+            cg.send('Starting loop j:{}+i:{}+hi:{} = k:{} (k_init={})'.format(
+                    j, i, hi, k, k_init))
             k = k if k > 0 else 0
-            hour = weatherdata[k]  # 15
+            hour = weatherdata[k]
             if type(k_init) is not int:
                 ts_start = hour['FCTTIME']['pretty']
                 h_start = hour['FCTTIME']['hour']
@@ -128,8 +133,10 @@ def hourly(quiet=True):
             "snow": 'SNOW! ' if np.amax(snow) > 0.1 else '',
             "precip": np.amax(qpf)
         })
+    # cg.send('Example (Wthr cnd):', commute_weather[0]["cnd"])
     if not quiet:
-        # cg.send('Example (Wthr cnd):', commute_weather[0]["cnd"])
-        _r = random.randint(0, len(commute_weather) - 1)
-        cg.send('commute_weather[{}]: {}'.format(_r, commute_weather[_r]))
+        # _r = random.randint(0, len(commute_weather) - 1)  # used to be rand
+        _r = 0  # now just the first
+        # cg.send('commute_weather[{}]: {}'.format(_r, commute_weather[_r]))
+        cg.send('weather[{}][ts]= {}'.format(_r, commute_weather[_r]["ts"]))
     return commute_weather

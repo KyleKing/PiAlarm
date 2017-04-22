@@ -48,10 +48,10 @@ brightness = dimmed_b if now.hour < 6 or now.hour > 21 else default_b
 
 
 class char_disp():
-    _started = False
-    _running = True
 
     def __init__(self):
+        self._scheduled = False
+        self._checkSchedule = False
         self.Initialize()
 
     def Initialize(self):
@@ -86,7 +86,7 @@ class char_disp():
                     section = section[0]
                 comp = comp + section + self.ext(lcd_columns - len(section))
             self.update_disp(comp)
-        except:
+        except:  # noqa
             comp = self.parse_message(raw)
             cg.send('Auto-parsed message: {}'.format(comp))
 
@@ -177,7 +177,7 @@ class char_disp():
             try:
                 data = eval(status)
                 self.set_disp(data)
-            except:
+            except:  # noqa
                 raise ValueError('Unknown display input: {}'.format(status))
 
     #
@@ -185,34 +185,38 @@ class char_disp():
     #
 
     def display_weather(self):
-        if not self._started:
+        if not self._scheduled:
             # Start a fresh thread for weather updates
             cg.send('Starting update_weather()')
             self.update_weather()
-            self._running = True
-            self._started = True
+            self._checkSchedule = True
+            self._scheduled = True
             schedule.every(5).minutes.do(self.update_weather)
             cg.thread(self.run_sched)  # Start a separate thread
-        elif self._running:
-            cg.send('Error: Weather Update is already running')
-        else:
+        elif self._checkSchedule:
+            cg.send('Error: update_weather() is already running')
+        elif not self._checkSchedule:
             # Allow the weather updates to continue
-            self._running = True
             cg.send('Toggling weather updates back on')
+            self._checkSchedule = True
+            cg.thread(self.run_sched)  # Start a separate thread
+        else:
+            cg.send('No appropriate display_weather() action...')
 
     def run_sched(self):
         """Loop through the schedule to check if new task"""
-        cg.send('> Started Thread w/ _run = {}'.format(self._running))
-        while self._running:
+        cg.send('> Started Thread w/ self._c = {}'.format(self._checkSchedule))
+        while self._checkSchedule:
             schedule.run_pending()
             sleep(1)
+        cg.send('> Ended thread w/ self._c = {}'.format(self._checkSchedule))
 
     def update_weather(self):
         """Request, then parse weather data for LCD display """
         msg = []
         both_commutes = weather.hourly(quiet=False)
         for wthr in both_commutes:
-            msg.append(['{}-{} {}'.format(wthr["day"], wthr["fc"][:10],
+            msg.append(['{}-{} {}'.format(wthr["day"], wthr["fc"][:11],
                                           wthr["tmp"])[0:20]])
             msg.append(['{}{}-{}mm {}'.format(
                 wthr['snow'], wthr['pop'], wthr['precip'],
@@ -223,8 +227,7 @@ class char_disp():
 
     def stop_weather(self):
         """Stop the schedule run pending loop"""
-        self._running = False
-        self._started = False
+        self._checkSchedule = False
         cg.send('Stopped weather thread')
 
 

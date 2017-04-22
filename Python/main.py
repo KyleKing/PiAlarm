@@ -2,6 +2,7 @@
 import re
 import sys
 import datetime
+# import shutil
 from time import sleep
 
 from modules import config as cg
@@ -78,7 +79,7 @@ class action_input():
             delay = cg.dict_arg(args, "delay")
             try:
                 self.delay = float(delay)
-            except:
+            except:  # noqa
                 self.delay = 1
             lcd.text(msg)
             cg.thread(self.resume)
@@ -163,7 +164,7 @@ class read_input():
             cg.send('w/ Args: {}'.format(arguments))
             try:
                 arguments = te(arguments)
-            except:
+            except:  # noqa
                 raise ValueError('Could not eval({})'.format(arguments))
         else:
             arguments = ''
@@ -173,4 +174,9 @@ class read_input():
 
 # Point of Entry
 if __name__ == "__main__":
+    # FIXME/TODO: Is this unnecessary?
+    # pth = './Python/modules/status'
+    # shutil.copyfile('{}.py'.format(pth), '{}_alt.py'.format(pth))
+    # cg.send('Duplicating Status File: {}'.format(pth))
+    #
     read_input().start()

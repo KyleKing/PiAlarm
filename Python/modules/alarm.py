@@ -3,8 +3,8 @@ import time
 import sys
 
 import fade
-import all_off
 import lcd
+import all_off
 import config as cg
 
 if cg.is_pi():
@@ -191,6 +191,7 @@ def start(user_home):
             stage += 1
         current_time = 0
         user_home = cg.check_status()
+        cg.send('Checking home (= {}) before next loop'.format(user_home))
     stop()
 
 

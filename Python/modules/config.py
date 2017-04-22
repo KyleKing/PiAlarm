@@ -36,7 +36,7 @@ def ifttt(event, dataset={'value1': ''}):
     try:
         requests.post("https://maker.ifttt.com/trigger/" +
                       "{}/with/key/{}".format(event, key), data=dataset)
-    except:
+    except:  # noqa
         print 'IFTTT Failed - possible loss of INTERNET connection'
 
 
@@ -68,7 +68,7 @@ def read_ini(component, param, filename='pins'):
     try:
         config.read(file)
         return config.get(component, param)
-    except:
+    except:  # noqa
         raise Exception("Failed to load `{}` and `{}` from: {}".format(
             component, param, file))
 

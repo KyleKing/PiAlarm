@@ -26,10 +26,12 @@ def set_LED_state():
 
 
 def run(arg):
-    if 'exit' in arg or 'false' in arg:
+    if 'exit' in arg or 'leave' in arg or 'false' in arg:
         update_status('false')
     elif 'enter' in arg or 'true' in arg:
         update_status('true')
+    else:
+        cg.send('Error: unknown arg = {}'.format(arg))
     set_LED_state()
 
 

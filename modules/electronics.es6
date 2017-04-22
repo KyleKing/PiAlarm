@@ -104,7 +104,8 @@ module.exports = {
     PythonShell.run('./Python/modules/status.py', (err, results) => {
       if (err)
         throw err;
-      electronicDebug(`rcvd (pyShellUserStatus): ${results}`);
+      // FIXME: Log this result, but quieted for now:
+      // electronicDebug(`rcvd (pyShellUserStatus): ${results}`);
       if (cb)
         cb(results)
     });

@@ -70,13 +70,14 @@ alarms.find({}, (err, allAlarms) => {
     mainDebug(alarm);
     ClockAlarms[alarm.uniq] = sched.scheduleCron(alarm.title, alarm.schedule);
 
+    // Fixme: Update .running to "active"
     if (alarm.running === true) {
       ClockAlarms[alarm.uniq].start();
-      mainDebug(`(Register) ^ Started: ${alarm.title}`);
-      mainDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+      mainDebug(`(Register) ^ Queued: ${alarm.title}`);
+      mainDebug(`    - ${alarm.uniq} (is active? ${ClockAlarms[alarm.uniq].running})`);
     } else {
       mainDebug(`(Register) x Not starting: ${alarm.title}`);
-      mainDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+      mainDebug(`    - ${alarm.uniq} (is active? ${ClockAlarms[alarm.uniq].running})`);
     }
   });
 });
@@ -96,7 +97,7 @@ function deleteAlarm(uniq) {
 
 function eraseAlarm(uniq) {
   mainDebug(`(eraseAlarm) x Stopped: ${ClockAlarms[uniq].title}`);
-  mainDebug(`    - ${uniq} (is running? ${ClockAlarms[uniq].running})`);
+  mainDebug(`    - ${uniq} (is active? ${ClockAlarms[uniq].running})`);
   ClockAlarms[uniq].stop();
   ClockAlarms[uniq] = null;
   deleteAlarm(uniq);
@@ -110,11 +111,11 @@ function createAlarm(alarmState, socket) {
       ClockAlarms[alarm.uniq] = sched.scheduleCron(alarm.title, alarm.schedule);
       if (alarm.running === true) {
         ClockAlarms[alarm.uniq].start();
-        mainDebug(`(createAlarm) ^ Started: ${alarm.title}`);
-        mainDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+        mainDebug(`(createAlarm) ^ Queued: ${alarm.title}`);
+        mainDebug(`    - ${alarm.uniq} (is active? ${ClockAlarms[alarm.uniq].running})`);
       } else {
         mainDebug(`(createAlarm) x Didnt start: ${alarm.title}`);
-        mainDebug(`    - ${alarm.uniq} (is running? ${ClockAlarms[alarm.uniq].running})`);
+        mainDebug(`    - ${alarm.uniq} (is active? ${ClockAlarms[alarm.uniq].running})`);
       }
       socket.emit('alarm event', alarm);
     } else
