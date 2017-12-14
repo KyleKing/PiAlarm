@@ -98,3 +98,38 @@ def test_hardware():
     print 'Initializing the LCD display'
     lcd.Initialize()
     ask('Does the character display have some text?')
+
+
+def button_tests():
+    LED_State = 1
+    away_led = cg.get_pin('Alarm_Status', 'away_led')
+    onoff_led = cg.get_pin('Reserved', 'onoff_led')
+
+    def test_off_led(tmp):
+        global LED_State
+        print 'test_off_led', LED_State
+        cg.set_PWM(away_led, LED_State)
+        LED_State = 1 if LED_State == 0 else 0
+
+    def test_nf_led(tmp):
+        global LED_State
+        print 'test_nf_led', LED_State
+        cg.set_PWM(onoff_led, LED_State)
+        LED_State = 1 if LED_State == 0 else 0
+
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+
+    off_button = cg.get_pin('Input_Pins', 'off_button')
+    GPIO.setup(off_button, GPIO.IN)
+    GPIO.add_event_detect(off_button, GPIO.RISING, callback=test_off_led, bouncetime=300)
+    print "Did the OFF button work? (Press Key)"
+    __ = raw_input()
+    GPIO.remove_event_detect(off_button)
+
+    onoff_button = cg.get_pin('Reserved', 'onoff_button')
+    GPIO.setup(onoff_button, GPIO.IN)
+    GPIO.add_event_detect(onoff_button, GPIO.RISING, callback=test_nf_led, bouncetime=300)
+    print "Did the ON/OFF button work? (Press Key)"
+    __ = raw_input()
+    GPIO.remove_event_detect(onoff_button)

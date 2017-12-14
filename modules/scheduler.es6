@@ -48,7 +48,7 @@ function WOKE(schedule) {
   const JOB = new CronJob(schedule, () => {
     electronics.queryStatus();
   }, () => {
-    schedDebug('Completed WOKE (Insonia V2) task')
+    schedDebug('Completed WOKE (Insomnia V2) task')
   }, false);
   return JOB;
 }

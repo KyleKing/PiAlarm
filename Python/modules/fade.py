@@ -70,3 +70,11 @@ def fade_RGB_Strip():
 if __name__ == "__main__":
     # Test the above module:
     fade_RGB_Strip()
+    print "Did Fade work? (Press Key)"
+
+    cg.set_PWM(pin_red, 0.5)
+    print "Currently Red? (Press Key)"
+    cg.set_PWM(pin_green, 0.5)
+    print "Currently Green? (Press Key)"
+    cg.set_PWM(pin_blue, 0.5)
+    print "Currently Blue? (Press Key)"

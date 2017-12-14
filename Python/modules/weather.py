@@ -1,7 +1,7 @@
 # Get weather conditions through WeatherUnderground (based on:
 # https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298)
 import json
-import random
+# import random
 import urllib2
 import numpy as np
 

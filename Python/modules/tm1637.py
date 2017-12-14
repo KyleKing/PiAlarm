@@ -189,20 +189,27 @@ class TM1637:
         try:
             print 'Attempting to stop live clock'
             self.__stop_event.set()
-        except:
+            self.Clear()
+        except AttributeError:
             print 'No clock to close'
 
 
 if __name__ == "__main__":
     """Confirm the display operation"""
-    display = TM1637(CLK=21, DIO=20, brightness=1.0)
+    import config as cg
+    # Initialize the clock (GND, VCC=3.3V, Example Pins are DIO=20 and CLK=21)
+    clock = cg.get_pin('7Segment', 'clk')
+    digital = cg.get_pin('7Segment', 'dio')
+    display = TM1637(CLK=clock, DIO=digital, brightness=1.0)
+    print('clock', clock)
+    print('digital', digital)
 
     display.Clear()
 
     digits = [1, 2, 3, 4]
     display.Show(digits)
     print "1234  - Working? (Press Key)"
-    scrap = raw_input()
+    __ = raw_input()
 
     print "Updating one digit at a time:"
     display.Clear()
@@ -214,7 +221,7 @@ if __name__ == "__main__":
     sleep(0.5)
     display.Show1(0, 4)
     print "4321  - (Press Key)"
-    scrap = raw_input()
+    __ = raw_input()
 
     print "Add double point\n"
     display.ShowDoublepoint(True)
@@ -228,5 +235,11 @@ if __name__ == "__main__":
     print "30% Brightness"
     display.SetBrightness(0.3)
     sleep(0.3)
+    print "Start the clock?"
+    __ = raw_input()
 
-    # See clock.py for how to use the clock functions!
+    display.StartClock(military_time=True)
+    print "Stop the clock?"
+    __ = raw_input()
+
+    display.StopClock()
