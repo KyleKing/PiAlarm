@@ -1,5 +1,5 @@
 # Get weather conditions through WeatherUnderground (based on:
-# https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298)
+# https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298
 import json
 # import random
 import urllib2
@@ -45,8 +45,11 @@ def conditions():
     weather = weatherdata['weather']  # Overcast
     temperature_string = weatherdata['temperature_string']  # 37.0 F (2.8 C)
     temp_c = weatherdata['temp_c']  # 2.8
+    temp_f = weatherdata['temp_f']  # 43
     feelslike_c = weatherdata['feelslike_c']  # 4
+    feelslike_f = weatherdata['feelslike_f']  # 43
     windchill_c = weatherdata['windchill_c']  # 3
+    windchill_f = weatherdata['windchill_f']  # 42
     wnd = weatherdata['wind_string']  # From the South at 2.0 MPH...
     wind_gust_mph = weatherdata['wind_gust_mph']  # 7.0
     precip = weatherdata['precip_today_string']  # 0.00 in (0 mm)
@@ -58,8 +61,11 @@ def conditions():
         "weather": weather,
         "temperature_string": temperature_string,
         "temp_c": temp_c,
+        "temp_f": temp_f,
         "feelslike_c": feelslike_c,
+        "feelslike_f": feelslike_f,
         "windchill_c": windchill_c,
+        "windchill_f": windchill_f,
         "wnd": wnd,
         "wind_gust_mph": wind_gust_mph,
         "precip": precip,
@@ -107,8 +113,8 @@ def hourly(quiet=True):
                 k_init = k
             fc.append(hour['wx'])  # Clear/Wind
             cnd.append(hour['condition'])  # Chance of Rain
-            temp.append(eval(hour['temp']['metric']))  # 9
-            tmp.append(eval(hour['feelslike']['metric']))  # 9
+            temp.append(eval(hour['temp']['english']))  # 9
+            tmp.append(eval(hour['feelslike']['english']))  # 43
             # wspd.append(eval(hour['wspd']['metric']))  # 37
             wspd.append(eval(hour['wspd']['english']))  # 20
             wdir.append(hour['wdir']['dir'])  # WNW
@@ -117,15 +123,14 @@ def hourly(quiet=True):
             hm.append(eval(hour['humidity']))  # 46
             snow.append(eval(hour['snow']['metric']))  # 0
             qpf.append(eval(hour['qpf']['metric']))  # 0 {rain?}
-        # "snow": '{} cm'.format(np.amax(snow)),
         commute_weather.append({
             "ts": ts_start,
             "hr": h_start,
             "day": day,
             "fc": fc[1],
             "cnd": cnd[1],
-            "temp": '{:3.1f}C'.format((np.mean(temp))),
-            "tmp": '{:+d}C'.format(int(np.mean(tmp))),
+            "temp": '{:3.1f}F'.format((np.mean(temp))),
+            "tmp": '{:+d}F'.format(int(np.mean(tmp))),
             "wspd": '{}mph'.format(int(np.mean(wspd))),
             "wdir": wdir[1],
             "pop": '{}%'.format(np.amax(pop)),

@@ -68,6 +68,15 @@ module.exports = {
       const id = req.params.id
       if (id === 'enter' || id === 'exit') {
         electronics.send(`[status] @>arg:>>${id}`);
+        // Toggle Display based on entry/exit status:
+        const curHour = new Date().getHours();
+        if (id === 'exit') {
+          electronics.send('[LCD] @>display:>>off');
+          electronics.send('[clock] @>display:>>0');
+        } else if (curHour < 21 && curHour > 7) {
+          electronics.send('[LCD] @>display:>>on');
+          electronics.send('[clock] @>display:>>1');
+        }
         const filepath = path.resolve(`${_dirname}/views/${id}.html`);
         return res.sendFile(filepath);
       }

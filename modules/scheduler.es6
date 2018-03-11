@@ -32,12 +32,21 @@ function sendOnCron(schedule, msg) {
   }, false);
   return JOB;
 }
-const weekendActivate = sendOnCron('50 30 8 * * 0,6', '[LCD] @>display:>>on');
-const weekdayActivate = sendOnCron('50 30 6 * * 1-5', '[LCD] @>display:>>on');
+// Control the Super-Bright LCD Display Backlight
+const weekendActivate = sendOnCron('25 58 8 * * 0,6,7', '[LCD] @>display:>>on');
+const weekdayActivate = sendOnCron('25 58 7 * * 1-5', '[LCD] @>display:>>on');
 const deactivate = sendOnCron('50 30 21 * * *', '[LCD] @>display:>>off');
 weekendActivate.start();
 weekdayActivate.start();
 deactivate.start();
+
+// Control the 7 Segment Clock Module
+const clockWkday = sendOnCron('50 00 9 * * 0,6,7', '[clock] @>display:>>1');
+const clockWknd = sendOnCron('50 30 6 * * 1-5', '[clock] @>display:>>1');
+const clockDeac = sendOnCron('50 30 21 * * *', '[clock] @>display:>>0');
+clockWkday.start();
+clockWknd.start();
+clockDeac.start();
 
 // Keep Pi and node app awake:
 const everyFive = '0,5,10,15,20,25,30,35,40,45,50,55'

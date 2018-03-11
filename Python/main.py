@@ -16,16 +16,17 @@ if cg.is_pi():
 cg.quiet_logging(False)
 
 
-class action_input():
+class action_input(object):
     """
     Break input of [`cmd`] into one of if statements listed below
         (i.e. test, alarm, lcd, status, etc...)
     Then act on supplied arguments
     """
 
-    def __init__(self, operation, args, message=''):
+    def __init__(self, operation, args, message='', tm1637_display=False):
         self.delay = 1
         self.msg = message
+        self.Display = tm1637_display
         operation = operation.lower().strip()
         cg.send('Acting on: {} w/ msg: {}'.format(operation, self.msg))
         """Determine the proper action based on the arguments"""
@@ -42,6 +43,10 @@ class action_input():
         elif re.match(operation, 'lcd'):
             self._mjr('Updating Character lcd!')
             self.lcd_logic(args)
+        elif re.match(operation, 'clock'):
+            self._mjr('Updating TM1637 Clock Module (brightness)!')
+            cg.send('**TM1637 Clock Args: {}'.format(self.msg))
+            self.Display.SetBrightness(float(args['display']))
         elif re.match(operation, 'status'):
             self._mjr('Starting status!')
             arg = cg.dict_arg(args, "arg")
@@ -91,7 +96,7 @@ class action_input():
         #     cg.send('INSOMNIA! Everything is running')
 
 
-class read_input():
+class read_input(object):
     """
     Open read line that parses input in format:
         [`cmd`] @>`key`:>>`value` @>`key`:>>`value` ...etc
@@ -104,11 +109,13 @@ class read_input():
         # Initialize the clock (GND, VCC=3.3V)
         clock = cg.get_pin('7Segment', 'clk')
         digital = cg.get_pin('7Segment', 'dio')
+        cg.send('Starting Clock? is pi: {}'.format(cg.is_pi()))
         if cg.is_pi():
-            Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
-            Display.StartClock(military_time=True)
+            self.Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
+            self.Display.StartClock(military_time=True)
         else:
             cg.send('Would run TM1637 w/ C:{}, D:{}'.format(clock, digital))
+        cg.send('Running ALL OFF')
         all_off.run()
         # Toggle display based on time of day
         evening = int(datetime.datetime.now().hour) >= 20
@@ -169,7 +176,7 @@ class read_input():
         else:
             arguments = ''
         # Decide on the appropriate action:
-        action_input(operation, arguments, self.message)
+        action_input(operation, arguments, self.message, self.Display)
 
 
 # Point of Entry
