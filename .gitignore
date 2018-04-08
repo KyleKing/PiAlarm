@@ -44,3 +44,5 @@ data/
 secret.*
 *.pyc
 /Python/modules/tmp.py
+/docs
+/.external-ecmascript.js

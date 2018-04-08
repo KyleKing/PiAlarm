@@ -1,0 +1,39 @@
+{
+  "env": {
+    "browser": true,
+    "jasmine": true,
+    "node": true
+  },
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 6
+  },
+  "rules": {
+    "class-methods-use-this": [0],
+    "curly": ["error","multi-or-nest"],
+    "eqeqeq": [2,"smart"],
+    "id-length": [0],
+    "import/newline-after-import": [0],
+    "import/no-unresolved": [0],
+    "new-cap": [2,{"capIsNew": false}],
+    "no-alert": [0],
+    "no-console": [0],
+    "no-constant-condition": [0],
+    "no-loop-func": [0],
+    "no-param-reassign": [0],
+    "no-shadow": [1],
+    "no-underscore-dangle": ["error", {"allowAfterThis": true}],
+    "object-curly-spacing": [0],
+    "quotes": [0],
+    "react/jsx-no-bind": [2, {"allowBind": true}],
+    "react/no-multi-comp": [0],
+    "react/prop-types": [2, {"ignore": ["children"]}],
+    "react/require-extension": [0],
+    "react/sort-comp": [2],
+    "semi": [0]
+  }
+}

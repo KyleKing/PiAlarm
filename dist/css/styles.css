@@ -3,18 +3,18 @@
  */
 
 header {
-    padding-top: 20px;
-    padding-bottom: 20px;
+  padding-bottom: 20px;
+  padding-top: 20px;
 }
 
 ul {
-    padding-right: 40px;
-    padding-left: 40px;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 ul li {
-    position: relative;
-    list-style: none;
-    color: white;
+  color: white;
+  list-style: none;
+  position: relative;
 }
 
 /*
@@ -22,34 +22,34 @@ ul li {
  */
 
 .flex-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 .flex-item {
-    flex-grow: 1
+  flex-grow: 1;
 }
 
 /* Status Colors */
 .alarm {
-    background-color: RGB(52, 73, 94);
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 3px;
+  background-color: RGB(52, 73, 94);
+  border-radius: 3px;
+  margin-bottom: 15px;
+  padding: 10px;
 }
 
 .alarm-buttons {
-    text-align: right;
+  text-align: right;
 }
 
 span {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 /* CSS Workaround of immutable React this.state() */
 .removed {
-    display: none !important;
+  display: none !important;
 }
 
 /*
@@ -57,36 +57,36 @@ span {
  */
 
 .custom-button-formatting {
-    max-width: 100px;
-    margin: 10px;
-    padding-top: 10px !important;
-    padding-right: 20px !important;
-    padding-bottom: 10px !important;
-    padding-left: 20px !important;
+  margin: 10px;
+  max-width: 100px;
+  padding-bottom: 10px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 10px !important;
 }
 
 .button-oversized {
-    max-width: 500px !important;
-    padding: 20px;
-    margin: 15px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+  display: block;
+  margin: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 500px !important;
+  padding: 20px;
 }
 
 /* Save Button: */
 .changed {
-    color: #fff;
-    background-color: #48c9b0;
-    border-color: #48c9b0;
+  background-color: #48c9b0;
+  border-color: #48c9b0;
+  color: #ffffff;
 }
 .unchanged {
-    background-color: #bdc3c7;
-    border-color: #bdc3c7;
-    color: rgba(255, 255, 255, 0.75);
-    opacity: 0.7;
-    filter: alpha(opacity=70);
-    cursor: not-allowed;
+  background-color: #bdc3c7;
+  border-color: #bdc3c7;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: not-allowed;
+  filter: alpha(opacity=70);
+  opacity: 0.7;
 }
 
 /*
@@ -94,23 +94,14 @@ span {
  */
 
 input {
-    color: RGB(52, 73, 94);
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 5px;
-    margin-right: 5px;
+  color: RGB(52, 73, 94);
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 10px;
 }
 .input-error {
-    border-color: #ec7063;
-    border-width: 4px;
-    background-color: RGB(238, 123, 123);
+  background-color: RGB(238, 123, 123);
+  border-color: #ec7063;
+  border-width: 4px;
 }
-
-/*
- TODO
- */
-
-/*
-@media (min-width: 500px) {
-}
-*/
