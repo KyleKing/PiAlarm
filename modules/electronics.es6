@@ -1,8 +1,8 @@
 /* initialize debugger */
-import { init } from './debugger.es6';
-const electronicDebug = init('elec');
-electronicDebug('Debugger initialized!');
-const moment = require('moment');
+import {init} from './debugger.es6'
+const electronicDebug = init( 'elec' )
+electronicDebug( 'Debugger initialized!' )
+const moment = require( 'moment' )
 // const exec = require('child_process').exec;
 // const spawn = require('child_process').spawn;
 // const CronJob = require('cron').CronJob;
@@ -11,20 +11,20 @@ const moment = require('moment');
  * Initialize the Python Controller
  */
 
-const PythonShell = require('python-shell');
-const pyshell = new PythonShell('./Python/main.py');
-electronicDebug('Started main.py');
-pyshell.on('message', (message) => {
-  electronicDebug(`rcvd (main): ${message}`);
-});
-pyshell.on('close', (err) => {
-  if (err)
-    throw err;
-  electronicDebug('Finished and closed main.py');
-});
-pyshell.on('error', (err) => { throw err; });
+const PythonShell = require( 'python-shell' )
+const pyshell = new PythonShell( './Python/main.py' )
+electronicDebug( 'Started main.py' )
+pyshell.on( 'message', ( message ) => {
+  electronicDebug( `rcvd (main): ${message}` )
+} )
+pyshell.on( 'close', ( err ) => {
+  if ( err )
+    throw err
+  electronicDebug( 'Finished and closed main.py' )
+} )
+pyshell.on( 'error', ( err ) => { throw err } )
 // Example: pyshell.send('[all_off]');
-pyshell.send('[lcd] @>start');
+pyshell.send( '[LCD] @>start' )
 
 // // Archived:
 // function execOnNoSTDOUT(task, cb, altCB, quiet) {
@@ -46,15 +46,34 @@ pyshell.send('[lcd] @>start');
 //   });
 // }
 
-
 module.exports = {
-  send(raw) {
+  // Toggle LCD Brightness
+  brightenLCD() {
+    pyshell.send( '[LCD] @>display:>>on' )
+  },
+  dimLCD() {
+    pyshell.send( '[LCD] @>display:>>off' )
+  },
+
+  // Universal Method for Interfacing with LCD Display
+  queryStatus( cb = false ) {
+    PythonShell.run( './Python/modules/status.py', ( err, results ) => {
+      if ( err )
+        throw err
+      // FIXME: Log this result, but quieted for now:
+      // electronicDebug(`rcvd (pyShellUserStatus): ${results}`);
+      if ( cb )
+        cb( results )
+    } )
+  },
+
+  send( raw ) {
     // *FYI: The most important function:
-    pyshell.send(raw);
+    pyshell.send( raw )
   },
 
   startAlarm() {
-    pyshell.send('[alarm]')
+    pyshell.send( '[alarm]' )
   },
 
   // // Create python shell to run the predefined alarm script
@@ -75,39 +94,19 @@ module.exports = {
   //   }
   // },
 
-  // Toggle LCD Brightness
-  brightenLCD() {
-    pyshell.send('[LCD] @>display:>>on');
-  },
-  dimLCD() {
-    pyshell.send('[LCD] @>display:>>off');
-  },
-
   // Universal Method for Interfacing with LCD Display
-  updateClockDisplay(raw) {
-    let content = '';
-    if (typeof raw === 'object') {
+  updateClockDisplay( raw ) {
+    let content = ''
+    if ( typeof raw === 'object' ) {
       let formattedText = '['
-      for (let i = 0; i < raw.length; i += 1)
-        formattedText = `${formattedText}'${moment().format(raw[i])}',`;
-      content = `${formattedText.slice(0, -1)}]`;
+      for ( let i = 0; i < raw.length; i += 1 )
+        formattedText = `${formattedText}'${moment().format( raw[i] )}',`
+      content = `${formattedText.slice( 0, -1 )}]`
     } else
-      content = moment().format(raw);
-    const displayText = `[lcd] @>message:>>${content} @>delay:>>1`;
-    electronicDebug(`Setting char_disp as: ${displayText}`);
-    pyshell.send(displayText);
-    return displayText;
+      content = moment().format( raw )
+    const displayText = `[lcd] @>message:>>${content} @>delay:>>1`
+    electronicDebug( `Setting char_disp as: ${displayText}` )
+    pyshell.send( displayText )
+    return displayText
   },
-
-  // Universal Method for Interfacing with LCD Display
-  queryStatus(cb = false) {
-    PythonShell.run('./Python/modules/status.py', (err, results) => {
-      if (err)
-        throw err;
-      // FIXME: Log this result, but quieted for now:
-      // electronicDebug(`rcvd (pyShellUserStatus): ${results}`);
-      if (cb)
-        cb(results)
-    });
-  },
-};
+}

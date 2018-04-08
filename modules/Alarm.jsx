@@ -6,100 +6,100 @@
 // month          0-12
 // day of week    0-6 (Sun-Sat)
 
-import React from 'react';
+import React from 'react'
 const socket = io();  // eslint-disable-line
 
 class Alarm extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor( props ) {
+    super( props )
     this.state = {
-      uniq: this.props.uniq,
-      title: this.props.title,
-      schedule: this.props.schedule,
-      running: this.props.running,
-      removed: false,
       changed: false,
       error: false,
-    };
+      removed: false,
+      running: this.props.running,
+      schedule: this.props.schedule,
+      title: this.props.title,
+      uniq: this.props.uniq,
+    }
     // More efficient bind to onClick event:
     // https://github.com/goatslacker/alt/issues/283#issuecomment-122650637
-    this.EnDisableToggle = this.EnDisableToggle.bind(this);
-    this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleScheduleChange = this.handleScheduleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.removeAlarm = this.removeAlarm.bind(this);
+    this.EnDisableToggle = this.EnDisableToggle.bind( this )
+    this.handleTitleChange = this.handleTitleChange.bind( this )
+    this.handleScheduleChange = this.handleScheduleChange.bind( this )
+    this.handleSubmit = this.handleSubmit.bind( this )
+    this.removeAlarm = this.removeAlarm.bind( this )
   }
 
   EnDisableToggle() {
     // console.log(`Toggled: ${this.props.uniq}, but no direct action!`);
-    this.setState({
+    this.setState( {
+      changed: true,
       running: !this.state.running,
-      changed: true,
-    });
+    } )
   }
 
-  handleTitleChange(event) {
-    this.setState({
+  handleTitleChange( event ) {
+    this.setState( {
+      changed: true,
       title: event.target.value,
-      changed: true,
-    });
+    } )
   }
 
-  handleScheduleChange(event) {
-    const newSched = event.target.value.trim();
-    if (/^((\S+\s+){5}\S+)$/.test(newSched)) {
+  handleScheduleChange( event ) {
+    const newSched = event.target.value.trim()
+    if ( /^((\S+\s+){5}\S+)$/.test( newSched ) ) {
       // console.log(event.target.value);
-      this.setState({
-        schedule: newSched,
+      this.setState( {
         changed: true,
         error: false,
-      });
+        schedule: newSched,
+      } )
     } else {
-      this.setState({
+      this.setState( {
         error: true,
-      });
-      console.warn(`[IC!]: Improper Cron formatting of ${newSched}`);
+      } )
+      console.warn( `[IC!]: Improper Cron formatting of ${newSched}` )
     }
   }
 
   handleSubmit() {
     const newState = {
-      uniq: this.state.uniq,
-      title: this.state.title,
-      schedule: this.state.schedule,
-      running: this.state.running,
-      removed: false,
       changed: false,
       error: false,
-    };
-    this.setState(newState);
-    socket.emit('update', newState);
-    console.log(`Submitted: ${this.props.uniq} with:`);
-    console.log(newState);
+      removed: false,
+      running: this.state.running,
+      schedule: this.state.schedule,
+      title: this.state.title,
+      uniq: this.state.uniq,
+    }
+    this.setState( newState )
+    socket.emit( 'update', newState )
+    console.log( `Submitted: ${this.props.uniq} with:` )
+    console.log( newState )
   }
 
   removeAlarm() {
     const newState = {
-      uniq: this.state.uniq,
-      title: 'DELETED',
-      removed: true,
       changed: true,
-    };
-    this.setState(newState);
-    socket.emit('remove', this.props.uniq);
-    console.log(`Clicked to remove: ${this.props.uniq}, which was:`);
-    console.log(newState);
+      removed: true,
+      title: 'DELETED',
+      uniq: this.state.uniq,
+    }
+    this.setState( newState )
+    socket.emit( 'remove', this.props.uniq )
+    console.log( `Clicked to remove: ${this.props.uniq}, which was:` )
+    console.log( newState )
   }
 
   render() {
     const fc = 'flex-container'
     const fi = 'flex-item'
-    const buttonBase = 'btn custom-button-formatting';
-    const buttonValue = this.state.running ? 'Enabled' : 'Disabled';
-    const buttonState = this.state.running ? 'info' : 'danger';
-    const buttonClasses = `${buttonBase} btn-${buttonState} ${buttonValue}`;
-    const removed = this.state.removed ? 'removed' : 'alarm-exists';
-    const changed = this.state.changed ? 'changed' : 'unchanged';
+    const buttonBase = 'btn custom-button-formatting'
+    const buttonValue = this.state.running ? 'Enabled' : 'Disabled'
+    const buttonState = this.state.running ? 'info' : 'danger'
+    const buttonClasses = `${buttonBase} btn-${buttonState} ${buttonValue}`
+    const removed = this.state.removed ? 'removed' : 'alarm-exists'
+    const changed = this.state.changed ? 'changed' : 'unchanged'
 
     return (
       <div className={`alarm ${removed} ${fc}`}>
@@ -117,7 +117,7 @@ class Alarm extends React.Component {
         />
         <input
           type="text"
-          className={`${fi} input-schedule ${(this.state.error) ? 'input-error' : ''}`}
+          className={`${fi} input-schedule ${( this.state.error ) ? 'input-error' : ''}`}
           defaultValue={this.state.schedule}
           onChange={this.handleScheduleChange}
         />
@@ -134,15 +134,15 @@ class Alarm extends React.Component {
           onClick={this.removeAlarm}
         >REMOVE</button>
       </div>
-    );
+    )
   }
 }
 
 Alarm.propTypes = {
-  uniq: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
-  schedule: React.PropTypes.string.isRequired,
   running: React.PropTypes.bool.isRequired,
-};
+  schedule: React.PropTypes.string.isRequired,
+  title: React.PropTypes.string.isRequired,
+  uniq: React.PropTypes.string.isRequired,
+}
 
-export default Alarm;
+export default Alarm

@@ -2,28 +2,28 @@
  * initialize debugger
  */
 
-const clc = require('cli-color');
-const debug = require('debug');
-const fs = require('fs');
+const clc = require( 'cli-color' )
+const debug = require( 'debug' )
+const fs = require( 'fs' )
 
 module.exports = {
   error: clc.red.bold,
-  warn: clc.yellow,
-  info: clc.blue,
-  ignore: clc.xterm(8),
-  init: (app) => {
-    if (process.env.VERBOSE !== 'false') debug.enable('app:*');
-    return debug(`app:${app}`);
+  exists( filename, cb ) {
+    fs.access( filename, cb )
   },
-  existsSync(filename) {
+  existsSync( filename ) {
     try {
-      fs.accessSync(filename);
-      return true;
-    } catch (ex) {
-      return false;
+      fs.accessSync( filename )
+      return true
+    } catch ( ex ) {
+      return false
     }
   },
-  exists(filename, cb) {
-    fs.access(filename, cb);
+  ignore: clc.xterm( 8 ),
+  info: clc.blue,
+  init: ( app ) => {
+    if ( process.env.VERBOSE !== 'false' ) debug.enable( 'app:*' )
+    return debug( `app:${app}` )
   },
-};
+  warn: clc.yellow,
+}
