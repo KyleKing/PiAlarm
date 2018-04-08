@@ -75,10 +75,13 @@ class action_input(object):
         """Toggle LCD back light / new text"""
         cg.send('LCD Args: {}'.format(self.msg))
         disp = cg.dict_arg(args, "display")
-        if disp:
-            lcd.brightness(disp)
         msg = cg.dict_arg(args, "message")
-        if msg:
+        start = cg.dict_arg(args, "start")
+        if disp:
+            cg.send('Case 1: Updating display brightness')
+            lcd.brightness(disp)
+        elif msg:
+            cg.send('Case 2: Received Message')
             # Prep the display for before/after the message
             lcd.stop_weather()
             delay = cg.dict_arg(args, "delay")
@@ -88,8 +91,8 @@ class action_input(object):
                 self.delay = 1
             lcd.text(msg)
             cg.thread(self.resume)
-        start = cg.dict_arg(args, "start")
-        if start:
+        elif start:
+            cg.send('Case 3: Starting LCD_Weather()')
             lcd.cycle_weather()
         # insomnia = cg.dict_arg(args, "insomnia")
         # if insomnia:

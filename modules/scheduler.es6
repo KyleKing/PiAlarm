@@ -48,10 +48,9 @@ clockWkday.start();
 clockWknd.start();
 clockDeac.start();
 
-// Keep Pi and node app awake:
-const everyFive = '0,5,10,15,20,25,30,35,40,45,50,55'
-// const insomnia = sendOnCron(`20 ${everyFive} * * * *`, '[lcd] @>insomnia');
-// insomnia.start()
+// Make sure the character display is always running with the latest weather information
+const resumeWeather = sendOnCron('2 0 5,20 * * *', '[LCD] @>start:>>True');
+resumeWeather.start();
 
 function WOKE(schedule) {
   const JOB = new CronJob(schedule, () => {
@@ -61,6 +60,8 @@ function WOKE(schedule) {
   }, false);
   return JOB;
 }
+// Keep Pi and node app awake:
+const everyFive = '0,5,10,15,20,25,30,35,40,45,50,55'
 const insomnia = WOKE(`20 ${everyFive} * * * *`);
 insomnia.start()
 

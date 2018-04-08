@@ -135,7 +135,7 @@ def hourly(quiet=True):
             "wdir": wdir[1],
             "pop": '{}%'.format(np.amax(pop)),
             "hm": '{:2d}%'.format(int(np.mean(hm))),
-            "snow": 'SNOW! ' if np.amax(snow) > 0.1 else '',
+            "snow": '',  # "snow": 'SNOW! ' if np.amax(snow) > 0.1 else '',
             "precip": np.amax(qpf)
         })
     # cg.send('Example (Wthr cnd):', commute_weather[0]["cnd"])

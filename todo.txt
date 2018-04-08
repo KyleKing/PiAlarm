@@ -1,0 +1,11 @@
+# TODO
+
+> Soon
+- Check colors of LCD
+- LCD wrap text is broken...
+- Update the wiring diagram
+- Re-solder the speaker to a 5V line rather than the current 3V
+
+> Long Term
+- Add a longer light strip!
+- Capture a better image of the alarm clock assembly then label everything in Sketch

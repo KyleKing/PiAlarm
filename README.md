@@ -29,9 +29,41 @@ Using react and socket.io, I built a simple web app accessible anywhere. Once in
 
 ## How to run your own version
 
-<!-- FIXME -->
+First, check the pins.ini file in the Python/ directory, then proceed the test of each hardware before booting the web application for the first time.
+
+### Initialization
+
+You will need a secret.ini file in the Python/ directory:
+
+```ini
+[IFTTT]
+key = <>
+
+[WU]
+info = Weather Underground API
+apikey = <>
+lat = <>
+lon = <>
+```
+
+Python packages and other libraries installed, see the script `./Python/requirements.sh`
+
+and Node modules: `cd PiAlarm; npm install`
+
+There are likely other bugs, so open an issue if you run into any trouble. This app really isn't built for distribution and is only a personal side-project.
+
+### Hardware Test: TM1637 7-Digit Display
+
+```
+cd PiAlarm/Python
+python modules/TM1637.py
+# There should be a few statements printed and you can press enter to confirm each test
+```
+
 
 *(TODO) I'm currently in the midst of revamping the clock display and refactoring the app, so I'll add a guide upon request. Open an issue to let me know that you're interested!*
+
+
 
 ## Acknowledgments
 
@@ -40,22 +72,3 @@ Using react and socket.io, I built a simple web app accessible anywhere. Once in
 ## Made by
 
 [Kyle King](http://kyleking.me)
-
-<!--
-
-### TODO
-
-> Long Term
-- Use heat shrink tubing to better organize the wires with masking tape labels
-- Add a plastic surface that presses the button like in my old alarm clock
-- *Add the second light strip!
-- Figure out what do to with the final housing
-....
-- Add a sleep button to allow the alarm to be turned off for an hour when I'm up before the first alarm > just one alarm per day
-- Setup the dip switch to toggle between regular boot or with the alarm clock > too much work for little reward
-- Use the spade connectors with matching gauge wire, find the seam on the spade terminal (usually top), and place seam up to crimp
-    > https://www.youtube.com/watch?v=eg9hjqkJWmg
-- Cut perf by etching a box cutter fix times along a line of holes. Then snap. Sand as needed, but fiberglass is dangerous to sand FYI
-- Setup strain relief on the lead wires
-
--->
