@@ -6,6 +6,5 @@ import fade  # noqa
 import lcd  # noqa
 import status  # noqa
 import tests  # noqa
+import tm1637  # noqa
 import weather  # noqa
-if config.is_pi():
-    import tm1637  # noqa

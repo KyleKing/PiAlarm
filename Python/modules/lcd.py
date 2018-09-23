@@ -213,6 +213,7 @@ class char_disp():
 
     def update_weather(self):
         """Request, then parse weather data for LCD display """
+        cg.send('Running update_weather()')
         msg = []
         both_commutes = weather.hourly(quiet=False)
         for wthr in both_commutes:

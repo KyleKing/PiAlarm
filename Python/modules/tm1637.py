@@ -1,9 +1,13 @@
-# !/usr/bin/python
+"""Manipulate a TM1637 7-segment display."""
 
 import math
-import RPi.GPIO as IO
 import threading
-from time import sleep, localtime
+from time import localtime, sleep
+
+import config as cg
+
+from context import IO
+
 # from tqdm import tqdm
 
 IO.setwarnings(False)
@@ -196,7 +200,7 @@ class TM1637:
 
 if __name__ == "__main__":
     """Confirm the display operation"""
-    import config as cg
+
     # Initialize the clock (GND, VCC=3.3V, Example Pins are DIO=20 and CLK=21)
     clock = cg.get_pin('7Segment', 'clk')
     digital = cg.get_pin('7Segment', 'dio')

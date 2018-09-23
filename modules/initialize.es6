@@ -32,7 +32,8 @@ module.exports = {
     } )
 
     // Configure the app port, etc.
-    app.set( 'port', 3000 )
+    app.set( 'port', 8000 ) // TODO: Set RPi port to 8000 instead of 80
+    // app.set( 'port', 300 )
     app.use( express.static( 'dist' ) )
     app.use( bodyParser.urlencoded( {extended: false} ) )
     app.use( cookieParser() )

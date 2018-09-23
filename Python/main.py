@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
+
+import datetime
 import re
 import sys
-import datetime
-# import shutil
 from time import sleep
 
 from modules import config as cg
-from modules import tests, alarm, lcd
-from modules import status, all_off
+from modules import alarm, all_off, lcd, status, tests, tm1637
 
-if cg.is_pi():
-    from modules import tm1637
-
+# import shutil
 
 cg.quiet_logging(False)
 
@@ -112,12 +109,8 @@ class read_input(object):
         # Initialize the clock (GND, VCC=3.3V)
         clock = cg.get_pin('7Segment', 'clk')
         digital = cg.get_pin('7Segment', 'dio')
-        cg.send('Starting Clock? is pi: {}'.format(cg.is_pi()))
-        if cg.is_pi():
-            self.Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
-            self.Display.StartClock(military_time=True)
-        else:
-            cg.send('Would run TM1637 w/ C:{}, D:{}'.format(clock, digital))
+        self.Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
+        self.Display.StartClock(military_time=True)
         cg.send('Running ALL OFF')
         all_off.run()
         # Toggle display based on time of day
