@@ -5,7 +5,6 @@
 
 Action Items:
 
-- Run on laptop for faster development (get rid of .is_pi() and use context.py with stub files)
 - Refactor Python files for docstrings and variable case
 - Fix:
     + Weather display doesn't update
@@ -15,6 +14,15 @@ Action Items:
 - Add simply.js to modify alarms from watch: http://simplyjs.io/
 - Configure router to use port 8000 from Raspberry Pi as port 80? (This way website doesn't need port in URL)
 - Update README
+- From TODO.txt
+    + Check colors of LCD
+    + LCD wrap text is broken...
+    + Update the wiring diagram
+    + Re-solder the speaker to a 5V line rather than the current 3V
+- Long Term
+    + Add a longer light strip!
+    + Capture a better image of the alarm clock assembly then label everything in Sketch
+
 
 ## The Alarm
 

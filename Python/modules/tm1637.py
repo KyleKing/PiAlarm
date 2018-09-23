@@ -7,8 +7,6 @@ from time import localtime, sleep
 import config as cg
 from context import IO
 
-# from tqdm import tqdm
-
 IO.setwarnings(False)
 IO.setmode(IO.BCM)
 
@@ -18,150 +16,140 @@ HexDigits = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
 ADDR_AUTO = 0x40
 ADDR_FIXED = 0x44
 STARTADDR = 0xC0
-# DEBUG = False
 
 
-class TM1637:
-    __doublePoint = False
-    __Clkpin = 0
-    __Datapin = 0
-    __brightness = 1.0  # default to max brightness
-    __currentData = [0, 0, 0, 0]
+class TM1637(object):
+    """TM1637 7-Segment Display."""
 
-    def __init__(self, CLK, DIO, brightness):
-        self.__Clkpin = CLK
-        self.__Datapin = DIO
-        self.__brightness = brightness
-        IO.setup(self.__Clkpin, IO.OUT)
-        IO.setup(self.__Datapin, IO.OUT)
+    def __init__(self, clk, dio, brightness=1.0):
+        """Initializer."""
+        self.CLK = clk
+        self.DIO = dio
+        self.brightness = brightness
+
+        self.double_point = False
+        self.current_values = [0, 0, 0, 0]
+
+        IO.setup(self.CLK, IO.OUT)
+        IO.setup(self.DIO, IO.OUT)
 
     def cleanup(self):
-        """Stop updating clock, turn off display, and cleanup GPIO"""
-        self.StopClock()
-        self.Clear()
+        """Stop updating clock, turn off display, and cleanup GPIO."""
+        self.stop_clock()
+        self.clear()
         IO.cleanup()
 
-    def Clear(self):
-        b = self.__brightness
-        point = self.__doublePoint
-        self.__brightness = 0
-        self.__doublePoint = False
+    def clear(self):
+        """Clear display."""
+        b = self.brightness
+        point = self.double_point
+        self.brightness = 0
+        self.double_point = False
         data = [0x7F, 0x7F, 0x7F, 0x7F]
-        self.Show(data)
+        self.show(data)
         # Restore previous settings:
-        self.__brightness = b
-        self.__doublePoint = point
+        self.brightness = b
+        self.double_point = point
 
-    def ShowInt(self, i):
-        s = str(i)
-        self.Clear()
-        for i in range(0, len(s)):
-            self.Show1(i, int(s[i]))
-
-    def Show(self, data):
+    def show(self, data):
+        """Show data on display."""
         for i in range(0, 4):
-            self.__currentData[i] = data[i]
+            self.current_values[i] = data[i]
 
         self.start()
-        self.writeByte(ADDR_AUTO)
+        self.write_byte(ADDR_AUTO)
         self.br()
-        self.writeByte(STARTADDR)
+        self.write_byte(STARTADDR)
         for i in range(0, 4):
-            self.writeByte(self.coding(data[i]))
+            self.write_byte(self.coding(data[i]))
         self.br()
-        self.writeByte(0x88 + int(self.__brightness))
+        self.write_byte(0x88 + int(self.brightness))
         self.stop()
 
-    def Show1(self, DigitNumber, data):
-        """show one Digit (number 0...3)"""
-        if(DigitNumber < 0 or DigitNumber > 3):
-            return  # error
+    def set_digit(self, idx, data):
+        """Set 7-segment digit by index [0, 3]."""
+        assert not (idx < 0 or idx > 3), 'Index must be in (0,3). Args: ({},{})'.format(idx, data)
 
-        self.__currentData[DigitNumber] = data
+        self.current_values[idx] = data
 
         self.start()
-        self.writeByte(ADDR_FIXED)
+        self.write_byte(ADDR_FIXED)
         self.br()
-        self.writeByte(STARTADDR | DigitNumber)
-        self.writeByte(self.coding(data))
+        self.write_byte(STARTADDR | idx)
+        self.write_byte(self.coding(data))
         self.br()
-        self.writeByte(0x88 + int(self.__brightness))
+        self.write_byte(0x88 + int(self.brightness))
         self.stop()
 
-    def SetBrightness(self, percent):
-        """Accepts percent brightness from 0 - 1"""
+    def set_brightness(self, percent):
+        """Set brightness in range 0-1."""
         max_brightness = 7.0
         brightness = math.ceil(max_brightness * percent)
         if (brightness < 0):
             brightness = 0
-        if(self.__brightness != brightness):
-            self.__brightness = brightness
-            self.Show(self.__currentData)
+        if (self.brightness != brightness):
+            self.brightness = brightness
+            self.show(self.current_values)
 
-    def ShowDoublepoint(self, on):
-        """Show or hide double point divider"""
-        if(self.__doublePoint != on):
-            self.__doublePoint = on
-            self.Show(self.__currentData)
+    def show_colon(self, on):
+        """Show or hide double point divider."""
+        if (self.double_point != on):
+            self.double_point = on
+            self.show(self.current_values)
 
-    def writeByte(self, data):
+    def write_byte(self, data):
+        """Write byte to display."""
         for i in range(0, 8):
-            IO.output(self.__Clkpin, IO.LOW)
-            if(data & 0x01):
-                IO.output(self.__Datapin, IO.HIGH)
+            IO.output(self.CLK, IO.LOW)
+            if (data & 0x01):
+                IO.output(self.DIO, IO.HIGH)
             else:
-                IO.output(self.__Datapin, IO.LOW)
+                IO.output(self.DIO, IO.LOW)
             data = data >> 1
-            IO.output(self.__Clkpin, IO.HIGH)
+            IO.output(self.CLK, IO.HIGH)
 
-        # wait for ACK
-        IO.output(self.__Clkpin, IO.LOW)
-        IO.output(self.__Datapin, IO.HIGH)
-        IO.output(self.__Clkpin, IO.HIGH)
-        IO.setup(self.__Datapin, IO.IN)
+        # Wait for ACK
+        IO.output(self.CLK, IO.LOW)
+        IO.output(self.DIO, IO.HIGH)
+        IO.output(self.CLK, IO.HIGH)
+        IO.setup(self.DIO, IO.IN)
 
-        while(IO.input(self.__Datapin)):
+        while IO.input(self.DIO):
             sleep(0.001)
-            if(IO.input(self.__Datapin)):
-                IO.setup(self.__Datapin, IO.OUT)
-                IO.output(self.__Datapin, IO.LOW)
-                IO.setup(self.__Datapin, IO.IN)
-        IO.setup(self.__Datapin, IO.OUT)
+            if (IO.input(self.DIO)):
+                IO.setup(self.DIO, IO.OUT)
+                IO.output(self.DIO, IO.LOW)
+                IO.setup(self.DIO, IO.IN)
+        IO.setup(self.DIO, IO.OUT)
 
     def start(self):
-        """send start signal to TM1637"""
-        IO.output(self.__Clkpin, IO.HIGH)
-        IO.output(self.__Datapin, IO.HIGH)
-        IO.output(self.__Datapin, IO.LOW)
-        IO.output(self.__Clkpin, IO.LOW)
+        """Send start signal to TM1637."""
+        IO.output(self.CLK, IO.HIGH)
+        IO.output(self.DIO, IO.HIGH)
+        IO.output(self.DIO, IO.LOW)
+        IO.output(self.CLK, IO.LOW)
 
     def stop(self):
-        IO.output(self.__Clkpin, IO.LOW)
-        IO.output(self.__Datapin, IO.LOW)
-        IO.output(self.__Clkpin, IO.HIGH)
-        IO.output(self.__Datapin, IO.HIGH)
+        """Stop clock."""
+        IO.output(self.CLK, IO.LOW)
+        IO.output(self.DIO, IO.LOW)
+        IO.output(self.CLK, IO.HIGH)
+        IO.output(self.DIO, IO.HIGH)
 
     def br(self):
-        """terse break"""
+        """Terse break."""
         self.stop()
         self.start()
 
     def coding(self, data):
-        if(self.__doublePoint):
-            pointData = 0x80
-        else:
-            pointData = 0
-
-        if(data == 0x7F):
-            data = 0
-        else:
-            data = HexDigits[data] + pointData
-        return data
+        """Set coding of display."""
+        point_data = 0x80 if self.double_point else 0
+        return 0 if data == 0x7F else HexDigits[data] + point_data
 
     def clock(self, military_time):
-        """Clock script modified from:
-            https://github.com/johnlr/raspberrypi-tm1637"""
-        self.ShowDoublepoint(True)
+        """Clock thread script."""
+        # Based on: https://github.com/johnlr/raspberrypi-tm1637
+        self.show_colon(True)
         while (not self.__stop_event.is_set()):
             t = localtime()
             hour = t.tm_hour
@@ -172,7 +160,7 @@ class TM1637:
             d2 = t.tm_min // 10
             d3 = t.tm_min % 10
             digits = [d0, d1, d2, d3]
-            self.Show(digits)
+            self.show(digits)
             # # Optional visual feedback of running alarm:
             # print digits
             # for i in tqdm(range(60 - t.tm_sec)):
@@ -180,19 +168,20 @@ class TM1637:
                 if (not self.__stop_event.is_set()):
                     sleep(1)
 
-    def StartClock(self, military_time=True):
+    def start_clock(self, military_time=True):
+        """Start clock thread."""
         # Stop event based on: http://stackoverflow.com/a/6524542/3219667
         self.__stop_event = threading.Event()
-        self.__clock_thread = threading.Thread(
-            target=self.clock, args=(military_time,))
+        self.__clock_thread = threading.Thread(target=self.clock, args=(military_time,))
         self.__clock_thread.daemon = True  # stops w/ main thread
         self.__clock_thread.start()
 
-    def StopClock(self):
+    def stop_clock(self):
+        """Stop clock thread."""
         try:
             print 'Attempting to stop live clock'
             self.__stop_event.set()
-            self.Clear()
+            self.clear()
         except AttributeError:
             print 'No clock to close'
 
@@ -207,42 +196,38 @@ if __name__ == '__main__':
     print('clock', clock)
     print('digital', digital)
 
-    display.Clear()
+    display.clear()
 
     digits = [1, 2, 3, 4]
-    display.Show(digits)
-    print "1234  - Working? (Press Key)"
-    __ = raw_input()
+    display.show(digits)
+    raw_input('1234  - Working? (Press Key)')
 
-    print "Updating one digit at a time:"
-    display.Clear()
-    display.Show1(1, 3)
+    print 'Updating one digit at a time:'
+    display.clear()
+    display.set_digit(1, 3)
     sleep(0.5)
-    display.Show1(2, 2)
+    display.set_digit(2, 2)
     sleep(0.5)
-    display.Show1(3, 1)
+    display.set_digit(3, 1)
     sleep(0.5)
-    display.Show1(0, 4)
-    print "4321  - (Press Key)"
-    __ = raw_input()
+    display.set_digit(0, 4)
+    raw_input('4321  - (Press Key)')
 
-    print "Add double point\n"
-    display.ShowDoublepoint(True)
+    print 'Add double point\n'
+    display.show_colon(True)
     sleep(0.2)
-    print "Brightness Off"
-    display.SetBrightness(0)
+    print 'Brightness Off'
+    display.set_brightness(0)
     sleep(0.5)
-    print "Full Brightness"
-    display.SetBrightness(1)
+    print 'Full Brightness'
+    display.set_brightness(1)
     sleep(0.5)
-    print "30% Brightness"
-    display.SetBrightness(0.3)
+    print '30% Brightness'
+    display.set_brightness(0.3)
     sleep(0.3)
-    print "Start the clock?"
-    __ = raw_input()
+    raw_input('Start the clock?')
 
-    display.StartClock(military_time=True)
-    print "Stop the clock?"
-    __ = raw_input()
+    display.start_clock(military_time=True)
+    raw_input('Stop the clock?')
 
-    display.StopClock()
+    display.stop_clock()

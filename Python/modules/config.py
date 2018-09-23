@@ -1,3 +1,5 @@
+"""Configuration Utilities."""
+
 import ConfigParser
 import inspect
 import os
@@ -6,8 +8,6 @@ import sys
 import threading
 
 import requests
-
-# import datetime
 
 quiet_STDOUT = True
 
@@ -18,26 +18,23 @@ quiet_STDOUT = True
 
 
 def send(info, force=False):
-    """Force output to parent application"""
+    """Force output to parent application."""
     if not quiet_STDOUT or force:
-        # now = datetime.datetime.now()
-        # print '{:02}:{:02}> {}'.format(int(now.hour),
-        #       int(now.minute), info)
         print '{}'.format(info)
         sys.stdout.flush()
 
 
 def quiet_logging(new_value=True):
+    """Toggle logging."""
     global quiet_STDOUT
     quiet_STDOUT = new_value
 
 
 def ifttt(event, dataset={'value1': ''}):
-    """Trigger IFTTT Maker Event"""
+    """Trigger IFTTT Maker Event."""
     key = read_ini('IFTTT', 'key', filename='secret')
     try:
-        requests.post("https://maker.ifttt.com/trigger/" +
-                      "{}/with/key/{}".format(event, key), data=dataset)
+        requests.post('https://maker.ifttt.com/trigger/{}/with/key/{}'.format(event, key), data=dataset)
     except:  # noqa
         print 'IFTTT Failed - possible loss of INTERNET connection'
 
@@ -48,6 +45,7 @@ def ifttt(event, dataset={'value1': ''}):
 
 
 def _ini_path(filename='pins'):
+    """Get ini file path."""
     cwd = os.getcwd()
     if 'Python' in cwd:
         if 'modules' in cwd:
@@ -59,23 +57,25 @@ def _ini_path(filename='pins'):
 
 
 def get_pin(component, param, _eval=True):
-    """Get pin numbering value from a shared ini file"""
+    """Get pin numbering value from a shared ini file."""
     raw = read_ini(component, param, filename='pins')
     return eval(raw) if _eval else raw
 
 
 def read_ini(component, param, filename='pins'):
+    """Read ini file."""
     config = ConfigParser.RawConfigParser()
     file = _ini_path(filename)
     try:
         config.read(file)
         return config.get(component, param)
     except:  # noqa
-        raise Exception("Failed to load `{}` and `{}` from: {}".format(
+        raise Exception('Failed to load `{}` and `{}` from: {}'.format(
             component, param, file))
 
 
 def write_ini(component, param, value):
+    """Write to ini file."""
     pin_config = ConfigParser.RawConfigParser()
     file = _ini_path()
     pin_config.read(file)
@@ -85,7 +85,7 @@ def write_ini(component, param, value):
 
 
 def check_status():
-    """Returns True, if alarm is to continue running, else is False"""
+    """Return True, if alarm is to continue running, else is False."""
     stat = get_pin('Alarm_Status', 'running', _eval=False)
     return 'true' in stat.lower()
 
@@ -95,23 +95,17 @@ def check_status():
 #
 
 
-def set_PWM(pin_num, percent, quiet=False):
-    """Run PWM commands through Pi-Blaster
-        echo "22=0" > /dev/pi-blaster
-    """
-    cmd = 'echo "' + str(pin_num).zfill(2) + \
-        '={0:0.2f}" > /dev/pi-blaster'.format(percent * 1.0)
-    # cmd = 'echo "{:02}={:0.2}" > /dev/pi-blaster'.format(
-    #        pin_num, percent * 1.0)
+def set_pwm(pin_num, percent, quiet=False):
+    """Run PWM commands through Pi-Blaster."""
+    # ex: echo '22=0.0' > /dev/pi-blaster
+    cmd = 'echo "{:02}={:0.2f}" > /dev/pi-blaster'.format(int(pin_num), float(percent))
     if not quiet:
         send(cmd)
     return False if not is_pi() else subprocess.call(cmd, shell=True)
 
 
-def release_PWM(pin_num):
-    """Release pin from Pi-Blaster
-        echo "release 22" > /dev/pi-blaster
-    """
+def release_pwm(pin_num):
+    """Release pin from Pi-Blaster."""
     cmd = 'echo "release {:02}" > /dev/pi-blaster'.format(pin_num)
     send(cmd)
     return subprocess.call(cmd, shell=True)
@@ -122,7 +116,7 @@ def release_PWM(pin_num):
 
 
 def try_eval(raw):
-    """Try to find a True/False, Integer, etc. value in str input"""
+    """Try to find a True/False, Integer, etc. value in string input."""
     raw = raw.strip()
     try:
         return eval(raw)
@@ -131,7 +125,7 @@ def try_eval(raw):
 
 
 def dict_arg(args, key):
-    """Try to decode the dictionary key or return False"""
+    """Try to decode the dictionary key or return False."""
     try:
         this = args[key]
         send('@> {} found in `{}`'.format(key, args))
@@ -146,10 +140,12 @@ def dict_arg(args, key):
 
 
 def is_pi():
+    """Check if running on a Raspberry Pi."""
     return 'pi' in os.path.abspath('')
 
 
 def get_path(raw):
+    """Get full path."""
     if 'Python' not in raw:
         full = '{}/Python/{}'.format(os.path.abspath(''), raw)
         send('Setting r: {} to f: {}'.format(raw, full))
@@ -159,9 +155,9 @@ def get_path(raw):
 
 
 def is_running(task):
-    """Use ps aux to check if a script is actively running"""
+    """Use `ps aux` to check if a script is actively running."""
     # output = 256 if running, else = 0
-    output = os.system("ps aux | grep {}".format(task))
+    output = os.system('ps aux | grep {}'.format(task))
     is_active = output == 0
     send('Is `{}` running? > {} ({})'.format(task, is_active, output))
     return is_active
@@ -173,11 +169,12 @@ def is_running(task):
 
 
 def parse_argv(sys_in, arg_num=1):
+    """Parse arguments."""
     return str(sys_in.argv[arg_num]).strip().lower()
 
 
 def thread(target, args=()):
-    """Start thread for parallel processes"""
+    """Start thread for parallel processes."""
     this = threading.Thread(target=target, args=args)
     this.daemon = True  # will only run if main thread running
     this.start()
@@ -185,41 +182,41 @@ def thread(target, args=()):
 
 
 # # Stop pi-blaster / or any process:
-# print os.system("sudo kill $(ps aux | grep 'pi-blaster\/[p]" +
-#                 "i-blaster' | awk '{print $2}')")
+# print os.system('sudo kill $(ps aux | grep 'pi-blaster\/[p]' +
+#                 'i-blaster' | awk '{print $2}')')
 # sudo kill $(ps aux | grep 'pi-blaster\/[p]i-blaster' | awk '{print $2}')
 
 
-# Simple Logger
+class Logger(object):
+    """Simple custom logger handler.
 
-class logger:
-    """ Example:
-        lgr = cg.logger('name')
-        lgr.lit(lgr.ln(), 'A little alert!! With line number!')
+    lgr = cg.logger('name')
+    lgr.lit(lgr.ln(), 'A little alert!! With line number!')
+
     """
 
     def __init__(self, origin=False):
-        if len(origin) != 6:
-            print '\nOrigin must be 6 letters ({} - is not)\n'.format(origin)
-        self.__origin = origin if origin else "    br"
+        """Initializer."""
+        assert len(origin) == 6, 'Origin must be 6 letters ({} - is not)'.format(origin)
+        self.__origin = origin if origin else '    br'
 
     def ln(self):
-        """Get line number for logging"""
-        return "{:03d}".format(inspect.currentframe().f_back.f_lineno)
+        """Get line number for logging."""
+        return '{:03d}'.format(inspect.currentframe().f_back.f_lineno)
 
     def _format(self, ln, message):
         return '{} (#{}): {}'.format(self.__origin, ln, message.strip())
 
     def lit(self, ln, message, print_out=True):
-        """Minor - two line comment"""
+        """Minor - two line comment."""
         send(self._format(ln, message))
-        send(self._format(ln, ""))
+        send(self._format(ln, ''))
         send(self._format(ln, message))
 
     def big(self, ln, message):
-        """Major - five line comment"""
-        send(self._format(ln, "__"))
-        send(self._format(ln, ""))
+        """Major - five line comment."""
+        send(self._format(ln, '__'))
+        send(self._format(ln, ''))
         send(self._format(ln, message))
-        send(self._format(ln, ""))
-        send(self._format(ln, "__"))
+        send(self._format(ln, ''))
+        send(self._format(ln, '__'))

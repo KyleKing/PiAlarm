@@ -45,7 +45,7 @@ class ActionInput(object):
             if arg:
                 status.run(arg)
             else:
-                status.set_LED_state()
+                status.set_led_state()
         else:
             self._mjr('Error: No known op for: {}'.format(self.msg))
         # if any(re.match("weather", arg) for arg in args):
@@ -106,8 +106,8 @@ class ReadInput(object):
         # Initialize the clock (GND, VCC=3.3V)
         clock = cg.get_pin('7Segment', 'clk')
         digital = cg.get_pin('7Segment', 'dio')
-        self.Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
-        self.Display.StartClock(military_time=True)
+        self.Display = tm1637.TM1637(clock, digital, brightness=1.0)
+        self.Display.start_clock(military_time=True)
         cg.send('Running ALL OFF')
         all_off.deactivate()
         # Toggle display based on time of day

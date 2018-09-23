@@ -1,3 +1,5 @@
+"""Control LCD."""
+
 import datetime
 import re
 from time import sleep
@@ -5,10 +7,7 @@ from time import sleep
 import config as cg
 import schedule
 import weather
-
-if cg.is_pi():
-    import Adafruit_CharLCD as LCD
-    import Adafruit_GPIO.MCP230xx as MCP
+from context import LCD, MCP
 
 # FIXME: Trims last word in longer strings...
 # TODO: Can't handle longer words that don't have spaces inside (just cut)
@@ -31,44 +30,42 @@ lcd_red = cg.get_pin('LCD_I2C_Pins', 'lcd_red')
 lcd_green = cg.get_pin('LCD_I2C_Pins', 'lcd_green')
 lcd_blue = cg.get_pin('LCD_I2C_Pins', 'lcd_blue')
 
-if cg.is_pi():
-    gpio = MCP.MCP23008()
-    lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
-                               lcd_columns, lcd_rows, lcd_backlight, gpio=gpio)
+gpio = MCP.MCP23008()
+lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
+                           lcd_columns, lcd_rows, lcd_backlight, gpio=gpio)
 
 # Set brightness to something reasonable based on time of day
 now = datetime.datetime.now()
-# default_b = (0.5, 0.0, 1.0)
-default_b = (1.0, 0.0, 1.0)
+default_b = (1.0, 0.0, 1.0)  # (0.5, 0.0, 1.0)
 off_b = (1.0, 1.0, 1.0)
-# dimmed_b = (0.7, 1.0, 0.7)
-dimmed_b = (0.0, 1.0, 1.0)
+dimmed_b = (0.0, 1.0, 1.0)  # (0.7, 1.0, 0.7)
 brightness = dimmed_b if now.hour < 6 or now.hour > 21 else default_b
 
 
-class char_disp():
+class CharDisp():
+    """Character display instance."""
 
     def __init__(self):
+        """Initializer."""
         self._scheduled = False
         self._checkSchedule = False
-        self.Initialize()
+        self.initialize()
 
-    def Initialize(self):
-        """Set color & initial value to display"""
+    def initialize(self):
+        """Set color & initial value to display."""
         cg.send('Manually set LCD brightness through pi-blaster')
         cg.send(' *Note all values are inverse logic (0 - high, 1 - off)')
         self.set_disp(*brightness)
-        self.custom_msg('Initialized')
+        self.custom_msg('initialized')
 
-    def set_disp(self, r, g, b):
-        """Control the R,G,B color of LCD"""
-        if cg.is_pi():
-            cg.set_PWM(lcd_red, r)
-            cg.set_PWM(lcd_green, g)
-            cg.set_PWM(lcd_blue, b)
+    def set_disp(self, r_, g_, b_):
+        """Control the R,G,B color of LCD."""
+        cg.set_pwm(lcd_red, r_)
+        cg.set_pwm(lcd_green, g_)
+        cg.set_pwm(lcd_blue, b_)
 
     def custom_msg(self, raw):
-        """External call to update the display with a custom message"""
+        """External call to update the display with a custom message."""
         try:
             # Check if given a list (or a text string to eval as a list)
             if type(raw) is list:
@@ -90,32 +87,30 @@ class char_disp():
             cg.send('Auto-parsed message: {}'.format(comp))
 
     def update_disp(self, msg):
-        if cg.is_pi():
-            lcd.clear()
-            lcd.message(msg)
-        else:
-            cg.send('LCD would display: `{}`'.format(msg))
+        """Clear then set the new display text."""
+        lcd.clear()
+        lcd.message(msg)
 
     #
     # Utility Functions
     #
 
     def ext(self, count, unit=' '):
-        """Extend a string by a number of string units"""
+        """Extend a string by a number of string units."""
         out = ''
         for i in range(count):
             out += unit
         return out
 
     def flip(self, segments):
-        """Flip order of the middle two values of a list"""
+        """Flip order of the middle two values of a list."""
         flipped = segments[2]
         segments[2] = segments[1]
         segments[1] = flipped
         return segments
 
     def parse(self, message):
-        """Sort words into correctly sized lists"""
+        """Sort words into correctly sized lists."""
         messages = message.split(' ')
         counter = 0
         segment = ''
@@ -134,7 +129,7 @@ class char_disp():
         return segments
 
     def parse_message(self, raw):
-        """Modify a message to display coherently on the LCD"""
+        """Modify a message to display coherently on the LCD."""
         message = raw.strip()
         if len(message) <= lcd_columns:
             self.update_disp(message)
@@ -149,8 +144,7 @@ class char_disp():
         else:
             segments = self.flip(segments)
             warning = '** Too Long ** '  # alert user of length error
-            segments[3] = warning + \
-                self.ext(lcd_columns - len('** Too Long ** '))
+            segments[3] = warning + self.ext(lcd_columns - len('** Too Long ** '))
             for i in range(len(segments) - 4):
                 segments.pop()
         full_msg = ''
@@ -161,7 +155,7 @@ class char_disp():
         return full_msg
 
     def disp(self, status):
-        """Parse text input for display state"""
+        """Parse text input for display state."""
         status = status.lower()
         if re.match('on', status):
             self.set_disp(0.4, 0.7, 0.4)
@@ -184,6 +178,7 @@ class char_disp():
     #
 
     def display_weather(self):
+        """Display weather on LCD."""
         if not self._scheduled:
             # Start a fresh thread for weather updates
             cg.send('Starting update_weather()')
@@ -203,7 +198,7 @@ class char_disp():
             cg.send('No appropriate display_weather() action...')
 
     def run_sched(self):
-        """Loop through the schedule to check if new task"""
+        """Loop through the schedule to check if new task."""
         cg.send('> Started Thread w/ self._c = {}'.format(self._checkSchedule))
         while self._checkSchedule:
             schedule.run_pending()
@@ -211,13 +206,12 @@ class char_disp():
         cg.send('> Ended thread w/ self._c = {}'.format(self._checkSchedule))
 
     def update_weather(self):
-        """Request, then parse weather data for LCD display """
+        """Request, then parse weather data for LCD display."""
         cg.send('Running update_weather()')
         msg = []
-        both_commutes = weather.hourly(quiet=False)
+        both_commutes = weather.commute(quiet=False)
         for wthr in both_commutes:
-            msg.append(['{}-{} {}'.format(wthr["day"], wthr["fc"][:11],
-                                          wthr["tmp"])[0:20]])
+            msg.append(['{}-{} {}'.format(wthr['day'], wthr['fc'][:11], wthr['tmp'])[0:20]])
             msg.append(['{}{}-{}mm {}'.format(
                 wthr['snow'], wthr['pop'], wthr['precip'],
                 wthr['wspd'])[0:20]])
@@ -226,7 +220,7 @@ class char_disp():
         return msg
 
     def stop_weather(self):
-        """Stop the schedule run pending loop"""
+        """Stop the schedule run pending loop."""
         self._checkSchedule = False
         cg.send('Stopped weather thread')
 
@@ -235,31 +229,30 @@ class char_disp():
 # Point of entry:
 #
 
-this_disp = char_disp()
+this_disp = CharDisp()
 
 
 def brightness(raw):
-    """Set the display brightness based on raw input"""
-    global this_disp
+    """Set the display brightness based on raw input."""
     this_disp.disp(raw)
 
 
 def text(msg):
-    """Set the display text using smart parser"""
-    global this_disp
+    """Set the display text using smart parser."""
     this_disp.custom_msg(msg)
 
 
 def cycle_weather():
-    global this_disp
+    """Update displayed weather."""
     this_disp.display_weather()
 
 
 def stop_weather():
-    global this_disp
+    """Stop updating displayed weather."""
     this_disp.stop_weather()
 
 
 if __name__ == '__main__':
+    # Quick test of display
     brightness('alt')
     text('THIS PROBABLY WORKS!')

@@ -1,10 +1,8 @@
+"""Fade LED Strip."""
+
 from time import sleep
 
 import config as cg
-
-###########################
-# Globals:
-###########################
 
 # cg.quiet_logging(False)
 cg.quiet_logging(True)
@@ -20,41 +18,41 @@ total_run_time = 60
 time_step = total_run_time / (6 * steps)  # 3 fades up, 3 down = 6
 
 
-###########################
-# Functions and Stuff
-###########################
-
-
 def fade_up(pin):
+    """Fade brightness in the positive direction."""
     for i in range(steps):
-        cg.set_PWM(pin, max_brightness * (1 - (1 / (i + 2))))
+        cg.set_pwm(pin, max_brightness * (1 - (1 / (i + 2))))
         sleep(time_step)
 
 
 def fade_down(pin):
+    """Fade brightness in the negative direction."""
     for i in range(steps):
-        cg.set_PWM(pin, max_brightness / (i + 2))
+        cg.set_pwm(pin, max_brightness / (i + 2))
         sleep(time_step)
 
 
 def all_off():
+    """Turn off LEDs."""
     cg.send('\nDeactivating SOME PWM pins')
-    cg.set_PWM(pin_red, 0)
-    cg.set_PWM(pin_blue, 0)
-    cg.set_PWM(pin_green, 0)
+    cg.set_pwm(pin_red, 0)
+    cg.set_pwm(pin_blue, 0)
+    cg.set_pwm(pin_green, 0)
 
 
 def all_on(max_brightness=1):
+    """Set LEDs to max brightness."""
     cg.send('\nActivating all LED Strip pins')
-    cg.set_PWM(pin_red, max_brightness)
-    cg.set_PWM(pin_blue, max_brightness)
-    cg.set_PWM(pin_green, max_brightness)
+    cg.set_pwm(pin_red, max_brightness)
+    cg.set_pwm(pin_blue, max_brightness)
+    cg.set_pwm(pin_green, max_brightness)
 
 
-def fade_RGB_Strip():
+def fade_rgb_strip():
+    """Fade the LED strip through a full RGB sequence."""
     all_off()
 
-    cg.set_PWM(pin_red, 0.1)
+    cg.set_pwm(pin_red, 0.1)
 
     fade_up(pin_green)
     fade_down(pin_red)
@@ -67,13 +65,13 @@ def fade_RGB_Strip():
 
 
 if __name__ == '__main__':
-    # Test the above module:
-    fade_RGB_Strip()
-    print "Did Fade work? (Press Key)"
+    # Test the above methods:
+    fade_rgb_strip()
+    raw_input('Did Fade work? (Press Key)')
 
-    cg.set_PWM(pin_red, 0.5)
-    print "Currently Red? (Press Key)"
-    cg.set_PWM(pin_green, 0.5)
-    print "Currently Green? (Press Key)"
-    cg.set_PWM(pin_blue, 0.5)
-    print "Currently Blue? (Press Key)"
+    cg.set_pwm(pin_red, 0.5)
+    raw_input('Currently Red? (Press Key)')
+    cg.set_pwm(pin_green, 0.5)
+    raw_input('Currently Green? (Press Key)')
+    cg.set_pwm(pin_blue, 0.5)
+    raw_input('Currently Blue? (Press Key)')

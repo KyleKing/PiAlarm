@@ -12,3 +12,13 @@ try:
     import stub_RPiGPIO as IO
 except ImportError:
     import RPi.GPIO as IO  # noqa
+
+try:
+    import stub_Adafruit_CharLCD as LCD
+except ImportError:
+    import Adafruit_CharLCD as LCD  # noqa
+
+try:
+    import stub_Adafruit_GPIOMCP230xx as MCP
+except ImportError:
+    import Adafruit_GPIO.MCP230xx as MCP  # noqa

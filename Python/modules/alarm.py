@@ -76,10 +76,10 @@ def beep(counter):
     """Cycle through different low frequencies."""
     global last_beep
     if counter % 2 <= 1 and last_beep == 0:
-        cg.set_PWM(pin_buzzer, 0.2)
+        cg.set_pwm(pin_buzzer, 0.2)
         last_beep = 0.2
     elif counter % 2 > 1 and last_beep == 0.2:
-        cg.set_PWM(pin_buzzer, 0.0)
+        cg.set_pwm(pin_buzzer, 0.0)
         last_beep = 0
 
 
@@ -100,12 +100,12 @@ def fade_led_strip(counter):
 
     # Update the Alarm Electronics
     if fade_stage < len(fade_stages):
-        # cg.set_PWM(pin_buzzer, ((counter % 2) + 1.0) / 4)
-        cg.set_PWM(fade_stages[fade_stage], max_brightness * value)
+        # cg.set_pwm(pin_buzzer, ((counter % 2) + 1.0) / 4)
+        cg.set_pwm(fade_stages[fade_stage], max_brightness * value)
         if time_step == time_total:
             fade_stage += 1
     else:
-        # cg.set_PWM(pin_buzzer, 0.5)
+        # cg.set_pwm(pin_buzzer, 0.5)
         fade.all_on(max_brightness)
 
 
@@ -127,7 +127,7 @@ def stop():
     #
     # IO.cleanup()  # Removed to avoid interference with clock
     #
-    # release_PWM(pin_shaker)
+    # release_pwm(pin_shaker)
     # etc...
     # # Then stop pi-blaster for good measure:
     # stopPiB = "sudo kill $(ps aux | grep [b]laster | awk '{print $2}')"
@@ -155,21 +155,21 @@ def start(user_home):
         # Stage 1 - Green LED Strip for 1 minute
         if stage == 1 and alarm_on:
             cg.send('Configuring Stage 1')
-            cg.set_PWM(pin_green, 0.2)
-            cg.set_PWM(pin_red, 0.2)
+            cg.set_pwm(pin_green, 0.2)
+            cg.set_pwm(pin_red, 0.2)
             cb = False
         # Stage 2 - Purple LED Strip and Buzzer
         if stage == 2 and alarm_on:
             cg.send('Configuring Stage 2')
-            cg.set_PWM(pin_blue, 0.5)
-            cg.set_PWM(pin_red, 0.5)
-            cg.set_PWM(pin_buzzer, 0.1)
+            cg.set_pwm(pin_blue, 0.5)
+            cg.set_pwm(pin_red, 0.5)
+            cg.set_pwm(pin_buzzer, 0.1)
             cb = beep
         # Stage 3 - LED Strip, Bed Shaker, and Buzzer
         if stage == 3 and alarm_on:
             cg.send('Configuring Stage 3')
-            cg.set_PWM(pin_shaker, 1)
-            cg.set_PWM(pin_buzzer, 0.5)
+            cg.set_pwm(pin_shaker, 1)
+            cg.set_pwm(pin_buzzer, 0.5)
             cb = fade_led_strip
 
         # Run alarm and check for button interrupt:

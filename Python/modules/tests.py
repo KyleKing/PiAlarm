@@ -54,7 +54,7 @@ def t_hw():
 
 def t_weather():
     """Output the commute-weather format."""
-    print weather.hourly(quiet=False)
+    print weather.commute(quiet=False)
 
 
 def test_off_btn():
@@ -91,7 +91,7 @@ def toggle_status():
 def test_hardware():
     """Check each electrical component and check with operator."""
     print 'Fading the RGB Strip'
-    fade.fade_RGB_Strip()
+    fade.fade_rgb_strip()
     ask('Did the RGB strip fade?')
 
     print 'Starting the 7-Segment Clock'
@@ -112,13 +112,13 @@ def button_tests():
     def test_off_led(tmp):
         global led_state
         print 'test_off_led', led_state
-        cg.set_PWM(away_led, led_state)
+        cg.set_pwm(away_led, led_state)
         led_state = 1 if led_state == 0 else 0
 
     def test_nf_led(tmp):
         global led_state
         print 'test_nf_led', led_state
-        cg.set_PWM(onoff_led, led_state)
+        cg.set_pwm(onoff_led, led_state)
         led_state = 1 if led_state == 0 else 0
 
     IO.setwarnings(False)

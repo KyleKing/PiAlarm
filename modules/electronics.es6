@@ -105,7 +105,7 @@ module.exports = {
     } else
       content = moment().format( raw )
     const displayText = `[lcd] @>message:>>${content} @>delay:>>1`
-    electronicDebug( `Setting char_disp as: ${displayText}` )
+    electronicDebug( `Setting CharDisp as: ${displayText}` )
     pyshell.send( displayText )
     return displayText
   },
