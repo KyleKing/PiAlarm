@@ -1,8 +1,6 @@
-import lcd
 import config as cg
-
-if cg.is_pi():
-    import RPi.GPIO as GPIO
+import lcd
+from context import IO
 
 ###########################
 # Configuration:
@@ -20,10 +18,8 @@ def toggle():
     _last = (not _last)  # update last display status
 
 
-if cg.is_pi():
-    cg.send('Set GPIO mode and event detection')
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(disp_btn, GPIO.IN)
-    GPIO.add_event_detect(disp_btn, GPIO.RISING,
-                          callback=toggle, bouncetime=300)
+cg.send('Set GPIO mode and event detection')
+IO.setwarnings(False)
+IO.setmode(IO.BCM)
+IO.setup(disp_btn, IO.IN)
+IO.add_event_detect(disp_btn, IO.RISING, callback=toggle, bouncetime=300)

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 import sys
+
 import config as cg
 
 # FYI
@@ -35,7 +37,7 @@ def run(arg):
     set_LED_state()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Quiet logging, so the only output is "forced"
     cg.quiet_logging(True)
     # Parse STDIN:

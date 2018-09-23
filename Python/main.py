@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Main file."""
 
 import datetime
 import re
@@ -8,25 +8,20 @@ from time import sleep
 from modules import config as cg
 from modules import alarm, all_off, lcd, status, tests, tm1637
 
-# import shutil
-
 cg.quiet_logging(False)
 
 
-class action_input(object):
-    """
-    Break input of [`cmd`] into one of if statements listed below
-        (i.e. test, alarm, lcd, status, etc...)
-    Then act on supplied arguments
-    """
+class ActionInput(object):
+    """Read input command and act on arguments."""
 
     def __init__(self, operation, args, message='', tm1637_display=False):
+        """Initializer."""
         self.delay = 1
         self.msg = message
         self.Display = tm1637_display
         operation = operation.lower().strip()
         cg.send('Acting on: {} w/ msg: {}'.format(operation, self.msg))
-        """Determine the proper action based on the arguments"""
+        """Determine the proper action based on the arguments."""
         if re.match(operation, 'test'):
             self._mjr('Starting tests!')
             tests.t_hw()  # just hello world
@@ -36,7 +31,7 @@ class action_input(object):
             alarm.run()
         elif re.match(operation, 'all_off'):
             self._mjr('Deactivating all pins')
-            all_off.run()
+            all_off.deactivate()
         elif re.match(operation, 'lcd'):
             self._mjr('Updating Character lcd!')
             self.lcd_logic(args)
@@ -46,7 +41,7 @@ class action_input(object):
             self.Display.SetBrightness(float(args['display']))
         elif re.match(operation, 'status'):
             self._mjr('Starting status!')
-            arg = cg.dict_arg(args, "arg")
+            arg = cg.dict_arg(args, 'arg')
             if arg:
                 status.run(arg)
             else:
@@ -56,12 +51,12 @@ class action_input(object):
         # if any(re.match("weather", arg) for arg in args):
 
     def _mjr(self, msg):
-        """Easy extra line-break print"""
+        """Easy extra line-break print."""
         # cg.send('\n{}\n'.format(msg))
         cg.send('<*> {}'.format(msg))
 
     def resume(self):
-        """Restart the LCD display at some delay"""
+        """Restart the LCD display at some delay."""
         _delay = int(round(self.delay * 60))
         cg.send('Delaying Weather-LCD updates for {}sec'.format(_delay))
         sleep(_delay)
@@ -69,11 +64,11 @@ class action_input(object):
         lcd.cycle_weather()
 
     def lcd_logic(self, args):
-        """Toggle LCD back light / new text"""
+        """Toggle LCD back light / new text."""
         cg.send('LCD Args: {}'.format(self.msg))
-        disp = cg.dict_arg(args, "display")
-        msg = cg.dict_arg(args, "message")
-        start = cg.dict_arg(args, "start")
+        disp = cg.dict_arg(args, 'display')
+        msg = cg.dict_arg(args, 'message')
+        start = cg.dict_arg(args, 'start')
         if disp:
             cg.send('Case 1: Updating display brightness')
             lcd.brightness(disp)
@@ -81,7 +76,7 @@ class action_input(object):
             cg.send('Case 2: Received Message')
             # Prep the display for before/after the message
             lcd.stop_weather()
-            delay = cg.dict_arg(args, "delay")
+            delay = cg.dict_arg(args, 'delay')
             try:
                 self.delay = float(delay)
             except:  # noqa
@@ -96,13 +91,15 @@ class action_input(object):
         #     cg.send('INSOMNIA! Everything is running')
 
 
-class read_input(object):
-    """
-    Open read line that parses input in format:
-        [`cmd`] @>`key`:>>`value` @>`key`:>>`value` ...etc
+class ReadInput(object):
+    """Open read line that parses input in below format.
+
+    [`cmd`] @>`key`:>>`value` @>`key`:>>`value` ...etc
+
     """
 
     def __init__(self):
+        """Initializer."""
         self.op_regex = ur'.*\[([^\]]*)\].*'
         self.parsed_sysarg = False
 
@@ -112,15 +109,15 @@ class read_input(object):
         self.Display = tm1637.TM1637(CLK=clock, DIO=digital, brightness=1.0)
         self.Display.StartClock(military_time=True)
         cg.send('Running ALL OFF')
-        all_off.run()
+        all_off.deactivate()
         # Toggle display based on time of day
         evening = int(datetime.datetime.now().hour) >= 20
         lcd.brightness('off') if evening else lcd.brightness('on')
 
     def start(self):
-        """Loop indefinitely"""
+        """Loop indefinitely."""
         while True:
-            # Accept an optional sys arg or open a readline prompt
+            # Accept an optional sysarg or open a readline prompt
             #   Warn: The sysarg must be escaped with single quotes
             #   python main.py '[lcd] @>start'
             if not self.parsed_sysarg and len(sys.argv) > 1:
@@ -143,7 +140,7 @@ class read_input(object):
                 self.parse_input()
 
     def parse_input(self):
-        # Parse the arguments received
+        """Parse the arguments received."""
         chunks = self.message.split('@>')
 
         # Parse operation and remove brackets:
@@ -172,14 +169,15 @@ class read_input(object):
         else:
             arguments = ''
         # Decide on the appropriate action:
-        action_input(operation, arguments, self.message, self.Display)
+        ActionInput(operation, arguments, self.message, self.Display)
 
 
 # Point of Entry
-if __name__ == "__main__":
+if __name__ == '__main__':
+
     # FIXME/TODO: Is this unnecessary?
     # pth = './Python/modules/status'
     # shutil.copyfile('{}.py'.format(pth), '{}_alt.py'.format(pth))
     # cg.send('Duplicating Status File: {}'.format(pth))
-    #
-    read_input().start()
+
+    ReadInput().start()

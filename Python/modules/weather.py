@@ -1,11 +1,12 @@
-# Get weather conditions through WeatherUnderground (based on:
-# https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298
+"""Get Weather from WU API."""
+
 import json
-# import random
 import urllib2
-import numpy as np
 
 import config as cg
+import numpy as np
+
+# Based on: https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298
 
 
 class WUnderground():
@@ -21,8 +22,8 @@ class WUnderground():
 
     def fetch(self, req_type):
         """Request Weather Data"""
-        GetURL = "http://api.wunderground.com/api/" + self.apikey + \
-            "/{}/q/{},{}.json".format(req_type, self.lat, self.lon)
+        GetURL = 'http://api.wunderground.com/api/' + self.apikey + \
+            '/{}/q/{},{}.json'.format(req_type, self.lat, self.lon)
         weatherdict = urllib2.urlopen(GetURL).read()
         weatherinfo = json.loads(weatherdict)
         # cg.send('\nComplete weatherinfo JSON:')
@@ -58,27 +59,27 @@ def conditions():
     relative_humidity = weatherdata['relative_humidity']  # 40%
 
     return {
-        "weather": weather,
-        "temperature_string": temperature_string,
-        "temp_c": temp_c,
-        "temp_f": temp_f,
-        "feelslike_c": feelslike_c,
-        "feelslike_f": feelslike_f,
-        "windchill_c": windchill_c,
-        "windchill_f": windchill_f,
-        "wnd": wnd,
-        "wind_gust_mph": wind_gust_mph,
-        "precip": precip,
-        "precip_1hr_metric": precip_1hr_metric,
-        "precip_today_metric": precip_today_metric,
-        "relative_humidity": relative_humidity
+        'weather': weather,
+        'temperature_string': temperature_string,
+        'temp_c': temp_c,
+        'temp_f': temp_f,
+        'feelslike_c': feelslike_c,
+        'feelslike_f': feelslike_f,
+        'windchill_c': windchill_c,
+        'windchill_f': windchill_f,
+        'wnd': wnd,
+        'wind_gust_mph': wind_gust_mph,
+        'precip': precip,
+        'precip_1hr_metric': precip_1hr_metric,
+        'precip_today_metric': precip_today_metric,
+        'relative_humidity': relative_humidity
     }
 
 
 def forecast():
     weatherinfo = WU.fetch('forecast')
     print weatherinfo
-    print "Error: forecast....isn't parsed yet"
+    print 'Error: forecast....isn't parsed yet'
 
 
 def hourly(quiet=True):
@@ -124,24 +125,24 @@ def hourly(quiet=True):
             snow.append(eval(hour['snow']['metric']))  # 0
             qpf.append(eval(hour['qpf']['metric']))  # 0 {rain?}
         commute_weather.append({
-            "ts": ts_start,
-            "hr": h_start,
-            "day": day,
-            "fc": fc[1],
-            "cnd": cnd[1],
-            "temp": '{:3.1f}F'.format((np.mean(temp))),
-            "tmp": '{:+d}F'.format(int(np.mean(tmp))),
-            "wspd": '{}mph'.format(int(np.mean(wspd))),
-            "wdir": wdir[1],
-            "pop": '{}%'.format(np.amax(pop)),
-            "hm": '{:2d}%'.format(int(np.mean(hm))),
-            "snow": '',  # "snow": 'SNOW! ' if np.amax(snow) > 0.1 else '',
-            "precip": np.amax(qpf)
+            'ts': ts_start,
+            'hr': h_start,
+            'day': day,
+            'fc': fc[1],
+            'cnd': cnd[1],
+            'temp': '{:3.1f}F'.format((np.mean(temp))),
+            'tmp': '{:+d}F'.format(int(np.mean(tmp))),
+            'wspd': '{}mph'.format(int(np.mean(wspd))),
+            'wdir': wdir[1],
+            'pop': '{}%'.format(np.amax(pop)),
+            'hm': '{:2d}%'.format(int(np.mean(hm))),
+            'snow': '',  # 'snow': 'SNOW! ' if np.amax(snow) > 0.1 else '',
+            'precip': np.amax(qpf)
         })
-    # cg.send('Example (Wthr cnd):', commute_weather[0]["cnd"])
+    # cg.send('Example (Wthr cnd):', commute_weather[0]['cnd'])
     if not quiet:
         # _r = random.randint(0, len(commute_weather) - 1)  # used to be rand
         _r = 0  # now just the first
         # cg.send('commute_weather[{}]: {}'.format(_r, commute_weather[_r]))
-        cg.send('weather[{}][ts]= {}'.format(_r, commute_weather[_r]["ts"]))
+        cg.send('weather[{}][ts]= {}'.format(_r, commute_weather[_r]['ts']))
     return commute_weather

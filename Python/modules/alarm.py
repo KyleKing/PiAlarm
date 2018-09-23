@@ -1,14 +1,15 @@
-# -*- coding: utf-8 -*-
-import time
-import sys
+"""Alarm Script."""
 
-import fade
-import lcd
+import sys
+import time
+
 import all_off
 import config as cg
+import fade
+import lcd
+from context import IO
 
-if cg.is_pi():
-    import RPi.GPIO as GPIO
+# FIXME: Re-implement as a thread with an interrupt Exception
 
 ###########################
 # Configuration:
@@ -21,7 +22,7 @@ pin_shaker = cg.get_pin('Haptics', 'pin_shaker')
 pin_blue = cg.get_pin('RGB_Strip', 'pin_blue')
 pin_red = cg.get_pin('RGB_Strip', 'pin_red')
 pin_green = cg.get_pin('RGB_Strip', 'pin_green')
-# # TODO
+# # TODO: Add second LED Strip
 # pin_blue2 = cg.get_pin('RGB_Strip', 'pin_blue2')
 # pin_red2 = cg.get_pin('RGB_Strip', 'pin_red2')
 # pin_green2 = cg.get_pin('RGB_Strip', 'pin_green2')
@@ -56,23 +57,23 @@ time_total = a_s_t / l_f_s
 
 
 def alarm_deactivate(pin_num):
-    """Button callback on rising edge"""
+    """Button callback on rising edge."""
     global alarm_on
-    if GPIO.input(pin_num):
-        cg.send('Deactivating Alarm on {}'.format(GPIO.input(pin_num)))
+    if IO.input(pin_num):
+        cg.send('Deactivating Alarm on {}'.format(IO.input(pin_num)))
         alarm_on = False
 
 
 def gen_button_cb(pin_num):
-    """For testing the cb function"""
-    if GPIO.input(pin_num):
-        cg.send("Triggered on a rising edge from pin: {}".format(pin_num))
+    """For testing the callback function."""
+    if IO.input(pin_num):
+        cg.send('Triggered on a rising edge from pin: {}'.format(pin_num))
     else:
-        cg.send("Triggered on a falling edge from pin: {}".format(pin_num))
+        cg.send('Triggered on a falling edge from pin: {}'.format(pin_num))
 
 
 def beep(counter):
-    """Cycle through different low frequencies"""
+    """Cycle through different low frequencies."""
     global last_beep
     if counter % 2 <= 1 and last_beep == 0:
         cg.set_PWM(pin_buzzer, 0.2)
@@ -83,7 +84,7 @@ def beep(counter):
 
 
 def fade_led_strip(counter):
-    """Cycle the LED Strip through various colors"""
+    """Cycle the LED Strip through various colors."""
     global fade_stage
     if time_total < 0.1:
         time_step = 1
@@ -114,16 +115,17 @@ def fade_led_strip(counter):
 
 
 def stop():
+    """Halt execution."""
     global _running
     _running = False
-    cg.send("\nAlarm Cycles Finished\n")
+    cg.send('\nAlarm Cycles Finished\n')
     cg.ifttt('PiAlarm_SendText', {'value1': 'PiAlarm Completed'})
 
     # Cleanup tasks:
-    all_off.run()
-    GPIO.remove_event_detect(off_button)
+    all_off.deactivate()
+    IO.remove_event_detect(off_button)
     #
-    # GPIO.cleanup()  # Removed to avoid interference with clock
+    # IO.cleanup()  # Removed to avoid interference with clock
     #
     # release_PWM(pin_shaker)
     # etc...
@@ -133,21 +135,19 @@ def stop():
 
 
 def start(user_home):
+    """Start alarm sequence."""
     global fade_stage, _running, alarm_on
     _running = True
     stage, stage3_rep_counter = 1, 0
 
-    cg.send('Set GPIO mode and event detection')
-    if cg.is_pi():
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(off_button, GPIO.IN)
-        GPIO.add_event_detect(off_button, GPIO.RISING,
-                              callback=alarm_deactivate,
-                              bouncetime=300)
+    cg.send('Set IO mode and event detection')
+    IO.setwarnings(False)
+    IO.setmode(IO.BCM)
+    IO.setup(off_button, IO.IN)
+    IO.add_event_detect(off_button, IO.RISING, callback=alarm_deactivate, bouncetime=300)
 
     while stage < 4 and stage3_rep_counter < 3 and user_home:
-        all_off.run()
+        all_off.deactivate()
         cg.send('\nStarting Stage: {}'.format(stage) +
                 ' for {} seconds'.format(alarm_stage_time[stage]))
 
@@ -182,7 +182,7 @@ def start(user_home):
 
         # Prep for the next loop:
         if stage == 3 and alarm_on:
-            all_off.run()
+            all_off.deactivate()
             cg.send('\nLooping back through Stage 3')
             time.sleep(7)
             fade_stage = 0
@@ -196,6 +196,7 @@ def start(user_home):
 
 
 def run():
+    """Check state and start alarm if ready."""
     global _running, alarm_on
     user_home = cg.check_status()
     alarm_on = True
@@ -210,3 +211,7 @@ def run():
         start(cg.check_status())
     else:
         cg.ifttt('PiAlarm_SendText', {'value1': 'User away, no PiAlarm'})
+
+
+if __name__ == '__main__':
+    run()

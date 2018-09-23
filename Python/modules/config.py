@@ -1,10 +1,12 @@
-import os
-import sys
-import inspect
-import requests
-import threading
-import subprocess
 import ConfigParser
+import inspect
+import os
+import subprocess
+import sys
+import threading
+
+import requests
+
 # import datetime
 
 quiet_STDOUT = True

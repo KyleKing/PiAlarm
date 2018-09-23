@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from time import sleep
 
 import config as cg
@@ -67,7 +66,7 @@ def fade_RGB_Strip():
     all_off()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Test the above module:
     fade_RGB_Strip()
     print "Did Fade work? (Press Key)"

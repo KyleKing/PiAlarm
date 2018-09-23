@@ -1,10 +1,9 @@
-# !/usr/bin/python
 import datetime
-import schedule
-from time import sleep
 import re
+from time import sleep
 
 import config as cg
+import schedule
 import weather
 
 if cg.is_pi():
@@ -261,6 +260,6 @@ def stop_weather():
     this_disp.stop_weather()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     brightness('alt')
     text('THIS PROBABLY WORKS!')

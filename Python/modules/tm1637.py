@@ -5,7 +5,6 @@ import threading
 from time import localtime, sleep
 
 import config as cg
-
 from context import IO
 
 # from tqdm import tqdm
@@ -198,7 +197,7 @@ class TM1637:
             print 'No clock to close'
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     """Confirm the display operation"""
 
     # Initialize the clock (GND, VCC=3.3V, Example Pins are DIO=20 and CLK=21)
