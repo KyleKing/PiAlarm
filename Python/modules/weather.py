@@ -25,8 +25,8 @@ class Wunderground(object):
 
     def fetch(self, req_type):
         """Request Weather Data."""
-        get_url = """http://api.wunderground.com/api/{}/{}/q/{},{}.json
-            """.format(self.apikey, req_type, self.lat, self.lon).strip()
+        get_url = 'http://api.wunderground.com/api/{}/{}/q/{},{}.json'.format(
+            self.apikey, req_type, self.lat, self.lon)
         weatherdict = urllib2.urlopen(get_url).read()
         weatherinfo = json.loads(weatherdict)
         # cg.send('\nComplete weatherinfo JSON:')
@@ -150,3 +150,8 @@ def commute(quiet=True):
         # cg.send('commute_weather[{}]: {}'.format(_r, commute_weather[_r]))
         cg.send('weather[{}][ts]= {}'.format(_r, commute_weather[_r]['ts']))
     return commute_weather
+
+
+if __name__ == '__main__':
+    weatherinfo = WU.fetch('hourly')
+    print weatherinfo
