@@ -34,7 +34,7 @@
     "debug": "^2.2.0",
     "express": "^4.13.3",
     "express-session": "^1.14.2",
-    "express-users": "^0.3.2",
+    "express-users": "file:../Pull Requests/express-users",
     "eyespect": "^0.1.10",
     "fs-extra": "^2.0.0",
     "interface-addresses": "0.0.5",
