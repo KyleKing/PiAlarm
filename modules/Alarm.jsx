@@ -46,7 +46,7 @@ class Alarm extends React.Component {
   }
 
   handleScheduleChange( event ) {
-    const newSched = event.target.value.trim()
+    const newSched = event.target.value
     // Check for correct Cron format. Note: the extra space
     if ( /^(?:[\d-,*]+ ){6}$/.test( `${newSched} ` ) ) {
       // console.log(event.target.value);
