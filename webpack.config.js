@@ -4,11 +4,11 @@ const webpack = require('webpack'); // eslint-disable-line
 // debug: true,
 module.exports = {
   entry: './bundleEntry.js',
-  output: { path: `${__dirname}`, filename: './dist/bundle.js' },
+  output: {path: `${__dirname}`, filename: './dist/bundle.js'},
   plugins: [
-    new webpack.LoaderOptionsPlugin({
+    new webpack.LoaderOptionsPlugin( {
       debug: true,
-    }),
+    } ),
   ],
   devtool: 'source-map',
   module: {
@@ -18,9 +18,9 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react'],
+          presets: ['env', 'react'],
         },
       },
     ],
   },
-};
+}
