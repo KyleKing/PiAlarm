@@ -86,6 +86,7 @@
     "no-useless-escape": 2,
     "no-useless-rename": 2,
     "no-useless-return": 2,
+    "nonblock-statement-body-position": ["error", "below"],
     "object-curly-spacing": ["error", "never"],
     "one-var-declaration-per-line": 2,
     "prefer-arrow-callback": 2,

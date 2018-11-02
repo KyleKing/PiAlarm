@@ -11,8 +11,9 @@ const moment = require( 'moment' )
  * Initialize the Python Controller
  */
 
-const PythonShell = require( 'python-shell' )
-const pyshell = new PythonShell( './Python/main.py' )
+const {PythonShell} = require( 'python-shell' )
+electronicDebug( 'about to create pyshell' )
+const pyshell = new PythonShell( './Python/main.py', null )
 electronicDebug( 'Started main.py' )
 pyshell.on( 'message', ( message ) => {
   electronicDebug( `rcvd (main): ${message}` )
@@ -57,10 +58,11 @@ module.exports = {
 
   // Universal Method for Interfacing with LCD Display
   queryStatus( cb = false ) {
-    PythonShell.run( './Python/parse_status.py', ( err, results ) => {
+    PythonShell.run( './Python/parse_status.py', null, ( err, results ) => {
       // FIXME: Log this result, but quieted for now
       electronicDebug( `rcvd (pyShellUserStatus): ${results}` )
-      electronicDebug( `${err}` )
+      electronicDebug( `cb:${cb}` )
+      electronicDebug( `err:${err}` )
 
       if ( err )
         throw err

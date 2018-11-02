@@ -7,7 +7,9 @@
 // day of week    0-6 (Sun-Sat)
 
 import React from 'react'
-const socket = io();  // eslint-disable-line
+
+const PropTypes = require( 'prop-types' )
+const socket = io()
 
 class Alarm extends React.Component {
   constructor( props ) {
@@ -108,7 +110,9 @@ class Alarm extends React.Component {
           type="button"
           className={`${fi} ${buttonClasses}`}
           onClick={this.EnDisableToggle}
-        >{buttonValue}</button>
+        >
+          {buttonValue}
+        </button>
 
         <input
           type="text"
@@ -127,23 +131,27 @@ class Alarm extends React.Component {
           className={`${fi} ${buttonBase} ${changed}`}
           onClick={this.handleSubmit}
           type="submit"
-        >Save</button>
+        >
+Save
+        </button>
         <button
           type="button"
           className={`${fi} ${buttonBase} btn-danger remove`}
           id={this.props.uniq}
           onClick={this.removeAlarm}
-        >REMOVE</button>
+        >
+REMOVE
+        </button>
       </div>
     )
   }
 }
 
 Alarm.propTypes = {
-  running: React.PropTypes.bool.isRequired,
-  schedule: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
-  uniq: React.PropTypes.string.isRequired,
+  running: PropTypes.bool.isRequired,
+  schedule: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  uniq: PropTypes.string.isRequired,
 }
 
 export default Alarm

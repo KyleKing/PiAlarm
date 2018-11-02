@@ -1,6 +1,8 @@
 # PiAlarm
 > Raspberry Pi-powered smart alarm clock. A RGB Light Strip, loud buzzer, bed shaker, web app, geo-location knowledge, and Character LCD display
 
+> npm i --production
+
 ## WIP
 
 Action Items:
