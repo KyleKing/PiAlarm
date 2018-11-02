@@ -3,11 +3,9 @@
 import sys
 import time
 
-import all_off
-import config as cg
-import fade
-import lcd
-from context import IO
+from . import config as cg
+from . import all_off, fade, lcd
+from .context import IO
 
 # FIXME: Re-implement as a thread with an interrupt Exception
 

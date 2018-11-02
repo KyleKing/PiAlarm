@@ -2,7 +2,7 @@
 
 from time import sleep
 
-import config as cg
+from . import config as cg
 
 # cg.quiet_logging(False)
 cg.quiet_logging(True)
@@ -67,11 +67,11 @@ def fade_rgb_strip():
 if __name__ == '__main__':
     # Test the above methods:
     fade_rgb_strip()
-    raw_input('Did Fade work? (Press Key)')
+    input('Did Fade work? (Press Key)')
 
     cg.set_pwm(pin_red, 0.5)
-    raw_input('Currently Red? (Press Key)')
+    input('Currently Red? (Press Key)')
     cg.set_pwm(pin_green, 0.5)
-    raw_input('Currently Green? (Press Key)')
+    input('Currently Green? (Press Key)')
     cg.set_pwm(pin_blue, 0.5)
-    raw_input('Currently Blue? (Press Key)')
+    input('Currently Blue? (Press Key)')

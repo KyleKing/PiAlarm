@@ -1,13 +1,13 @@
 # PiAlarm
 > Raspberry Pi-powered smart alarm clock. A RGB Light Strip, loud buzzer, bed shaker, web app, geo-location knowledge, and Character LCD display
 
-# WIP
+## WIP
 
 Action Items:
 
 - Weather display doesn't update
 - LCD wrap text is broken...
-- Add simply.js to modify alarms from watch: http://simplyjs.io/
+- Add simply.js to modify alarms from watch: [http://simplyjs.io/](http://simplyjs.io/)
 - Configure router with InternalPort:8000 / ServicePort:80 (this way port isn't needed in URL)
 - Rebuild alarm housing
     + Re-solder the speaker to a 5V line rather than the current 3V
@@ -16,6 +16,8 @@ Action Items:
 - From TODO.txt
     + Update README - note: install local express-users with `npm i ../Pull Requests/express-users`
     + Update the wiring diagram
+
+*Notes: Router Admin Panel > Forwarding > Virtual Servers > 80/3000/TCP*
 
 ## The Alarm
 

@@ -4,8 +4,8 @@ import math
 import threading
 from time import localtime, sleep
 
-import config as cg
-from context import IO
+from . import config as cg
+from .context import IO
 
 IO.setwarnings(False)
 IO.setmode(IO.BCM)
@@ -179,11 +179,11 @@ class TM1637(object):
     def stop_clock(self):
         """Stop clock thread."""
         try:
-            print 'Attempting to stop live clock'
+            print('Attempting to stop live clock')
             self.__stop_event.set()
             self.clear()
         except AttributeError:
-            print 'No clock to close'
+            print('No clock to close')
 
 
 if __name__ == '__main__':
@@ -200,9 +200,9 @@ if __name__ == '__main__':
 
     digits = [1, 2, 3, 4]
     display.show(digits)
-    raw_input('1234  - Working? (Press Key)')
+    input('1234  - Working? (Press Key)')
 
-    print 'Updating one digit at a time:'
+    print('Updating one digit at a time:')
     display.clear()
     display.set_digit(1, 3)
     sleep(0.5)
@@ -211,23 +211,23 @@ if __name__ == '__main__':
     display.set_digit(3, 1)
     sleep(0.5)
     display.set_digit(0, 4)
-    raw_input('4321  - (Press Key)')
+    input('4321  - (Press Key)')
 
-    print 'Add double point\n'
+    print('Add double point\n')
     display.show_colon(True)
     sleep(0.2)
-    print 'Brightness Off'
+    print('Brightness Off')
     display.set_brightness(0)
     sleep(0.5)
-    print 'Full Brightness'
+    print('Full Brightness')
     display.set_brightness(1)
     sleep(0.5)
-    print '30% Brightness'
+    print('30% Brightness')
     display.set_brightness(0.3)
     sleep(0.3)
-    raw_input('Start the clock?')
+    input('Start the clock?')
 
     display.start_clock(military_time=True)
-    raw_input('Stop the clock?')
+    input('Stop the clock?')
 
     display.stop_clock()

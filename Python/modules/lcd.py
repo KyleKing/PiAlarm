@@ -4,10 +4,11 @@ import datetime
 import re
 from time import sleep
 
-import config as cg
 import schedule
-import weather
-from context import LCD, MCP
+
+from . import config as cg
+from . import weather
+from .context import LCD, MCP
 
 # FIXME: Trims last word in longer strings...
 # TODO: Can't handle longer words that don't have spaces inside (just cut)

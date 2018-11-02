@@ -129,7 +129,7 @@ function createAlarm( alarmState, socket ) {
 
 io.on( 'connection', ( socket ) => {
   // Check alarm status (present/away)
-  // PythonShell.run('./Python/modules/status.py', (err, results) => {
+  // PythonShell.run('./Python/parse_status.py', (err, results) => {
   //   if (err)
   //     throw err;
   //   mainDebug(`rcvd (pyShellUserStatus): ${results}`);

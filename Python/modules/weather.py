@@ -1,10 +1,12 @@
 """Get Weather from WU API."""
 
 import json
-import urllib2
+from urllib.request import urlopen
 
-import config as cg
 import numpy as np
+
+from . import config as cg
+
 
 # Based on: https://www.hackster.io/brad-buskey/getweather-for-omega2-8e3298
 
@@ -27,7 +29,7 @@ class Wunderground(object):
         """Request Weather Data."""
         get_url = 'http://api.wunderground.com/api/{}/{}/q/{},{}.json'.format(
             self.apikey, req_type, self.lat, self.lon)
-        weatherdict = urllib2.urlopen(get_url).read()
+        weatherdict = urlopen(get_url).read()
         weatherinfo = json.loads(weatherdict)
         # cg.send('\nComplete weatherinfo JSON:')
         # cg.send(weatherinfo)
@@ -82,8 +84,8 @@ def conditions():
 def forecast():
     """Print forecast."""
     weatherinfo = WU.fetch('forecast')
-    print weatherinfo
-    print 'Error: forecast....isn\'t parsed yet'
+    print(weatherinfo)
+    print('Error: forecast....isn\'t parsed yet')
 
 
 def commute(quiet=True):
@@ -154,4 +156,4 @@ def commute(quiet=True):
 
 if __name__ == '__main__':
     weatherinfo = WU.fetch('hourly')
-    print weatherinfo
+    print(weatherinfo)

@@ -100,7 +100,7 @@ class ReadInput(object):
 
     def __init__(self):
         """Initializer."""
-        self.op_regex = ur'.*\[([^\]]*)\].*'
+        self.op_regex = r'.*\[([^\]]*)\].*'
         self.parsed_sysarg = False
 
         # Initialize the clock (GND, VCC=3.3V)
@@ -175,7 +175,7 @@ class ReadInput(object):
 # Point of Entry
 if __name__ == '__main__':
 
-    # FIXME/TODO: Is this unnecessary?
+    # FIXME: Is this unnecessary?
     # pth = './Python/modules/status'
     # shutil.copyfile('{}.py'.format(pth), '{}_alt.py'.format(pth))
     # cg.send('Duplicating Status File: {}'.format(pth))

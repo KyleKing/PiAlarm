@@ -1,6 +1,6 @@
 """Configuration Utilities."""
 
-import ConfigParser
+import configparser
 import inspect
 import os
 import subprocess
@@ -20,7 +20,7 @@ quiet_STDOUT = True
 def send(info, force=False):
     """Force output to parent application."""
     if not quiet_STDOUT or force:
-        print '{}'.format(info)
+        print('{}'.format(info))
         sys.stdout.flush()
 
 
@@ -36,7 +36,7 @@ def ifttt(event, dataset={'value1': ''}):
     try:
         requests.post('https://maker.ifttt.com/trigger/{}/with/key/{}'.format(event, key), data=dataset)
     except:  # noqa
-        print 'IFTTT Failed - possible loss of INTERNET connection'
+        print('IFTTT Failed - possible loss of INTERNET connection')
 
 
 #
@@ -64,7 +64,7 @@ def get_pin(component, param, _eval=True):
 
 def read_ini(component, param, filename='pins'):
     """Read ini file."""
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     file = _ini_path(filename)
     try:
         config.read(file)
@@ -76,7 +76,7 @@ def read_ini(component, param, filename='pins'):
 
 def write_ini(component, param, value):
     """Write to ini file."""
-    pin_config = ConfigParser.RawConfigParser()
+    pin_config = configparser.RawConfigParser()
     file = _ini_path()
     pin_config.read(file)
     with open(file, 'w') as cfgfile:

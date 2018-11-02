@@ -12,10 +12,7 @@ make
 
 cd ~
 
-sudo pip install schedule
-sudo pip install requests
-sudo pip install ConfigParser
-sudo pip install tqdm
+sudo pip install schedule requests tqdm
 
 sudo apt-get install build-essential python-dev python-smbus python-pip
 sudo apt-get install rpi.gpio

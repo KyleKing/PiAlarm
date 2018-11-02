@@ -2,7 +2,7 @@
 
 import subprocess
 
-import config as cg
+from . import config as cg
 
 cg.quiet_logging(False)
 

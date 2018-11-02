@@ -1,8 +1,8 @@
 """TODO: Remove this file."""
 
-import config as cg
-import lcd
-from context import IO
+from . import config as cg
+from . import lcd
+from .context import IO
 
 ###########################
 # Configuration:

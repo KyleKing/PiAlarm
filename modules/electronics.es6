@@ -57,18 +57,20 @@ module.exports = {
 
   // Universal Method for Interfacing with LCD Display
   queryStatus( cb = false ) {
-    PythonShell.run( './Python/modules/status.py', ( err, results ) => {
+    PythonShell.run( './Python/parse_status.py', ( err, results ) => {
+      // FIXME: Log this result, but quieted for now
+      electronicDebug( `rcvd (pyShellUserStatus): ${results}` )
+      electronicDebug( `${err}` )
+
       if ( err )
         throw err
-      // FIXME: Log this result, but quieted for now:
-      // electronicDebug(`rcvd (pyShellUserStatus): ${results}`);
       if ( cb )
         cb( results )
     } )
   },
 
   send( raw ) {
-    // *FYI: The most important function:
+    // *FYI: The most important function
     pyshell.send( raw )
   },
 

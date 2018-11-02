@@ -1,10 +1,8 @@
 """Manage user's Home/Away status."""
 
-import sys
+from . import config as cg
 
-import config as cg
-
-# FYI: For a synchronous status query, call this file with an arg of:
+# FYI: For a synchronous status query, call this file with an arg of
 #    exit, enter, false, or true respectively
 
 quiet = False
@@ -37,16 +35,3 @@ def run(arg):
     else:
         cg.send('Error: unknown arg = {}'.format(arg))
     set_led_state()
-
-
-if __name__ == '__main__':
-    # Quiet logging, so the only output is "forced"
-    cg.quiet_logging(True)
-
-    # Parse STDIN:
-    if len(sys.argv) > 1:
-        arg = cg.parse_argv(sys)
-        run(arg)
-    else:
-        cg.send('No state change, only updating LED')
-        set_led_state()
