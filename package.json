@@ -1,74 +1,47 @@
 {
-  "name": "alarm_clock",
-  "version": "0.1.5",
-  "description": "Alarm Clock App",
-  "main": "main.es6",
-  "scripts": {
-    "start": "./node_modules/webpack/bin/webpack.js && node main.es6 -v",
-    "memory": "./node_modules/webpack/bin/webpack.js && node --max-old-space-size=512 main.es6 -v",
-    "local": "./node_modules/webpack/bin/webpack.js && node --max-old-space-size=512 main.es6 -lv",
-    "alarm": "./node_modules/webpack/bin/webpack.js && node --max-old-space-size=512 main.es6 -va",
-    "watch": "./node_modules/webpack/bin/webpack.js --watch",
-    "test": "./node_modules/eslint/bin/eslint.js . --ext .jsx,.es6",
-    "precommit": "echo Hello_World"
-  },
-  "pre-commit": [
-    "precommit"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KyleKing/My-Programming-Sketchbook.git"
-  },
-  "author": "Kyle King",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/KyleKing/My-Programming-Sketchbook/issues"
-  },
-  "homepage": "https://github.com/KyleKing/My-Programming-Sketchbook/tree/master/Raspberry_Pi",
+  "name": "PiAlarm",
+  "version": "0.0.1",
+  "private": true,
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^7.2.3",
-    "babel-loader": "^6.4.1",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "body-parser": "^1.18.3",
-    "child_process": "^1.0.2",
-    "cli-color": "^1.4.0",
-    "commander": "^2.18.0",
-    "connect-flash": "^0.1.1",
-    "cookie-parser": "^1.4.3",
-    "cookie-session": "^2.0.0-beta.3",
-    "cron": "^1.5.0",
-    "debug": "^4.1.0",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^4.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^6.1.0",
     "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "express-users": "file:../Pull Requests/express-users",
-    "eyespect": "^0.1.10",
-    "fs-extra": "^7.0.0",
-    "interface-addresses": "^0.0.5",
-    "karma": "^3.1.1",
-    "method-override": "^3.0.0",
-    "moment": "^2.22.2",
-    "nedb": "^1.8.0",
-    "node-pid-controller": "^1.0.1",
-    "onoff": "^3.2.2",
-    "passport": "^0.4.0",
-    "pi-blaster.js": "^0.1.3",
-    "prop-types": "^15.6.2",
-    "python-shell": "^1.0.6",
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0",
-    "schedule": "^0.5.0",
-    "serialport": "^7.0.2",
-    "socket.io": "^2.1.1",
-    "webpack": "^2.7.0"
+    "express-graphql": "^0.7.1",
+    "express-rate-limit": "^3.3.1",
+    "fs": "0.0.2",
+    "graphql": "^14.0.2",
+    "jsonwebtoken": "^8.3.0",
+    "minimist": "^1.2.0",
+    "serve": "^10.0.2"
+  },
+  "watch": {
+    "server": "*.js"
+  },
+  "scripts": {
+    "start": "npm run client-build; npm run production",
+    "development": "concurrently \"npm run server\" \"npm run client\"",
+    "production": "concurrently \"npm run server\" \"npm run client-serve\"",
+    "server": "node server.js",
+    "server-watch": "npm-watch",
+    "client": "node run-client.js --npm=\"start\"",
+    "client-build": "node run-client.js --npm=\"run build\"",
+    "client-serve": "./node_modules/serve/bin/serve.js -s client/build"
   },
   "devDependencies": {
-    "eslint": "^5.8.0",
-    "eslint-config-airbnb": "^17.1.0",
+    "babel-eslint": "9.0.0",
+    "csscomb": "^4.2.0",
+    "eslint": "5.6.0",
+    "eslint-config-fbjs": "^2.1.0",
+    "eslint-plugin-array-func": "^3.0.0",
+    "eslint-plugin-babel": "^5.2.1",
+    "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-no-loops": "^0.3.0",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-relay": "0.0.28",
+    "eslint-plugin-security": "^1.4.0",
+    "npm-watch": "^0.4.0"
   }
 }

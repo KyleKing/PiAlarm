@@ -1,20 +1,21 @@
 {
   "always-semicolon": true,
   "block-indent": "  ",
-  "color-case": "lower",
+  "color-case": "upper",
   "color-shorthand": false,
   "element-case": "lower",
   "eof-newline": true,
   "leading-zero": true,
   "quotes": "double",
+  "remove-empty-rulesets": true,
   "sort-order": [
-    "..."
+    "abc"
   ],
   "sort-order-fallback": "abc",
   "space-after-colon": " ",
   "space-after-combinator": " ",
   "space-after-opening-brace": "\n",
-  "space-after-selector-delimiter": "",
+  "space-after-selector-delimiter": "\n",
   "space-before-closing-brace": "\n",
   "space-before-colon": "",
   "space-before-combinator": " ",
@@ -22,5 +23,7 @@
   "space-before-selector-delimiter": "",
   "space-between-declarations": "\n",
   "strip-spaces": true,
-  "tab-size": true
+  "tab-size": true,
+  "unitless-zero": true,
+  "vendor-prefix-align": true
 }
