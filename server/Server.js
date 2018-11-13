@@ -11,6 +11,7 @@ const bcrypt = require( 'bcryptjs' )
 const GQL = require( './API.js' )
 const graphqlHTTP = require( 'express-graphql' )
 const CircularJSON = require( 'circular-json' )
+const db = require( './Database.js' )
 
 const app = express()
 app.set( 'port', ( process.env.PORT || 3001 ) )
@@ -40,19 +41,27 @@ app.use( cors( {
 	},
 } ) )
 
-// FIXME: store password hash in database, manually  initialized once
-var hash = bcrypt.hashSync( process.env.PASSWORD, bcrypt.genSaltSync( 14 ) )
-
 // JWT or Password middle ware for authentication
-app.use( ( req, res, next ) => {
+app.use( async ( req, res, next ) => {
 	// Check if request includes authorization string
 	if ( typeof ( req.headers.authorization ) === 'string' ) {
 		// Check support JWT and Password options for authentication
 		const argsAuth = req.headers.authorization.split( ' ' )
 		if ( argsAuth.length === 2 ) {
-			if ( argsAuth[0] === 'Basic' && bcrypt.compareSync( argsAuth[1], hash ) )
-				return next()  // User Authenticated
-			if ( argsAuth[0] === 'Bearer' && jwt.verify( argsAuth[1], process.env.JWT_SECRET ) ) {
+			if ( argsAuth[0] === 'Basic' ) {
+				// Check provided password against database
+				var passAuth = await db.prom.findOne( db.users, {} ).then( doc => {
+					if ( doc.length === 0 )
+						throw new Error( 'No user account found' )
+					return bcrypt.compareSync( argsAuth[1], doc.hash )
+				} ).catch( ( err ) => {
+					lgr( err )
+					return false
+				} )
+
+				if ( passAuth )
+					return next()
+			} else if ( argsAuth[0] === 'Bearer' && jwt.verify( argsAuth[1], process.env.JWT_SECRET ) ) {
 				// jwt.decode( argsAuth[1], process.env.JWT_SECRET )
 				return next()  // User Authenticated
 			}

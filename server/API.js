@@ -3,6 +3,7 @@
 const lgr = require( 'debug' )( 'App:API' )
 
 const jwt = require( 'jsonwebtoken' )
+const bcrypt = require( 'bcryptjs' )
 const { buildSchema } = require( 'graphql' )
 const db = require( './Database.js' )
 
@@ -48,8 +49,16 @@ const rootValue = {
 			.then( doc => new Message( doc._id, doc ) )
 	},
 	createToken: function( { password } ) {
-		// bcrypt.compareSync( password, hash )  // FIXME: Check password, then return
-		return jwt.sign( { user: { admin: true } }, process.env.JWT_SECRET, { expiresIn: '10m' } )
+		return db.prom.findOne( db.users, {} )
+			.then( doc => {
+				if ( doc.length === 0 )
+					throw new Error( 'No user account found' )
+
+				if ( bcrypt.compareSync( password, doc.hash ) )
+					return jwt.sign( { user: { admin: true } }, process.env.JWT_SECRET, { expiresIn: '10m' } )
+				else
+					throw new Error( 'Password error' )
+			} )
 	},
 	getMessage: async function( { id } ) {
 		return db.prom.findOne( db.alarms, { _id: id } )
