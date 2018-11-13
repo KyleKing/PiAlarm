@@ -38,10 +38,10 @@ class App extends Component {
 	render() {
 
 		// Test GraphQL requests
-		auth( 'BadPass', () => '' )
+		// auth( 'BadPass', () => '' )
 		auth( 'SecretPass',  () => {
-			Client.rollDice( 3, 6 )
 			Mutation.setMessage( 'DeepThoughts', 'How much wood can a wood chuck...' )
+			setTimeout( Client.rollDice, 200, 3, 6 )
 		} )
 
 		return (

@@ -2,7 +2,7 @@
 
 // Configure logging
 const debug = require( 'debug' )
-debug.enable( 'app:*' )
+debug.enable( 'App:*' )
 
 // Launch the server instance
-require( './server/Server.js' ).init()
+require( './server/Server.js' )

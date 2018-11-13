@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "circular-json": "^0.5.9",
     "concurrently": "^4.0.1",
     "cors": "^2.8.5",
     "debug": "^4.1.0",
