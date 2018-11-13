@@ -12,3 +12,6 @@ secret.*
 
 # React
 client/build
+
+# NEDB
+data/

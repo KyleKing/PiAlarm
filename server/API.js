@@ -1,9 +1,10 @@
 // Configure GraphQL
 
-// const lgr = require( 'debug' )( 'App:API' )
+const lgr = require( 'debug' )( 'App:API' )
 
 const jwt = require( 'jsonwebtoken' )
 const { buildSchema } = require( 'graphql' )
+const db = require( './Database.js' )
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema( `
@@ -38,29 +39,52 @@ class Message {
 		this.author = author
 	}
 }
-
-// FYI: Temporary database for testing
-var fakeDatabase = {}
+const doAsync = require( 'doasync' )
 
 // The root provides a resolver function for each API endpoint
 const rootValue = {
+	// createMessage: async function( { input } ) {
 	createMessage: function( { input } ) {
-		// Create a random id for our "database".
-		const id = require( 'crypto' ).randomBytes( 10 ).toString( 'hex' )
+		lgr( input )
+		// // // var message = doAsync( db.alarms ).insert( input )
+		// var message = doAsync( db.alarms ).insert( input ).then( doc => {
+		// 	lgr( `doc: ${doc}` )
+		// 	return doc
+		// } )
 
-		fakeDatabase[id] = input
-		return new Message( id, input )
+		// // var message = doAsync( db.alarms ).find( {} )
+		// // 	.then( docs => {
+		// // 		lgr( `docs: ${docs}` )
+		// // 		return docs
+		// // 	} )
+		// // 	.catch( ( err ) => lgr( `Find Error: ${err}` ) )
+		// // // var message = await doAsync( db.alarms ).insert( input ).then( doc => doc )
+
+		var message =  db.prom.insert( db.alarms, input )
+			.then( doc => {
+				lgr( `doc: ${doc}` )
+				doc.id = doc._id
+				lgr( doc )
+				// lgr( doc.author )
+				// lgr( doc._id )
+				return doc
+			} )
+
+		lgr( 'message:' )
+		lgr( message )
+		return ( message )
 	},
 	createToken: function( { password } ) {
 		// bcrypt.compareSync( password, hash )  // FIXME: Check password, then return
-		// 	FYI: Will need to do run in async: https://graphql.org/learn/execution/
 		return jwt.sign( { user: { admin: true } }, process.env.JWT_SECRET, { expiresIn: '10m' } )
 	},
-	getMessage: function( { id } ) {
-		if ( !fakeDatabase[id] )
-			throw new Error( 'no message exists with id ' + id )
-
-		return new Message( id, fakeDatabase[id] )
+	getMessage: async function( { id } ) {
+		return await doAsync( db.alarms ).findOne( { _id: id } )
+			.then( doc => {
+				if ( doc.length === 0 )
+					throw new Error( 'no message exists with id ' + id )
+				return doc
+			} )
 	},
 	ip: function( args, request ) {
 		return request.ip

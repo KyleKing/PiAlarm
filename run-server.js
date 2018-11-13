@@ -4,5 +4,6 @@
 const debug = require( 'debug' )
 debug.enable( 'App:*' )
 
-// Launch the server instance
+// Initialize the database and launch server
+require( './server/Database.js' )
 require( './server/Server.js' )
