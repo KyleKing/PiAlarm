@@ -1,11 +1,12 @@
 {
-  "name": "PiAlarm",
-  "version": "0.0.1",
+  "name": "PiAlarm-Server",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "concurrently": "^4.0.1",
     "cors": "^2.8.5",
+    "debug": "^4.1.0",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
@@ -17,13 +18,13 @@
     "serve": "^10.0.2"
   },
   "watch": {
-    "server": "*.js"
+    "server": "server/*.js"
   },
   "scripts": {
     "start": "npm run client-build; npm run production",
     "development": "concurrently \"npm run server\" \"npm run client\"",
     "production": "concurrently \"npm run server\" \"npm run client-serve\"",
-    "server": "node server.js",
+    "server": "node run-server.js",
     "server-watch": "npm-watch",
     "client": "node run-client.js --npm=\"start\"",
     "client-build": "node run-client.js --npm=\"run build\"",

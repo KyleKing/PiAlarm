@@ -1,3 +1,7 @@
+// Configure GraphQL
+
+// const lgr = require( 'debug' )( 'App:API' )
+
 const jwt = require( 'jsonwebtoken' )
 const { buildSchema } = require( 'graphql' )
 
@@ -39,7 +43,7 @@ class Message {
 var fakeDatabase = {}
 
 // The root provides a resolver function for each API endpoint
-const root = {
+const rootValue = {
 	createMessage: function( { input } ) {
 		// Create a random id for our "database".
 		const id = require( 'crypto' ).randomBytes( 10 ).toString( 'hex' )
@@ -48,7 +52,7 @@ const root = {
 		return new Message( id, input )
 	},
 	createToken: function( { password } ) {
-		// FIXME: Check password, then return
+		// bcrypt.compareSync( password, hash )  // FIXME: Check password, then return
 		// 	FYI: Will need to do run in async: https://graphql.org/learn/execution/
 		return jwt.sign( { user: { admin: true } }, process.env.JWT_SECRET, { expiresIn: '10m' } )
 	},
@@ -80,4 +84,11 @@ const root = {
 	},
 }
 
-module.exports = { root, schema }
+
+module.exports = {
+	config: {
+		graphiql: true,
+		rootValue,
+		schema,
+	},
+}
