@@ -63,10 +63,9 @@ function modifyMessage( id, newAuthor ) {
 			if ( data.errors )
 				data.errors.map( err => console.log( err.message, err ) )
 
-			const { idNew } = data.data.updateMessage
-			return idNew
+			return data.data.updateMessage.id
 		} )
-		.then( idNew => getMessage( idNew ) )
+		.then( idUpdate => getMessage( idUpdate ) )
 		.catch( err => console.error( err ) )
 }
 

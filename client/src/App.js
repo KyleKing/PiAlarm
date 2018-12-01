@@ -1,8 +1,25 @@
+import './Globals.css'
 import './App.css'
+import {
+	Link, Redirect, Route, BrowserRouter as Router, Switch,
+} from 'react-router-dom'
 import React, { Component } from 'react'
+import Alarm from './Alarm'
 import Client from './Client'
+import Login from './Login'
 import Mutation from './Mutation'
-import logo from './logo.svg'
+
+const Alarms = () => <Alarm
+	uniq="{alarm.uniq}"
+	title="{alarm.title}"
+	schedule="{alarm.schedule}"
+	running="{alarm.running}" />  // FYI: will output error to console
+
+const NoMatch = () => <h1><Link to="/">404 - URL Not Found</Link></h1>
+
+function redirect() {
+	return <Redirect to="/" />
+}
 
 function auth( pass, cb ) {
 	const query = `mutation CreateToken($pass: String!) {
@@ -35,6 +52,16 @@ function auth( pass, cb ) {
 }
 
 class App extends Component {
+	constructor( props ) {
+		super( props )
+		this.state = { approve: false }
+		this.setApprove = this.setApprove.bind( this )
+	}
+
+	setApprove( approve ) {
+		this.setState( { approve } )
+	}
+
 	render() {
 
 		// Test GraphQL requests
@@ -45,22 +72,18 @@ class App extends Component {
 		} )
 
 		return (
-			<div className="App">
-				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo" />
-					<p>
-            Edit <code>src/App.js</code> and save to reload.
-					</p>
-					<a
-						className="App-link"
-						href="https://reactjs.org"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-            Learn React
-					</a>
-				</header>
-			</div>
+			<Router>
+				<div className="App">
+					<Switch>
+						<Route path="/" exact render={( props ) => (
+							<Login {...props} approveAuth={this.setApprove} />
+						)} />
+						<Route path="/Alarms/"
+							component={this.state.approve ? Alarms : redirect} />
+						<Route component={NoMatch} />
+					</Switch>
+				</div>
+			</Router>
 		)
 	}
 }

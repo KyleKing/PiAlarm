@@ -45,7 +45,7 @@ prom.count( alarms, {} )
 			alarms.find( {}, ( err, docs ) => {
 				if ( err ) throw new Error( err )
 				docs.forEach( ( doc ) => {
-					lgr( `>> (${doc.title}): uniq: ${doc.uniq}, sched: ${doc.schedule}` )
+					lgr( `>> (${doc.title}): uniq: ${doc.uniq}, sched: ${doc.schedule}, running: ${doc.running}` )
 				} )
 			} )
 		}

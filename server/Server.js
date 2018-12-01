@@ -61,9 +61,16 @@ app.use( async ( req, res, next ) => {
 
 				if ( passAuth )
 					return next()
-			} else if ( argsAuth[0] === 'Bearer' && jwt.verify( argsAuth[1], process.env.JWT_SECRET ) ) {
-				// jwt.decode( argsAuth[1], process.env.JWT_SECRET )
-				return next()  // User Authenticated
+			} else if ( argsAuth[0] === 'Bearer' ) {
+				try {
+					if ( jwt.verify( argsAuth[1], process.env.JWT_SECRET ) )  {
+						// jwt.decode( argsAuth[1], process.env.JWT_SECRET )
+						return next()  // User Authenticated
+					}
+				} catch ( err ) {
+					lgr( err )
+					return res.sendStatus( 205 )
+				}
 			}
 		}
 		lgr( `Denied access to: '${req.headers.authorization}'` )
