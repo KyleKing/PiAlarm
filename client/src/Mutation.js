@@ -5,36 +5,32 @@ const headers = {
 	'Content-Type': 'application/json',
 }
 
-function setMessage( author, content ) {
-	var query = `mutation CrtMsg($input: MessageInput) {
-    createMessage(input: $input) {
-      id
-    }
-  }`
+function getMessage( id ) {
+	// Declare GetMsg query that accepts id variable and returns only author,content fields
+	var query = `query GetMsg($id: ID!) {
+      getMessage(id: $id) {
+				author
+	      content
+	    }
+    }`
 
 	fetch( 'http://localhost:3001/graphql', {
 		body: JSON.stringify( {
 			query,
-			variables: {
-				input: {
-					author,
-					content,
-				},
-			},
+			variables: { id },
 		} ),
 		headers,
 		method: 'POST',
 	} )
-		.then( r => r.json() )
+		.then( r => {
+			console.log( r )
+			return r.json()
+		} )
 		.then( data => {
+			console.log( 'getMessage() > returned:', data.data.getMessage )
 			if ( data.errors )
 				data.errors.map( err => console.log( err.message, err ) )
-
-			const { id } = data.data.createMessage
-			console.log( 'setMessage() > returned:', id )
-			return id
 		} )
-		.then( id => modifyMessage( id, 'PLaGeRizer' ) )
 		.catch( err => console.error( err ) )
 }
 
@@ -67,39 +63,43 @@ function modifyMessage( id, newAuthor ) {
 			if ( data.errors )
 				data.errors.map( err => console.log( err.message, err ) )
 
-			const { id } = data.data.updateMessage
-			return id
+			const { idNew } = data.data.updateMessage
+			return idNew
 		} )
-		.then( id => getMessage( id ) )
+		.then( idNew => getMessage( idNew ) )
 		.catch( err => console.error( err ) )
 }
 
-function getMessage( id ) {
-	// Declare GetMsg query that accepts id variable and returns only author,content fields
-	var query = `query GetMsg($id: ID!) {
-      getMessage(id: $id) {
-				author
-	      content
-	    }
-    }`
+function setMessage( author, content ) {
+	var query = `mutation CrtMsg($input: MessageInput) {
+    createMessage(input: $input) {
+      id
+    }
+  }`
 
 	fetch( 'http://localhost:3001/graphql', {
 		body: JSON.stringify( {
 			query,
-			variables: { id },
+			variables: {
+				input: {
+					author,
+					content,
+				},
+			},
 		} ),
 		headers,
 		method: 'POST',
 	} )
-		.then( r => {
-			console.log( r )
-			return r.json()
-		} )
+		.then( r => r.json() )
 		.then( data => {
-			console.log( 'getMessage() > returned:', data.data.getMessage )
 			if ( data.errors )
 				data.errors.map( err => console.log( err.message, err ) )
+
+			const { id } = data.data.createMessage
+			console.log( 'setMessage() > returned:', id )
+			return id
 		} )
+		.then( id => modifyMessage( id, 'PLaGeRizer' ) )
 		.catch( err => console.error( err ) )
 }
 

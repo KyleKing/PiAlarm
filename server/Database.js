@@ -8,6 +8,8 @@ const Datastore = require( 'nedb' )
 const moment = require( 'moment' )
 const prom = require( './DatabasePromises.js' )
 
+const alarms = new Datastore( { autoload: true, filename: './data/alarms.db' } )
+
 // Generate Unique Identifier for Each Alarm
 function generateUniq() {
 	const randVal = Math.floor( Math.random() * ( 50 ) )
@@ -31,8 +33,7 @@ function seedAlarmDB() {
 }
 
 
-// Load Alarms database, if no data present, populate with a random alarm
-const alarms = new Datastore( { autoload: true, filename: './data/alarms.db' } )
+// If no data present, populate with a random alarm
 prom.count( alarms, {} )
 	.then( ( count ) => {
 		lgr( `Found ${count} alarms` )
@@ -52,16 +53,16 @@ prom.count( alarms, {} )
 
 // Remove any existing passwords, then create single user account
 const users = new Datastore( { autoload: true, filename: './data/users.db' } )
-users.remove( {}, { multi: true }, ( err, numRemoved ) => {
+users.remove( {}, { multi: true }, ( remErr, numRemoved ) => {
 	// Simple wrapper to only log error if one found
-	if ( err )
-		lgr( err )
+	if ( remErr )
+		lgr( remErr )
 
 	users.insert( {
 		hash: bcrypt.hashSync( process.env.PASSWORD, bcrypt.genSaltSync( 14 ) ),
-	}, ( err ) => {
-		if ( err )
-			lgr( err )
+	}, ( insErr ) => {
+		if ( insErr )
+			lgr( insErr )
 	} )
 } )
 

@@ -1,13 +1,13 @@
 // Wrap common NedB functions as promises
-// TODO: There has to be an easier way to do this
+// TODO: Is there an easier way to wrap NedB as promises?
 
 function count( db, query ) {
 	return new Promise( ( resolve, reject ) => {
-		db.count( query, ( err, count ) => {
+		db.count( query, ( err, countMatches ) => {
 			if ( err )
 				reject( err )
 			else
-				resolve( count )
+				resolve( countMatches )
 		} )
 	} )
 }
@@ -33,11 +33,11 @@ function findOne( db, query ) {
 }
 function insert( db, doc ) {
 	return new Promise( ( resolve, reject ) => {
-		db.insert( doc, ( err, doc ) => {
+		db.insert( doc, ( err, finalDoc ) => {
 			if ( err )
 				reject( err )
 			else
-				resolve( doc )
+				resolve( finalDoc )
 		} )
 	} )
 }
@@ -51,9 +51,9 @@ function remove( db, query ) {
 		} )
 	} )
 }
-function update( db, query, update, options ) {
+function update( db, query, newDoc, options ) {
 	return new Promise( ( resolve, reject ) => {
-		db.update( query, update, options, ( err, numAffected, affectedDocuments, upsert ) => {
+		db.update( query, newDoc, options, ( err, numAffected, affectedDocuments, upsert ) => {
 			if ( err )
 				reject( err )
 			else
