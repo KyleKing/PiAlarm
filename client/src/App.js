@@ -4,16 +4,11 @@ import {
 	Link, Redirect, Route, BrowserRouter as Router, Switch,
 } from 'react-router-dom'
 import React, { Component } from 'react'
-import Alarm from './Alarm'
+import Alarms from './Alarms'
 import Auth from './Auth'
 import Login from './Login'
 import Mutation from './Mutation'
 
-const Alarms = ( alarm ) => <Alarm
-	uniq={alarm.uniq}
-	title={alarm.title}
-	schedule={alarm.schedule}
-	enabled={alarm.enabled} />
 
 const NoMatch = () => <h1><Link to="/">404 - URL Not Found</Link></h1>
 
