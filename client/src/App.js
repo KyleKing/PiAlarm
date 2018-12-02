@@ -1,5 +1,5 @@
-import './Globals.css'
-import './App.css'
+import './styles/Globals.css'
+import './styles/App.css'
 import {
 	Link, Redirect, Route, BrowserRouter as Router, Switch,
 } from 'react-router-dom'

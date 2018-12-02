@@ -63,7 +63,6 @@ function update( db, query, newDoc, options ) {
 	} )
 }
 
-
 module.exports = {
 	count,
 	find,
