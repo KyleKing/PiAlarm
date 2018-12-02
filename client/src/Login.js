@@ -1,6 +1,5 @@
 import './Login.css'
 import React, { Component } from 'react'
-// import bcrypt from 'bcryptjs'
 
 class Login extends Component {
 	// Login input text
@@ -50,7 +49,6 @@ class Login extends Component {
 		// 	} )
 
 		// } )
-
 	}
 
 	render() {

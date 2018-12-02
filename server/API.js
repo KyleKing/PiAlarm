@@ -43,7 +43,6 @@ class Message {
 
 // The root provides a resolver function for each API endpoint
 const rootValue = {
-	// createMessage: async function( { input } ) {
 	createMessage: function( { input } ) {
 		return db.prom.insert( db.alarms, input )
 			.then( doc => new Message( doc._id, doc ) )
@@ -55,7 +54,7 @@ const rootValue = {
 					throw new Error( 'No user account found' )
 
 				if ( bcrypt.compareSync( password, doc.hash ) )
-					return jwt.sign( { user: { admin: true } }, process.env.JWT_SECRET, { expiresIn: '10m' } )
+					return jwt.sign( { user: { admin: true } }, process.env.JWT_SECRET, { expiresIn: '15m' } )
 				else
 					throw new Error( 'Password error' )
 			} )
@@ -68,28 +67,24 @@ const rootValue = {
 				return new Message( doc._id, doc )
 			} )
 	},
-	ip: function( args, request ) {
-		return request.ip
-	},
+	ip: ( args, request ) => request.ip,
 	rollDice: function( { numDice, numSides } ) {
 		return ( [...Array( numDice ).keys()].map( () => Math.floor( Math.random() * ( numSides || 6 ) ) ) )
 	},
 	updateMessage: function( { id, input } ) {
+		// multi: true > returns list of documents
+		// returnUpdatedDocs: true > must be set to true to return docs
+		// upsert: true > if document is inserted, upsert will be the doc. Otherwise undefined
 		return db.prom.update( db.alarms, { _id: id }, input, { multi: true, returnUpdatedDocs: true, upsert: true } )
 			.then( ( { numAffected, affectedDocuments, upsert } ) => {
 				if ( numAffected === 0 )
 					throw new Error( 'no message exists with id ' + id )
-
-				// returnUpdatedDocs: true > must be set to true to return docs
-				// multi: true > returns list of documents
-				// upsert: true > if document is inserted, upsert will be the doc. Otherwise undefined
 				const doc = affectedDocuments[0]
 				return new Message( doc._id, doc )
 			} )
 			.catch( err => lgr( err ) )
 	},
 }
-
 
 module.exports = {
 	config: {

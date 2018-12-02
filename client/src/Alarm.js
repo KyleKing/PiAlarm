@@ -12,7 +12,7 @@ import React from 'react'
 
 class Alarm extends React.Component {
 	static propTypes = {
-		running: PropTypes.bool.isRequired,
+		running: PropTypes.string.isRequired,
 		schedule: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		uniq: PropTypes.string.isRequired,
