@@ -5,10 +5,9 @@ import {
 } from 'react-router-dom'
 import React, { Component } from 'react'
 import Alarm from './Alarm'
+import Auth from './Auth'
 import Login from './Login'
-
 import Mutation from './Mutation'
-import auth from './auth'
 
 const Alarms = ( alarm ) => <Alarm
 	uniq={alarm.uniq}
@@ -34,8 +33,15 @@ class App extends Component {
 	}
 
 	render() {
-		// TODO: Move to unit test
-		auth( 'SecretPass' )
+		// // TODO: Move to unit test
+		// Auth( 'SecretPass' ).then( () => {
+		// 	Mutation.makeAlarm( {
+		// 		enabled: false,
+		// 		schedule: 'SCHEDULE',
+		// 		title: 'TITLE',
+		// 		uniq: 'UNIQ',
+		// 	} )
+		// } )
 
 		return (
 			<Router>

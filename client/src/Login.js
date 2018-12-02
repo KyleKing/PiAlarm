@@ -1,5 +1,6 @@
 import './styles/Login.css'
 import React, { Component } from 'react'
+import Auth from './Auth'
 
 class Login extends Component {
 	// Login input text
@@ -29,26 +30,19 @@ class Login extends Component {
 		e.preventDefault()
 		// Hide password and disable form input while loading
 		this.setState( { hidePass: true, loadState: true } )
-
-		this.props.approveAuth( true )
-		this.props.history.push( '/Alarms' )
-
-		// // TODO: Enable Users Search
-		// users.find( {}, ( err, docs ) => {
-		// 	// Test against first password hash found in database
-		// 	bcrypt.compare( this.state.password, docs[0].hash ).then( ( res ) => {
-		// 		if ( res ) {
-		// 			this.props.approveAuth( res )
-		// 			this.props.history.push( '/Alarms' )
-		// 		} else
-		// 			console.warn( `Password Denied: ${this.state.password}` )
-		// 	} ).catch( ( compareErr ) => {
-		// 		alert( compareErr )
-		// 	} ).finally( () => {
-		// 		this.setState( { loadState: false } )
-		// 	} )
-
-		// } )
+		// Check password in Authorization promise
+		Auth( 'SecretPass' )
+			.then( ( token ) => {
+				if ( token.length === 157 ) {
+					this.props.approveAuth( true )
+					this.props.history.push( '/Alarms' )
+				}
+			} ).catch( ( err ) => {
+				console.warn( `Password Denied: ${this.state.password}`, err )
+				alert( err )
+			} ).finally( () => {
+				this.setState( { loadState: false } )
+			} )
 	}
 
 	render() {
