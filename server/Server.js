@@ -41,42 +41,46 @@ app.use( cors( {
 	},
 } ) )
 
-// JWT or Password middle ware for authentication
+// Basic Password or JWT authentication middleware
 app.use( async ( req, res, next ) => {
 	// Check if request includes authorization string
 	if ( typeof ( req.headers.authorization ) === 'string' ) {
 		// Check support JWT and Password options for authentication
 		const argsAuth = req.headers.authorization.split( ' ' )
 		if ( argsAuth.length === 2 ) {
+			lgr( `Received Authorization: '${req.headers.authorization}'` )
+
+			// With Basic authentication, check encrypted password against database
 			if ( argsAuth[0] === 'Basic' ) {
-				// Check provided password against database
-				var passAuth = await db.prom.findOne( db.users, {} ).then( doc => {
+				return await db.prom.findOne( db.users, {} ).then( doc => {
 					if ( doc.length === 0 )
 						throw new Error( 'No user account found' )
-					return bcrypt.compareSync( argsAuth[1], doc.hash )
+					if ( bcrypt.compareSync( argsAuth[1], doc.hash ) )
+						return next()
+					else
+						return res.status( 401 ).send( 'Authorization Error: Incorrect Password' )
 				} ).catch( ( err ) => {
 					lgr( err )
-					return false
+					return res.status( 401 ).send( `Authorization Error: ${err}` )
 				} )
 
-				if ( passAuth )
-					return next()
+			// With Bearer authentication, check token
 			} else if ( argsAuth[0] === 'Bearer' ) {
 				try {
 					if ( jwt.verify( argsAuth[1], process.env.JWT_SECRET ) )  {
-						// jwt.decode( argsAuth[1], process.env.JWT_SECRET )
+						lgr( jwt.decode( argsAuth[1], process.env.JWT_SECRET ) )
 						return next()  // User Authenticated
 					}
 				} catch ( err ) {
 					lgr( err )
-					return res.sendStatus( 205 )
+					return res.status( 401 ).send( `Authorization Error: ${err}` )
 				}
 			}
 		}
-		lgr( `Denied access to: '${req.headers.authorization}'` )
+
 	}
 	// Otherwise, send 401 - Unauthorized Status Code
-	lgr( `UnAuthorized Request: '${CircularJSON.stringify( req.headers )}'` )
+	lgr( `No Authorization Method: '${CircularJSON.stringify( req.headers )}'` )
 	return res.sendStatus( 401 )
 } )
 

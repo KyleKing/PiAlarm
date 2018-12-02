@@ -1,11 +1,11 @@
-export default function auth( pass, cb ) {
-	const query = `mutation CreateToken($pass: String!) {
-		  createToken(password: $pass)
-		}`
+export default function auth( pass ) {
+	// FIXME: Use client secret to encrypt plain text password
 
-	fetch( 'http://localhost:3001/graphql', {
+	return fetch( 'http://localhost:3001/graphql', {
 		body: JSON.stringify( {
-			query,
+			query: `mutation CreateToken($pass: String!) {
+			  createToken(password: $pass)
+			}`,
 			variables: { pass },
 		} ),
 		headers: {
@@ -17,13 +17,13 @@ export default function auth( pass, cb ) {
 	} )
 		.then( r => r.json() )
 		.then( data => {
-			console.log( 'createToken() > returned:', data.data.createToken )
 			if ( data.errors )
 				data.errors.map( err => console.log( err.message, err ) )
 
 			// Store returned token for use in subsequent requests
-			sessionStorage.setItem( 'jwt', data.data.createToken )
+			const token = data.data.createToken
+			console.log( `createToken() > returned: ${token}` )
+			sessionStorage.setItem( 'jwt', token )
+			return token
 		} )
-		.then( cb() )
-		.catch( err => console.error( err ) )
 }

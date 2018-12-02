@@ -1,89 +1,42 @@
 // Generate headers
+const fetchURL = 'http://localhost:3001/graphql'
 const headers = {
 	'Accept': 'application/json',
 	'Authorization': `Bearer ${sessionStorage.getItem( 'jwt' )}`,
 	'Content-Type': 'application/json',
 }
 
-function getMessage( id ) {
-	// Declare GetMsg query that accepts id variable and returns only author,content fields
-	var query = `query GetMsg($id: ID!) {
-      getMessage(id: $id) {
-				author
-	      content
-	    }
-    }`
+// function getAlarms() {
+// 	// Declare GetAlarm query that accepts id variable and returns only author,content fields
+// 	return fetch( fetchURL, {
+// 		body: JSON.stringify( {
+// 			query: `query GetAlarms() {
+// 	      getAlarms() [NewAlarm]
+// 	    }`,
+// 		} ),
+// 		headers,
+// 		method: 'POST',
+// 	} )
+// 		.then( r => r.json() )
+// 		.then( data => {
+// 			if ( data.errors )
+// 				data.errors.map( err => console.log( err.message, err ) )
 
-	fetch( 'http://localhost:3001/graphql', {
+// 			console.log( 'getAlarms() > returned:', data.data.getAlarms )
+// 			return data.data.getAlarms
+// 		} )
+// 		// .catch( err => console.error( err ) )
+// }
+
+function getAlarm( id ) {
+	// Declare GetAlarm query that accepts id variable and returns only author,content fields
+	return fetch( fetchURL, {
 		body: JSON.stringify( {
-			query,
-			variables: { id },
-		} ),
-		headers,
-		method: 'POST',
-	} )
-		.then( r => {
-			console.log( r )
-			return r.json()
-		} )
-		.then( data => {
-			console.log( 'getMessage() > returned:', data.data.getMessage )
-			if ( data.errors )
-				data.errors.map( err => console.log( err.message, err ) )
-		} )
-		.catch( err => console.error( err ) )
-}
-
-function modifyMessage( id, newAuthor ) {
-	var query = `mutation ModMsg($id: ID!, $input: MessageInput) {
-    updateMessage(id: $id, input: $input) {
-      id
-    }
-  }`
-
-	fetch( 'http://localhost:3001/graphql', {
-		body: JSON.stringify( {
-			query,
+			query: `query GetAlarm($id: ID!) {
+	      getAlarm(id: $id) NewAlarm
+	    }`,
 			variables: {
-				id: id,
-				input: {
-					author: newAuthor,
-				},
-			},
-		} ),
-		headers,
-		method: 'POST',
-	} )
-		.then( r => {
-			console.log( r )
-			return r.json()
-		} )
-		.then( data => {
-			console.log( 'modifyMessage() > returned:', data.data )
-			if ( data.errors )
-				data.errors.map( err => console.log( err.message, err ) )
-
-			return data.data.updateMessage.id
-		} )
-		.then( idUpdate => getMessage( idUpdate ) )
-		.catch( err => console.error( err ) )
-}
-
-function setMessage( author, content ) {
-	var query = `mutation CrtMsg($input: MessageInput) {
-    createMessage(input: $input) {
-      id
-    }
-  }`
-
-	fetch( 'http://localhost:3001/graphql', {
-		body: JSON.stringify( {
-			query,
-			variables: {
-				input: {
-					author,
-					content,
-				},
+				id,
 			},
 		} ),
 		headers,
@@ -94,13 +47,66 @@ function setMessage( author, content ) {
 			if ( data.errors )
 				data.errors.map( err => console.log( err.message, err ) )
 
-			const { id } = data.data.createMessage
-			console.log( 'setMessage() > returned:', id )
-			return id
+			console.log( 'getAlarm() > returned:', data.data.getAlarm )
+			return data.data.getAlarm
 		} )
-		.then( id => modifyMessage( id, 'PLaGeRizer' ) )
-		.catch( err => console.error( err ) )
+		// .catch( err => console.error( err ) )
 }
 
-const Mutation = { getMessage, setMessage }
-export default Mutation
+function modifyAlarm( id, input ) {
+	return fetch( fetchURL, {
+		body: JSON.stringify( {
+			query: `mutation ModAlarm($id: ID!, $input: MutateAlarm) {
+		    updateAlarm(id: $id, input: $input) {
+		      id
+		    }
+		  }`,
+			variables: {
+				id: id,
+				input,
+			},
+		} ),
+		headers,
+		method: 'POST',
+	} )
+		.then( r => r.json() )
+		.then( data => {
+			if ( data.errors )
+				data.errors.map( err => console.log( err.message, err ) )
+
+			console.log( 'modifyAlarm() > returned:', data.data )
+			return data.data.updateAlarm._id
+		} )
+		.then( idUpdate => getAlarm( idUpdate ) )
+		// .catch( err => console.error( err ) )
+}
+
+function makeAlarm( input ) {
+	return fetch( fetchURL, {
+		body: JSON.stringify( {
+			query: `mutation CreateAlarm($input: NewAlarm) {
+		    createAlarm(input: $input) {
+		      id
+		    }
+		  }`,
+			variables: {
+				input,
+			},
+		} ),
+		headers,
+		method: 'POST',
+	} )
+		.then( r => r.json() )
+		.then( data => {
+			if ( data.errors )
+				data.errors.map( err => console.log( err.message, err ) )
+
+			const id = data.data.createAlarm._id
+			console.log( 'makeAlarm() > returned:', id )
+			return id
+		} )
+		// .catch( err => console.error( err ) )
+}
+
+// export default { getAlarm, getAlarms, makeAlarm, modifyAlarm }
+export default { getAlarm, makeAlarm, modifyAlarm }

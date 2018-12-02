@@ -7,6 +7,9 @@ import React, { Component } from 'react'
 import Alarm from './Alarm'
 import Login from './Login'
 
+import Mutation from './Mutation'
+import auth from './auth'
+
 const Alarms = ( alarm ) => <Alarm
 	uniq={alarm.uniq}
 	title={alarm.title}
@@ -31,6 +34,9 @@ class App extends Component {
 	}
 
 	render() {
+		// TODO: Move to unit test
+		auth( 'SecretPass' )
+
 		return (
 			<Router>
 				<div className="App">
