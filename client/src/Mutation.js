@@ -14,34 +14,12 @@ const typeAlarm = `{
 	uniq
 }`
 
-// function getAlarms() {
-// 	// Declare GetAlarm query that accepts id variable and returns only author,content fields
-// 	return fetch( fetchURL, {
-// 		body: JSON.stringify( {
-// 			query: `query GetAlarms() {
-// 	      getAlarms() [Alarm]
-// 	    }`,
-// 		} ),
-// 		headers,
-// 		method: 'POST',
-// 	} )
-// 		.then( r => r.json() )
-// 		.then( data => {
-// 			if ( data.errors )
-// 				data.errors.map( err => console.log( err.message, err ) )
-
-// 			console.log( 'getAlarms() > returned:', data.data.getAlarms )
-// 			return data.data.getAlarms
-// 		} )
-// 		// .catch( err => console.error( err ) )
-// }
-
 function getAlarm( id ) {
 	// Declare GetAlarm query that accepts id variable and returns only author,content fields
 	return fetch( fetchURL, {
 		body: JSON.stringify( {
 			query: `query GetAlarm($id: ID!) {
-	      getAlarm(id: $id) ${typeAlarm}
+	      getAlarm(id: $id) [${typeAlarm}]
 	    }`,
 			variables: {
 				id,
@@ -57,6 +35,28 @@ function getAlarm( id ) {
 
 			console.log( 'getAlarm() > returned:', data.data.getAlarm )
 			return data.data.getAlarm
+		} )
+		// .catch( err => console.error( err ) )
+}
+
+function getAlarms() {
+	// Declare GetAlarm query that accepts id variable and returns only author,content fields
+	return fetch( fetchURL, {
+		body: JSON.stringify( {
+			query: `query GetAlarms {
+	      getAlarms ${typeAlarm}
+	    }`,
+		} ),
+		headers,
+		method: 'POST',
+	} )
+		.then( r => r.json() )
+		.then( data => {
+			if ( data.errors )
+				data.errors.map( err => console.log( err.message, err ) )
+
+			console.log( 'getAlarms() > returned:', data.data.getAlarms )
+			return data.data.getAlarms
 		} )
 		// .catch( err => console.error( err ) )
 }
@@ -112,5 +112,4 @@ function makeAlarm( input ) {
 		// .catch( err => console.error( err ) )
 }
 
-// export default { getAlarm, getAlarms, makeAlarm, modifyAlarm }
-export default { getAlarm, makeAlarm, modifyAlarm }
+export default { getAlarm, getAlarms, makeAlarm, modifyAlarm }

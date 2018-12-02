@@ -33,6 +33,7 @@ const schema = buildSchema( `
 
 	type Query {
 		getAlarm(id: ID!): Alarm
+		getAlarms: [Alarm]
 	}
 
 	type Mutation {
@@ -67,6 +68,7 @@ const rootValue = {
 				return doc
 			} )
 	},
+	getAlarms: async () => await db.prom.find( db.alarms ),
 	ip: ( args, request ) => request.ip,
 	updateAlarm: function( { id, input } ) {
 		// returnUpdatedDocs: true > must be set to true to return docs

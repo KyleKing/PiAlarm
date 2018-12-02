@@ -1,35 +1,40 @@
 import './styles/Alarms.css'
 import Alarm from './Alarm'
-// import Mutation from './Mutation'
+import Mutation from './Mutation'
 import React from 'react'
 
 export default class Alarms extends React.Component {
-	// // TODO: Enable getAlarms()
-	// constructor( props ) {
-	// 	super( props )
-	// 	this.state = {
-	// 		alarms: async () => await Mutation.getAlarms(),
-	// 	}
-	// }
+	constructor( props ) {
+		super( props )
+		this.state = {
+			alarms: [],
+		}
+	}
+
+	componentDidMount() {
+		// Request all Alarms to populate UI
+		Mutation.getAlarms().then( ( alarms ) => {
+			this.setState( {
+				alarms,
+			} )
+		} )
+	}
 
 	render() {
-		// // TODO: Enable getAlarms()
-		// return this.state.alarms.map( ( alarm ) => {
-		// 	return (
-		// 		<Alarm
-		// 			uniq={alarm.uniq}
-		// 			title={alarm.title}
-		// 			schedule={alarm.schedule}
-		// 			enabled={alarm.enabled} />
-		// 	)
-		// } )
+		const mappedAlarms = this.state.alarms.map( ( alarm ) => {
+			return (
+				<Alarm
+					uniq={alarm.uniq}
+					title={alarm.title}
+					schedule={alarm.schedule}
+					enabled={alarm.enabled} />
+			)
+		} )
 
 		return (
-			<Alarm
-				uniq="{alarm.uniq}"
-				title="{alarm.title}"
-				schedule="{alarm.schedule}"
-				enabled={true} />
+			<div>
+				{mappedAlarms}
+			</div>
 		)
 	}
 }

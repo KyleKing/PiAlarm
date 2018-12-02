@@ -7,7 +7,6 @@ import React, { Component } from 'react'
 import Alarms from './Alarms'
 import Login from './Login'
 
-
 const NoMatch = () => <h1><Link to="/">404 - URL Not Found</Link></h1>
 
 function redirect() {
