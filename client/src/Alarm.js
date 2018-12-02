@@ -10,9 +10,9 @@ import './styles/Alarm.css'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-class Alarm extends React.Component {
+export default class Alarm extends React.Component {
 	static propTypes = {
-		running: PropTypes.string.isRequired,
+		enabled: PropTypes.bool.isRequired,
 		schedule: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		uniq: PropTypes.string.isRequired,
@@ -22,9 +22,9 @@ class Alarm extends React.Component {
 		super( props )
 		this.state = {
 			changed: false,
+			enabled: this.props.enabled,
 			error: false,
 			removed: false,
-			running: this.props.running,
 			schedule: this.props.schedule,
 			title: this.props.title,
 			uniq: this.props.uniq,
@@ -41,7 +41,7 @@ class Alarm extends React.Component {
 		// console.log(`Toggled: ${this.props.uniq}, but no direct action!`);
 		this.setState( {
 			changed: true,
-			running: !this.state.running,
+			enabled: !this.state.enabled,
 		} )
 	}
 
@@ -73,9 +73,9 @@ class Alarm extends React.Component {
 	handleSubmit() {
 		const newState = {
 			changed: false,
+			enabled: this.state.enabled,
 			error: false,
 			removed: false,
-			running: this.state.running,
 			schedule: this.state.schedule,
 			title: this.state.title,
 			uniq: this.state.uniq,
@@ -99,8 +99,8 @@ class Alarm extends React.Component {
 		const fc = 'flex-container'
 		const fi = 'flex-item'
 		const buttonBase = 'btn custom-button-formatting'
-		const buttonValue = this.state.running ? 'Enabled' : 'Disabled'
-		const buttonState = this.state.running ? 'info' : 'danger'
+		const buttonValue = this.state.enabled ? 'Enabled' : 'Disabled'
+		const buttonState = this.state.enabled ? 'info' : 'danger'
 		const buttonClasses = `${buttonBase} btn-${buttonState} ${buttonValue}`
 		const removed = this.state.removed ? 'removed' : 'alarm-exists'
 		const changed = this.state.changed ? 'changed' : 'unchanged'
@@ -143,12 +143,3 @@ class Alarm extends React.Component {
 		)
 	}
 }
-
-// Alarm.propTypes = {
-// 	running: PropTypes.bool.isRequired,
-// 	schedule: PropTypes.string.isRequired,
-// 	title: PropTypes.string.isRequired,
-// 	uniq: PropTypes.string.isRequired,
-// }
-
-export default Alarm

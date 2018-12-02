@@ -7,11 +7,11 @@ import React, { Component } from 'react'
 import Alarm from './Alarm'
 import Login from './Login'
 
-const Alarms = () => <Alarm
-	uniq="{alarm.uniq}"
-	title="{alarm.title}"
-	schedule="{alarm.schedule}"
-	running="{alarm.running}" />  // FYI: will output error to console
+const Alarms = ( alarm ) => <Alarm
+	uniq={alarm.uniq}
+	title={alarm.title}
+	schedule={alarm.schedule}
+	enabled={alarm.enabled} />
 
 const NoMatch = () => <h1><Link to="/">404 - URL Not Found</Link></h1>
 

@@ -8,6 +8,7 @@ const Datastore = require( 'nedb' )
 const moment = require( 'moment' )
 const prom = require( './DatabasePromises.js' )
 
+// Load alarms database
 const alarms = new Datastore( { autoload: true, filename: './data/alarms.db' } )
 
 // Generate Unique Identifier for Each Alarm
@@ -24,7 +25,7 @@ function seedAlarmDB() {
 	prefs.forEach( ( pref ) => {
 		const uniq = generateUniq()
 		alarms.insert( {
-			running: true,
+			enabled: true,
 			schedule,
 			title: `ALARM: ${uniq} - ${pref}`,
 			uniq,
@@ -32,32 +33,33 @@ function seedAlarmDB() {
 	} )
 }
 
-
-// If no data present, populate with a random alarm
+// Check number of alarms in database
 prom.count( alarms, {} )
 	.then( ( count ) => {
 		lgr( `Found ${count} alarms` )
 		if ( count === 0 ) {
+			// If no data present, populate with a random alarm
 			lgr( 'Initializing new Alarms data store' )
 			seedAlarmDB()
 		} else {
+			// Otherwise, log database initial state for debugging
 			lgr( 'Loading existing Alarms data store' )
 			alarms.find( {}, ( err, docs ) => {
 				if ( err ) throw new Error( err )
 				docs.forEach( ( doc ) => {
-					lgr( `>> (${doc.title}): uniq: ${doc.uniq}, sched: ${doc.schedule}, running: ${doc.running}` )
+					lgr( `>> (${doc.title}): uniq: ${doc.uniq}, sched: ${doc.schedule}, enabled: ${doc.enabled}` )
 				} )
 			} )
 		}
 	} )
 
-// Remove any existing passwords, then create single user account
+// Remove any existing users (passwords) then create the single user account
 const users = new Datastore( { autoload: true, filename: './data/users.db' } )
 users.remove( {}, { multi: true }, ( remErr, numRemoved ) => {
-	// Simple wrapper to only log error if one found
 	if ( remErr )
 		lgr( remErr )
 
+	// Insert new user based on the password variable set in the .env file
 	users.insert( {
 		hash: bcrypt.hashSync( process.env.PASSWORD, bcrypt.genSaltSync( 14 ) ),
 	}, ( insErr ) => {
