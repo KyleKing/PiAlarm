@@ -38,10 +38,9 @@ class Login extends Component {
 					this.props.history.push( '/Alarms' )
 				}
 			} ).catch( ( err ) => {
+				this.setState( { loadState: false } )
 				console.warn( `Password Denied: ${this.state.password}`, err )
 				alert( err )
-			} ).finally( () => {
-				this.setState( { loadState: false } )
 			} )
 	}
 

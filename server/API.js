@@ -44,12 +44,7 @@ const schema = buildSchema( `
 
 // The root provides a resolver function for each API endpoint
 const rootValue = {
-	createAlarm: async ( { input } ) => {
-		lgr( input )
-		const alarm = await db.prom.insert( db.alarms, input )
-		lgr( alarm )
-		return alarm
-	},
+	createAlarm: async ( { input } ) => await db.prom.insert( db.alarms, input ),
 	createToken: function( { password } ) {
 		return db.prom.findOne( db.users, {} )
 			.then( doc => {

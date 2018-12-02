@@ -67,10 +67,9 @@ app.use( async ( req, res, next ) => {
 			// With Bearer authentication, check token
 			} else if ( argsAuth[0] === 'Bearer' ) {
 				try {
-					if ( jwt.verify( argsAuth[1], process.env.JWT_SECRET ) )  {
-						lgr( jwt.decode( argsAuth[1], process.env.JWT_SECRET ) )
+					lgr( jwt.decode( argsAuth[1], process.env.JWT_SECRET ) )
+					if ( jwt.verify( argsAuth[1], process.env.JWT_SECRET ) )
 						return next()  // User Authenticated
-					}
 				} catch ( err ) {
 					lgr( err )
 					return res.status( 401 ).send( `Authorization Error: ${err}` )

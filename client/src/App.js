@@ -5,9 +5,7 @@ import {
 } from 'react-router-dom'
 import React, { Component } from 'react'
 import Alarms from './Alarms'
-import Auth from './Auth'
 import Login from './Login'
-import Mutation from './Mutation'
 
 
 const NoMatch = () => <h1><Link to="/">404 - URL Not Found</Link></h1>
@@ -28,16 +26,6 @@ class App extends Component {
 	}
 
 	render() {
-		// // TODO: Move to unit test
-		// Auth( 'SecretPass' ).then( () => {
-		// 	Mutation.makeAlarm( {
-		// 		enabled: false,
-		// 		schedule: 'SCHEDULE',
-		// 		title: 'TITLE',
-		// 		uniq: 'UNIQ',
-		// 	} )
-		// } )
-
 		return (
 			<Router>
 				<div className="App">

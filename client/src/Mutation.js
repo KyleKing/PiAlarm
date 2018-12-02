@@ -6,12 +6,20 @@ const headers = {
 	'Content-Type': 'application/json',
 }
 
+const typeAlarm = `{
+	_id
+	enabled
+	schedule
+	title
+	uniq
+}`
+
 // function getAlarms() {
 // 	// Declare GetAlarm query that accepts id variable and returns only author,content fields
 // 	return fetch( fetchURL, {
 // 		body: JSON.stringify( {
 // 			query: `query GetAlarms() {
-// 	      getAlarms() [NewAlarm]
+// 	      getAlarms() [Alarm]
 // 	    }`,
 // 		} ),
 // 		headers,
@@ -33,7 +41,7 @@ function getAlarm( id ) {
 	return fetch( fetchURL, {
 		body: JSON.stringify( {
 			query: `query GetAlarm($id: ID!) {
-	      getAlarm(id: $id) NewAlarm
+	      getAlarm(id: $id) ${typeAlarm}
 	    }`,
 			variables: {
 				id,
@@ -57,9 +65,7 @@ function modifyAlarm( id, input ) {
 	return fetch( fetchURL, {
 		body: JSON.stringify( {
 			query: `mutation ModAlarm($id: ID!, $input: MutateAlarm) {
-		    updateAlarm(id: $id, input: $input) {
-		      id
-		    }
+		    updateAlarm(id: $id, input: $input) ${typeAlarm}
 		  }`,
 			variables: {
 				id: id,
@@ -85,9 +91,7 @@ function makeAlarm( input ) {
 	return fetch( fetchURL, {
 		body: JSON.stringify( {
 			query: `mutation CreateAlarm($input: NewAlarm) {
-		    createAlarm(input: $input) {
-		      id
-		    }
+		    createAlarm(input: $input) ${typeAlarm}
 		  }`,
 			variables: {
 				input,
