@@ -7,7 +7,8 @@ class Login extends Component {
 
 	constructor( props ) {
 		super( props )
-		this.state = { hidePass: false, loadState: false, password: '' }
+		// this.state = { hidePass: false, loadState: false, password: '' }  # FIXME: Remove password
+		this.state = { hidePass: false, loadState: false, password: 'SecretPass' }
 		// Bind handlers
 		this.showHide = this.showHide.bind( this )
 		this.handleChange = this.handleChange.bind( this )

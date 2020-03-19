@@ -24,6 +24,7 @@ export default class Alarms extends React.Component {
 		const mappedAlarms = this.state.alarms.map( ( alarm ) => {
 			return (
 				<Alarm
+					key={alarm._id}
 					uniq={alarm.uniq}
 					title={alarm.title}
 					schedule={alarm.schedule}
