@@ -1,53 +1,33 @@
 # PiAlarm
-> Raspberry Pi-powered smart alarm clock. A RGB Light Strip, loud buzzer, bed shaker, web app, geo-location knowledge, and Character LCD display
 
-> npm i --production
+Raspberry Pi Smart Alarm Clock. RGB light strip, buzzer, character LCD display, and web app. Built with Plotly/Dash to handle the backend alarm clock control and the front-end user interactions
 
-## WIP
+This has been a personal project that I was using for awhile. I originally hacked it together in Python2, but I've learned about TDD, architecture, and general code quality since then. I made an iteration building the entire alarm in NodeJS/React, but decided that Python is just a much better alternative and am using Plotly/Dash.
 
-Action Items:
+**Status:** the project was on ice for ~1 year, but I'm starting to work on it again in 2020. My goal is to have a MVP by April 30 and polish and complete the project by end of May. I'm working on other personal projects and have other activities that might interfere, but might as well set a goal!
 
-- Weather display doesn't update
-- LCD wrap text is broken...
-- Add simply.js to modify alarms from watch: [http://simplyjs.io/](http://simplyjs.io/)
-- Configure router with InternalPort:8000 / ServicePort:80 (this way port isn't needed in URL)
-- Rebuild alarm housing
-    + Re-solder the speaker to a 5V line rather than the current 3V
-    + Add a longer light strip!
-    + Capture a better image of the alarm clock assembly then label everything in Sketch
-- From TODO.txt
-    + Update README - note: install local express-users with `npm i ../Pull Requests/express-users`
-    + Update the wiring diagram
+## Tech
 
-*Notes: Router Admin Panel > Forwarding > Virtual Servers > 80/3000/TCP*
-
-## The Alarm
-
-I'm a heavy sleeper, so I designed the alarm clock to go from pleasant to effective. When the alarm starts, a RGB LED strip lights up and gently increases in brightness. The second stage starts a buzzer and increase the LED strips brightness. The third stage initiates the bed shaker, buzzer, and fades the RGB LED strip between color values at full brightness. At any point, I can press the push button button and turn off the alarm.
+- Integrations
+  - Plotly/Dash application to handle UI, basic HTML authentication, and managing a TInyDB instance
+  - If This Then That (IFTTT)/generic HTML requests to toggle alarm on/off. Allows me to modify the alarm when not home and will automatically disable the alarm if I leave the general vicinity of my home until I return
+- Electronics
+  - RGB Light Strip
+  - Buzzer
+  - 7-Segment Display for time
+  - Character LCD - shows weather and other quick information
+  - (Used to also have a motorized bed shaker, but that got banned, haha)
+- Box
+  - Pretty janky, but easy to open and work on as a prototype. Will probably try to make something that looks nicer down the road
 
 <p align="center">
-  <img width="550" height=auto src="./README/cover.jpg" alt="above view">
+  <img width="550" height=auto src="./.readme/cover.jpg" alt="above view">
 </p>
-<p align="center">The prototype alarm</p>
-
-## Display
-
-The current display is a simple character LCD that I had lying around. I'm working on replacing it with a 4 custom RGB LED digits. I'm using shift registers to control the insane number of pins necessary to set each LED individually. I'll update the progress on the new display sometime soon.
-
-## Location Smarts
-
-Using If This Then That (IFTTT), I setup a recipe that makes a web request when I'm away to turn off the alarm and when I return to activate the alarm. This way, the alarm won't run unless I'm present.
-
-## Web app
-
-Using react and socket.io, I built a simple web app accessible anywhere. Once in the app, new alarms can be set using basic cron syntax. The back end of the app handles scheduling, starting, and deleting alarms as I modify the database of alarms.
-
-<p align="center">
-  <img width="550" height=auto src="./README/webapp.png" alt="web app">
-</p>
-<p align="center">The web app</p>
+<p align="center">Prototype Alarm Clock</p>
 
 ## How to run your own version
+
+TODO: Update documentation for quick start. This is probably ~10% right
 
 First, check the pins.ini file in the Python/ directory, then proceed the test of each hardware before booting the web application for the first time.
 
@@ -68,8 +48,6 @@ lon = <>
 
 Python packages and other libraries installed, see the script `./Python/requirements.sh`
 
-and Node modules: `cd PiAlarm; npm install`
-
 There are likely other bugs, so open an issue if you run into any trouble. This app really isn't built for distribution and is only a personal side-project.
 
 ### Hardware Test: TM1637 7-Digit Display
@@ -79,10 +57,6 @@ cd PiAlarm/Python
 python modules/TM1637.py
 # There should be a few statements printed and you can press enter to confirm each test
 ```
-
-## Acknowledgments
-
-[Web app based on React example apps published by Twilio](https://www.twilio.com/blog/2015/08/setting-up-react-for-es6-with-webpack-and-babel-2.html)
 
 ## Made by
 
