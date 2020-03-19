@@ -3,6 +3,7 @@
 # Environment Files
 **/.env
 **/secret.*
+**/tmp.py
 
 # Logs
 **/*.log
