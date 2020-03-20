@@ -1,0 +1,52 @@
+{
+  "name": "PiAlarm-Server",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "circular-json": "^0.5.9",
+    "concurrently": "^4.1.0",
+    "cors": "^2.8.5",
+    "debug": "^4.1.0",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "express-graphql": "^0.7.1",
+    "express-rate-limit": "^3.3.2",
+    "fs": "0.0.2",
+    "graphql": "^14.0.2",
+    "jsonwebtoken": "^8.4.0",
+    "minimist": "^1.2.0",
+    "moment": "^2.22.2",
+    "nedb": "^1.8.0",
+    "serve": "^10.1.1"
+  },
+  "watch": {
+    "server": "server/*.js"
+  },
+  "scripts": {
+    "start": "npm run client-build; npm run production",
+    "development": "concurrently \"npm run server\" \"npm run client\"",
+    "production": "concurrently \"npm run server\" \"npm run client-serve\"",
+    "server": "node run-server.js",
+    "server-watch": "npm-watch",
+    "client": "node run-client.js --npm=\"start\"",
+    "client-build": "node run-client.js --npm=\"run build\"",
+    "client-serve": "./node_modules/serve/bin/serve.js -s client/build"
+  },
+  "devDependencies": {
+    "babel-eslint": "9.0.0",
+    "csscomb": "^4.2.0",
+    "eslint": "5.6.0",
+    "eslint-config-fbjs": "^2.1.0",
+    "eslint-plugin-array-func": "^3.1.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-no-loops": "^0.3.0",
+    "eslint-plugin-optimize-regex": "^1.1.6",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-relay": "0.0.28",
+    "eslint-plugin-security": "^1.4.0",
+    "npm-watch": "^0.4.0"
+  }
+}
