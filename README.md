@@ -20,14 +20,31 @@ This has been a personal project that I was using for awhile. I originally hacke
 - Box
   - Pretty janky, but easy to open and work on as a prototype. Will probably try to make something that looks nicer down the road
 
+## Photos
+
 <p align="center">
-  <img width="550" height=auto src="./.readme/cover.jpg" alt="above view">
+  <img width="550" height=auto src="./.readme/prototype.jpg" alt="above view">
 </p>
-<p align="center">Prototype Alarm Clock</p>
+<p align="center">Initial Prototype</p>
 
-## How to run your own version
+<p align="center">
+  <img width="550" height=auto src="./.readme/TODO: Photo of box" alt="above view">
+</p>
+<p align="center">Prototype v2 with Box</p>
 
-TODO: Update documentation for quick start. This is probably ~10% right
+## Local Development
+
+![Commits Since last Release](https://img.shields.io/github/commits-since/KyleKing/pialarm/latest) ![Last Commit Badge](https://img.shields.io/github/last-commit/kyleking/pialarm)
+
+> FIXME: Update documentation for quick start. This is probably ~32% right
+
+```sh
+git clone https://github.com/KyleKing/pialarm.git
+cd pialarm
+poetry install
+poetry shell
+python pialarm.py
+```
 
 First, check the pins.ini file in the Python/ directory, then proceed the test of each hardware before booting the web application for the first time.
 
@@ -54,10 +71,6 @@ There are likely other bugs, so open an issue if you run into any trouble. This 
 
 ```
 cd PiAlarm/Python
-python modules/TM1637.py
+python .archive-python/modules/TM1637.py
 # There should be a few statements printed and you can press enter to confirm each test
 ```
-
-## Made by
-
-[Kyle King](http://kyleking.me)

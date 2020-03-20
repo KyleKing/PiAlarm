@@ -3,14 +3,22 @@
 # Environment Files
 **/.env
 **/secret.*
-**/tmp.py
-.vscode/
+
+# Coverage
+coverage.json
+docs/coverage_html/*
+docs/test_report.html
 
 # Logs
 **/*.log
 
 # NEDB
 **/data/
+
+# Other
+**/tmp.py
+.doit*
+.vscode/
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Default Python Gitignore

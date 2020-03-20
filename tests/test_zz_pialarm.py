@@ -4,12 +4,15 @@ import time
 
 import pytest
 import toml
-from pialarm import __version__, main
+from pialarm import __version__
+from pialarm.app_alarm import AppAlarm
 
 
 @pytest.mark.CHROME
 def test_smoke_test_main(dash_duo):
-    dash_duo.start_server(main.app.app)
+    app = AppAlarm()
+    app.create()
+    dash_duo.start_server(app.app)
 
     time.sleep(1)
 
