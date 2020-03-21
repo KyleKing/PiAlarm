@@ -281,6 +281,26 @@ testing = ["pytest", "pytest-sugar", "pytest-mock", "lxml", "selenium (>=3.141.0
 
 [[package]]
 category = "main"
+description = "Dash Authorization Package."
+name = "dash-auth"
+optional = false
+python-versions = "*"
+version = "1.3.2"
+
+[package.dependencies]
+Flask = ">=0.12"
+dash = ">=0.18.3"
+dash_core_components = "*"
+dash_html_components = "*"
+flask-compress = "*"
+flask-seasurf = "*"
+itsdangerous = ">=0.18"
+plotly = "*"
+retrying = "*"
+ua_parser = "*"
+
+[[package]]
+category = "main"
 description = "Bootstrap themed components for use in Plotly Dash"
 name = "dash-bootstrap-components"
 optional = false
@@ -315,6 +335,7 @@ scipy = "*"
 reference = "4320549c7b52a7ed24c0cdf7cd32e46958200619"
 type = "git"
 url = "https://github.com/kyleking/dash_charts"
+
 [[package]]
 category = "main"
 description = "Core component suite for Dash"
@@ -404,6 +425,7 @@ version = "*, ^1.9"
 reference = "9b89336eef89aa1baa029dd8b270de3070e6e2f3"
 type = "git"
 url = "https://github.com/KyleKing/dash_dev.git"
+
 [[package]]
 category = "main"
 description = "Vanilla HTML components for Dash"
@@ -964,6 +986,17 @@ name = "flask-compress"
 optional = false
 python-versions = "*"
 version = "1.4.0"
+
+[package.dependencies]
+Flask = "*"
+
+[[package]]
+category = "main"
+description = "An updated CSRF extension for Flask."
+name = "flask-seasurf"
+optional = false
+python-versions = "*"
+version = "0.2.2"
 
 [package.dependencies]
 Flask = "*"
@@ -1777,6 +1810,14 @@ diagrams = ["pygraphviz"]
 test = ["pytest"]
 
 [[package]]
+category = "main"
+description = "Python port of Browserscope's user agent parser"
+name = "ua-parser"
+optional = false
+python-versions = "*"
+version = "0.10.0"
+
+[[package]]
 category = "dev"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 name = "urllib3"
@@ -1832,7 +1873,6 @@ watchdog = ["watchdog"]
 [[package]]
 category = "dev"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version < \"3.8\""
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -1843,7 +1883,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "de097ed7f54a7b36b20264dc1276951bfda812ee1aa2009b8236a3620babe330"
+content-hash = "54cb274186361ce1d7f9673c7aa3f0d87bfc8a07bb768e8b383239c07f82a396"
 python-versions = "^3.7, !=3.8"
 
 [metadata.files]
@@ -1999,6 +2039,9 @@ darglint = [
 ]
 dash = [
     {file = "dash-1.9.1.tar.gz", hash = "sha256:6a488d380f02ba7c8e624a7c4d89f9e39368b8d9ed4a6f463364894a237f1fd8"},
+]
+dash-auth = [
+    {file = "dash_auth-1.3.2.tar.gz", hash = "sha256:cb3c1467b70ba0d1770274a0c6819e6cbda7adc5ce5f1ed5b02b24de2857be85"},
 ]
 dash-bootstrap-components = [
     {file = "dash-bootstrap-components-0.9.1.tar.gz", hash = "sha256:a958ec54ad61b9b2d9842f1afba8999d6b276a7eaa346c2e5645c21580f0c20d"},
@@ -2185,6 +2228,9 @@ flask = [
 ]
 flask-compress = [
     {file = "Flask-Compress-1.4.0.tar.gz", hash = "sha256:468693f4ddd11ac6a41bca4eb5f94b071b763256d54136f77957cfee635badb3"},
+]
+flask-seasurf = [
+    {file = "Flask-SeaSurf-0.2.2.tar.gz", hash = "sha256:c57918c17e9afd988bdc30d8dcb7bfb833741dee38b06c1bbd17821d6fa2b6cf"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
@@ -2581,6 +2627,10 @@ tqdm = [
 transitions = [
     {file = "transitions-0.8.0-py2.py3-none-any.whl", hash = "sha256:45c7138cff493c14b015b23d4ff64d820bcbc108294d5da374e52fbf58c42635"},
     {file = "transitions-0.8.0.tar.gz", hash = "sha256:1e7d213ce04114e4b1f861986282294b494c5a7d0448faa28849ec84298862bf"},
+]
+ua-parser = [
+    {file = "ua-parser-0.10.0.tar.gz", hash = "sha256:47b1782ed130d890018d983fac37c2a80799d9e0b9c532e734c67cf70f185033"},
+    {file = "ua_parser-0.10.0-py2.py3-none-any.whl", hash = "sha256:46ab2e383c01dbd2ab284991b87d624a26a08f72da4d7d413f5bfab8b9036f8a"},
 ]
 urllib3 = [
     {file = "urllib3-1.25.8-py2.py3-none-any.whl", hash = "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc"},

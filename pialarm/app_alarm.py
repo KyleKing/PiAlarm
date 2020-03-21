@@ -1,5 +1,9 @@
 """Alarm App."""
 
+import json
+from pathlib import Path
+
+import dash_auth
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash_charts.utils_app import AppBase
@@ -11,6 +15,9 @@ class AppAlarm(AppBase):
 
     name = 'PiAlarm'
     """Application name"""
+
+    secret_filename = Path(__file__).parent / 'secret.json'
+    """Path to json file with username and passwords. Example: `{'username': 'password'}`."""
 
     external_stylesheets = [dbc.themes.FLATLY]
     """List of external stylesheets."""
@@ -25,6 +32,11 @@ class AppAlarm(AppBase):
         """Initialize ids with `self.register_uniq_ids([...])` and other one-time actions."""
         super().initialization()
         self.register_uniq_ids([self.id_button, self.id_status])
+
+        if not self.secret_filename.is_file():
+            raise FileNotFoundError(f'Expected: {self.secret_filename}')
+        user_pass_pairs = json.loads(self.secret_filename.read_text())
+        dash_auth.BasicAuth(self.app, user_pass_pairs)
 
     def create_elements(self):
         """Initialize charts and tables."""
