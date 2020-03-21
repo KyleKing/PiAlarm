@@ -2,6 +2,14 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Changes
+~~~~~~~
+- Initialize placeholder app and first test. [Kyle King]
+
+
 0.0.0 (2020-03-20)
 ------------------
 

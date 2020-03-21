@@ -6,8 +6,7 @@
 
 # Coverage
 coverage.json
-docs/coverage_html/*
-docs/test_report.html
+docs/*
 
 # Logs
 **/*.log

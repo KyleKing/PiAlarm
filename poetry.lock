@@ -179,8 +179,8 @@ category = "main"
 description = "Cross-platform colored terminal text."
 name = "colorama"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "0.4.3"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "0.4.1"
 
 [[package]]
 category = "dev"
@@ -280,7 +280,7 @@ dev = ["dash_flow_example (0.0.5)", "dash-dangerously-set-inner-html", "mock", "
 testing = ["pytest", "pytest-sugar", "pytest-mock", "lxml", "selenium (>=3.141.0)", "percy", "requests", "beautifulsoup4", "waitress"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Bootstrap themed components for use in Plotly Dash"
 name = "dash-bootstrap-components"
 optional = false
@@ -305,13 +305,14 @@ version = "0.0.4"
 bottleneck = "*"
 cerberus = "^1.3.2"
 dash = "*, ^1.9"
+dash-bootstrap-components = "*"
 icecream = "*"
 pandas = "*"
 pystache = "^0.5.4"
 scipy = "*"
 
 [package.source]
-reference = "5ffc6584585cacbc349194b1cad938935196053a"
+reference = "4320549c7b52a7ed24c0cdf7cd32e46958200619"
 type = "git"
 url = "https://github.com/kyleking/dash_charts"
 [[package]]
@@ -324,15 +325,85 @@ version = "1.8.1"
 
 [[package]]
 category = "dev"
-description = "DAQ components for Dash"
-name = "dash-daq"
+description = ""
+name = "dash-dev"
 optional = false
-python-versions = "*"
-version = "0.4.0"
+python-versions = "^3.7"
+version = "0.0.1"
 
 [package.dependencies]
-dash = ">=1.6.1"
+add-trailing-comma = "*"
+autopep8 = "*"
+beautifulsoup4 = "*"
+cohesion = "*"
+darglint = "*"
+diff-cover = "*"
+dlint = "*"
+doit = "*"
+flake8 = "*"
+flake8-2020 = "*"
+flake8-aaa = "*"
+flake8-assertive = "*"
+flake8-bandit = "*"
+flake8-blind-except = "*"
+flake8-breakpoint = "*"
+flake8-broken-line = "*"
+flake8-bugbear = "*"
+flake8-builtins = "*"
+flake8-cognitive-complexity = "*"
+flake8-commas = "*"
+flake8-comprehensions = "*"
+flake8-debugger = "*"
+flake8-deprecated = "*"
+flake8-docstrings = "*"
+flake8-eradicate = "*"
+flake8-fixme = "*"
+flake8-functions = "*"
+flake8-isort = "*"
+flake8-logging-format = "*"
+flake8-markdown = "*"
+flake8-mock = "*"
+flake8-mutable = "*"
+flake8-pep3101 = "*"
+flake8-plone-hasattr = "*"
+flake8-print = "*"
+flake8-printf-formatting = "*"
+flake8-pytest-style = "*"
+flake8-quotes = "*"
+flake8-return = "*"
+flake8-spellcheck = "*"
+flake8-sql = "*"
+flake8-string-format = "*"
+flake8-tuple = "*"
+flake8-variables-names = "*"
+gitchangelog = "*"
+icecream = "*"
+iniparse = "*"
+isort = "*"
+pandas-vet = "*"
+pdoc3 = "*"
+pep8-naming = "*"
+proselint = "*"
+pur = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-html = "*"
+pyupgrade = "*"
+radon = "*"
+rope = "*"
+toml = "*"
+tqdm = "*"
+transitions = "*"
+vulture = "*"
 
+[package.dependencies.dash]
+extras = ["testing"]
+version = "*, ^1.9"
+
+[package.source]
+reference = "9b89336eef89aa1baa029dd8b270de3070e6e2f3"
+type = "git"
+url = "https://github.com/KyleKing/dash_dev.git"
 [[package]]
 category = "main"
 description = "Vanilla HTML components for Dash"
@@ -782,7 +853,7 @@ description = "A flake8 plugin checking common style issues or inconsistencies w
 name = "flake8-pytest-style"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.5.0"
+version = "0.6.0"
 
 [package.dependencies]
 flake8-plugin-utils = ">=1.2.0,<2.0.0"
@@ -1217,7 +1288,7 @@ description = "Check PEP-8 naming conventions, plugin for flake8"
 name = "pep8-naming"
 optional = false
 python-versions = "*"
-version = "0.9.1"
+version = "0.10.0"
 
 [package.dependencies]
 flake8-polyfill = ">=1.0.2,<2"
@@ -1512,10 +1583,10 @@ description = "Code Metrics in Python"
 name = "radon"
 optional = false
 python-versions = "*"
-version = "4.0.0"
+version = "4.1.0"
 
 [package.dependencies]
-colorama = ">=0.4,<0.5"
+colorama = "0.4.1"
 flake8-polyfill = "*"
 future = "*"
 mando = ">=0.6,<0.7"
@@ -1556,6 +1627,17 @@ version = "1.3.3"
 
 [package.dependencies]
 six = ">=1.7.0"
+
+[[package]]
+category = "dev"
+description = "a python refactoring library..."
+name = "rope"
+optional = false
+python-versions = "*"
+version = "0.16.0"
+
+[package.extras]
+dev = ["pytest"]
 
 [[package]]
 category = "main"
@@ -1680,12 +1762,12 @@ version = "4.43.0"
 dev = ["py-make (>=0.1.0)", "twine", "argopt", "pydoc-markdown"]
 
 [[package]]
-category = "dev"
-description = "A lightweight, object-oriented Python state machine implementation."
+category = "main"
+description = "A lightweight, object-oriented Python state machine implementation with many extensions."
 name = "transitions"
 optional = false
 python-versions = "*"
-version = "0.7.2"
+version = "0.8.0"
 
 [package.dependencies]
 six = "*"
@@ -1750,6 +1832,7 @@ watchdog = ["watchdog"]
 [[package]]
 category = "dev"
 description = "Backport of pathlib-compatible object wrapper for zip files"
+marker = "python_version < \"3.8\""
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -1760,7 +1843,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "4d06ea3d973e4fb264bd0c81e3a4a57eb44782342da485b84308643742f395e3"
+content-hash = "de097ed7f54a7b36b20264dc1276951bfda812ee1aa2009b8236a3620babe330"
 python-versions = "^3.7, !=3.8"
 
 [metadata.files]
@@ -1851,8 +1934,8 @@ cohesion = [
     {file = "cohesion-1.0.0-py2.py3-none-any.whl", hash = "sha256:a33a526eb8922c7dbfef19257b3532d16e6246c4ece3ab3b492b290d9d3f2d4b"},
 ]
 colorama = [
-    {file = "colorama-0.4.3-py2.py3-none-any.whl", hash = "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff"},
-    {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
+    {file = "colorama-0.4.1-py2.py3-none-any.whl", hash = "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"},
+    {file = "colorama-0.4.1.tar.gz", hash = "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d"},
 ]
 coverage = [
     {file = "coverage-5.0.4-cp27-cp27m-macosx_10_12_x86_64.whl", hash = "sha256:8a620767b8209f3446197c0e29ba895d75a1e272a36af0786ec70fe7834e4307"},
@@ -1924,9 +2007,7 @@ dash-charts = []
 dash-core-components = [
     {file = "dash_core_components-1.8.1.tar.gz", hash = "sha256:9a8901b67d3a1038fb79153c17234d5713c2d7cca0382718c6376c786b280e63"},
 ]
-dash-daq = [
-    {file = "dash_daq-0.4.0.tar.gz", hash = "sha256:051adb0ffc03e25f24bc031d40b858aa85bd3bae61450b150a24a5d13847d332"},
-]
+dash-dev = []
 dash-html-components = [
     {file = "dash_html_components-1.0.2.tar.gz", hash = "sha256:8992097a044f5add21f86ccbe0caef8c499394a04d5f2b6cc4458a42f37cca98"},
 ]
@@ -2071,8 +2152,8 @@ flake8-printf-formatting = [
     {file = "flake8_printf_formatting-1.1.0-py2.py3-none-any.whl", hash = "sha256:8a07bebb8a93828cc5730be6d0e355776f1d38caf91aa7691c1585f94878f99c"},
 ]
 flake8-pytest-style = [
-    {file = "flake8-pytest-style-0.5.0.tar.gz", hash = "sha256:37ff18c8146c36050d1505f6f879c8a8baad8a39f6fe6a71267e5a0e148ba6ee"},
-    {file = "flake8_pytest_style-0.5.0-py3-none-any.whl", hash = "sha256:c775f7286ac4727da0ae900fa800294e7500bbc220794e2b0043d9ef352f3145"},
+    {file = "flake8-pytest-style-0.6.0.tar.gz", hash = "sha256:381c5791507db8e5be47b9117529a3157a339f2dd27f0728d60e6f14e629d327"},
+    {file = "flake8_pytest_style-0.6.0-py3-none-any.whl", hash = "sha256:1314b3995d9aff89038a8860f487671fb835269f9486368478dbb1267f05868a"},
 ]
 flake8-quotes = [
     {file = "flake8-quotes-2.1.1.tar.gz", hash = "sha256:11a15d30c92ca5f04c2791bd7019cf62b6f9d3053eb050d02a135557eb118bfc"},
@@ -2301,8 +2382,8 @@ pdoc3 = [
     {file = "pdoc3-0.7.5.tar.gz", hash = "sha256:ebca75b7fcf23f3b4320abe23339834d3f08c28517718e9d29e555fc38eeb33c"},
 ]
 pep8-naming = [
-    {file = "pep8-naming-0.9.1.tar.gz", hash = "sha256:a33d38177056321a167decd6ba70b890856ba5025f0a8eca6a3eda607da93caf"},
-    {file = "pep8_naming-0.9.1-py2.py3-none-any.whl", hash = "sha256:45f330db8fcfb0fba57458c77385e288e7a3be1d01e8ea4268263ef677ceea5f"},
+    {file = "pep8-naming-0.10.0.tar.gz", hash = "sha256:f3b4a5f9dd72b991bf7d8e2a341d2e1aa3a884a769b5aaac4f56825c1763bf3a"},
+    {file = "pep8_naming-0.10.0-py2.py3-none-any.whl", hash = "sha256:5d9f1056cb9427ce344e98d1a7f5665710e2f20f748438e308995852cfa24164"},
 ]
 percy = [
     {file = "percy-2.0.2-py2.py3-none-any.whl", hash = "sha256:c1647b768810e9453220a7721a5d52cec560dee913d13c1e29b713703f4f223e"},
@@ -2411,8 +2492,8 @@ pyyaml = [
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
 ]
 radon = [
-    {file = "radon-4.0.0-py2.py3-none-any.whl", hash = "sha256:32ac2f86bfacbddade5c79f0e927e97f90a5cda5b86f880511dd849c4a0096e3"},
-    {file = "radon-4.0.0.tar.gz", hash = "sha256:20f799949e42e6899bc9304539de222d3bdaeec276f38fbd4034859ccd548b46"},
+    {file = "radon-4.1.0-py2.py3-none-any.whl", hash = "sha256:0c18111ec6cfe7f664bf9db6c51586714ac8c6d9741542706df8a85aca39b99a"},
+    {file = "radon-4.1.0.tar.gz", hash = "sha256:56082c52206db45027d4a73612e1b21663c4cc2be3760fee769d966fd7efdd6d"},
 ]
 requests = [
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
@@ -2420,6 +2501,11 @@ requests = [
 ]
 retrying = [
     {file = "retrying-1.3.3.tar.gz", hash = "sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b"},
+]
+rope = [
+    {file = "rope-0.16.0-py2-none-any.whl", hash = "sha256:ae1fa2fd56f64f4cc9be46493ce54bed0dd12dee03980c61a4393d89d84029ad"},
+    {file = "rope-0.16.0-py3-none-any.whl", hash = "sha256:52423a7eebb5306a6d63bdc91a7c657db51ac9babfb8341c9a1440831ecf3203"},
+    {file = "rope-0.16.0.tar.gz", hash = "sha256:d2830142c2e046f5fc26a022fe680675b6f48f81c7fc1f03a950706e746e9dfe"},
 ]
 scipy = [
     {file = "scipy-1.4.1-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:c5cac0c0387272ee0e789e94a570ac51deb01c796b37fb2aad1fb13f85e2f97d"},
@@ -2493,8 +2579,8 @@ tqdm = [
     {file = "tqdm-4.43.0.tar.gz", hash = "sha256:f35fb121bafa030bd94e74fcfd44f3c2830039a2ddef7fc87ef1c2d205237b24"},
 ]
 transitions = [
-    {file = "transitions-0.7.2-py2.py3-none-any.whl", hash = "sha256:011afaefa1244177cad3d960d836c0c4a201403252371bd4c555cf8c17ce7d3c"},
-    {file = "transitions-0.7.2.tar.gz", hash = "sha256:5566c9d32e438ee9eb1f046e3ac1a0b2689f32807b47859210162084d4c84ab7"},
+    {file = "transitions-0.8.0-py2.py3-none-any.whl", hash = "sha256:45c7138cff493c14b015b23d4ff64d820bcbc108294d5da374e52fbf58c42635"},
+    {file = "transitions-0.8.0.tar.gz", hash = "sha256:1e7d213ce04114e4b1f861986282294b494c5a7d0448faa28849ec84298862bf"},
 ]
 urllib3 = [
     {file = "urllib3-1.25.8-py2.py3-none-any.whl", hash = "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc"},
