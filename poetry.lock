@@ -1,4 +1,90 @@
 [[package]]
+category = "main"
+description = "CircuitPython APIs for non-CircuitPython versions of Python such as CPython on Linux and MicroPython."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-blinka"
+optional = false
+python-versions = ">=3.4.0"
+version = "4.3.0"
+
+[package.dependencies]
+Adafruit-PlatformDetect = ">=2.5.0"
+Adafruit-PureIO = ">=1.1.0"
+pyftdi = ">=0.40.0"
+sysv_ipc = "*"
+
+[[package]]
+category = "main"
+description = "CircuitPython driver for 74HC595 shift register."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-circuitpython-74hc595"
+optional = false
+python-versions = "*"
+version = "1.1.1"
+
+[package.dependencies]
+Adafruit-Blinka = "*"
+adafruit-circuitpython-busdevice = "*"
+
+[[package]]
+category = "main"
+description = "CircuitPython bus device classes to manage bus sharing."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-circuitpython-busdevice"
+optional = false
+python-versions = "*"
+version = "4.3.1"
+
+[package.dependencies]
+Adafruit-Blinka = "*"
+
+[[package]]
+category = "main"
+description = "CircuitPython library for standard character LCDs."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-circuitpython-charlcd"
+optional = false
+python-versions = "*"
+version = "3.3.1"
+
+[package.dependencies]
+Adafruit-Blinka = "*"
+adafruit-circuitpython-74hc595 = "*"
+adafruit-circuitpython-busdevice = "*"
+adafruit-circuitpython-mcp230xx = "*"
+
+[[package]]
+category = "main"
+description = "CircuitPython library for controlling a MCP23008 or MCP23017 I2C GPIO expander."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-circuitpython-mcp230xx"
+optional = false
+python-versions = "*"
+version = "2.3.1"
+
+[package.dependencies]
+Adafruit-Blinka = "*"
+adafruit-circuitpython-busdevice = "*"
+
+[[package]]
+category = "main"
+description = "Platform detection for use by libraries like Adafruit-Blinka."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-platformdetect"
+optional = false
+python-versions = ">=3.4.0"
+version = "2.5.0"
+
+[[package]]
+category = "main"
+description = "Pure python (i.e. no native extensions) access to Linux IO including I2C and SPI.  Drop in replacement for smbus and spidev modules."
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "adafruit-pureio"
+optional = false
+python-versions = ">=3.4.0"
+version = "1.1.0"
+
+[[package]]
 category = "dev"
 description = "Automatically add trailing commas to calls and literals"
 name = "add-trailing-comma"
@@ -179,8 +265,8 @@ category = "main"
 description = "Cross-platform colored terminal text."
 name = "colorama"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "0.4.3"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "0.4.1"
 
 [[package]]
 category = "dev"
@@ -1461,6 +1547,19 @@ version = "2.1.1"
 
 [[package]]
 category = "main"
+description = "FTDI device driver (pure Python)"
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "pyftdi"
+optional = false
+python-versions = ">=3.5"
+version = "0.50.0"
+
+[package.dependencies]
+pyserial = ">=3.0"
+pyusb = ">=1.0.0"
+
+[[package]]
+category = "main"
 description = "Pygments is a syntax highlighting package written in Python."
 name = "pygments"
 optional = false
@@ -1499,6 +1598,15 @@ name = "pyparsing"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "2.4.7"
+
+[[package]]
+category = "main"
+description = "Python Serial Port Extension"
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "pyserial"
+optional = false
+python-versions = "*"
+version = "3.4"
 
 [[package]]
 category = "dev"
@@ -1656,6 +1764,15 @@ version = "2.1.0"
 tokenize-rt = ">=3.2.0"
 
 [[package]]
+category = "main"
+description = "Python USB access module"
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "pyusb"
+optional = false
+python-versions = "*"
+version = "1.0.2"
+
+[[package]]
 category = "dev"
 description = "YAML parser and emitter for Python"
 name = "pyyaml"
@@ -1669,10 +1786,10 @@ description = "Code Metrics in Python"
 name = "radon"
 optional = false
 python-versions = "*"
-version = "4.0.0"
+version = "4.1.0"
 
 [package.dependencies]
-colorama = ">=0.4,<0.5"
+colorama = "0.4.1"
 flake8-polyfill = "*"
 future = "*"
 mando = ">=0.6,<0.7"
@@ -1730,6 +1847,15 @@ version = "0.16.0"
 
 [package.extras]
 dev = ["pytest"]
+
+[[package]]
+category = "main"
+description = "A module to control Raspberry Pi GPIO channels"
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\""
+name = "rpi-gpio"
+optional = false
+python-versions = "*"
+version = "0.7.0"
 
 [[package]]
 category = "main"
@@ -1804,6 +1930,15 @@ version = "1.32.0"
 [package.dependencies]
 pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 six = ">=1.10.0"
+
+[[package]]
+category = "main"
+description = "System V IPC primitives (semaphores, shared memory and message queues) for Python"
+marker = "sys_platform != \"win32\" and sys_platform != \"darwin\" and platform_system != \"Windows\" and platform_machine != \"mips\""
+name = "sysv-ipc"
+optional = false
+python-versions = "*"
+version = "1.0.1"
 
 [[package]]
 category = "dev"
@@ -1956,10 +2091,31 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "328796dae44f0f4170a8f2757ebf94d3527f294efa97d1047dfdf088afc6e6f2"
+content-hash = "e3009c131e57cffe203819197b25b67b95cda2a1edccb81815cd58ed4ae80a6e"
 python-versions = "^3.7, !=3.8"
 
 [metadata.files]
+adafruit-blinka = [
+    {file = "Adafruit-Blinka-4.3.0.tar.gz", hash = "sha256:1254c70430f7dfb4e0a74825d040bcab2d01cedf91e480f7fb580fe30aa32570"},
+]
+adafruit-circuitpython-74hc595 = [
+    {file = "adafruit-circuitpython-74hc595-1.1.1.tar.gz", hash = "sha256:777b741786dff565c9d3448bd9e2c0e77712b29010917b74a9e3f0a70d601931"},
+]
+adafruit-circuitpython-busdevice = [
+    {file = "adafruit-circuitpython-busdevice-4.3.1.tar.gz", hash = "sha256:7eafaaad3bbcd6b31102632fc5c289dc1e208ee34301d0e44210e95664552657"},
+]
+adafruit-circuitpython-charlcd = [
+    {file = "adafruit-circuitpython-charlcd-3.3.1.tar.gz", hash = "sha256:f5ac6456d1ebfa4f8ffc9b10f68d9403db4e7dd961e6bf193a392265a8812561"},
+]
+adafruit-circuitpython-mcp230xx = [
+    {file = "adafruit-circuitpython-mcp230xx-2.3.1.tar.gz", hash = "sha256:129ce86c06ec92be432f23e4ef17441282155ed55a53f66d81fa13712cc42387"},
+]
+adafruit-platformdetect = [
+    {file = "Adafruit-PlatformDetect-2.5.0.tar.gz", hash = "sha256:bf446f8365cdf0a87d4bf6620e70bd59da99b0523c2111f0dc74a1155236ff61"},
+]
+adafruit-pureio = [
+    {file = "Adafruit_PureIO-1.1.0.tar.gz", hash = "sha256:7f3384a2cedb3f9d1b0d3f0f8424e47ac53157235514d8d936703139c63cfd45"},
+]
 add-trailing-comma = [
     {file = "add_trailing_comma-2.0.1-py2.py3-none-any.whl", hash = "sha256:34e090e00d9f93992fd09ffdc7cd8cdddcdb03f950efa5b60166209c98789801"},
     {file = "add_trailing_comma-2.0.1.tar.gz", hash = "sha256:7b8e63fe870045646b80e97cc79988cae8a820de0bdbdf4032c554e451ea18d0"},
@@ -2047,8 +2203,8 @@ cohesion = [
     {file = "cohesion-1.0.0-py2.py3-none-any.whl", hash = "sha256:a33a526eb8922c7dbfef19257b3532d16e6246c4ece3ab3b492b290d9d3f2d4b"},
 ]
 colorama = [
-    {file = "colorama-0.4.3-py2.py3-none-any.whl", hash = "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff"},
-    {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
+    {file = "colorama-0.4.1-py2.py3-none-any.whl", hash = "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"},
+    {file = "colorama-0.4.1.tar.gz", hash = "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d"},
 ]
 coverage = [
     {file = "coverage-5.0.4-cp27-cp27m-macosx_10_12_x86_64.whl", hash = "sha256:8a620767b8209f3446197c0e29ba895d75a1e272a36af0786ec70fe7834e4307"},
@@ -2551,6 +2707,10 @@ pyflakes = [
     {file = "pyflakes-2.1.1-py2.py3-none-any.whl", hash = "sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0"},
     {file = "pyflakes-2.1.1.tar.gz", hash = "sha256:d976835886f8c5b31d47970ed689944a0262b5f3afa00a5a7b4dc81e5449f8a2"},
 ]
+pyftdi = [
+    {file = "pyftdi-0.50.0-py36-none-any.whl", hash = "sha256:be03977320abb31ab8be35f95bdd82fdfbef22288a63e78c0676353e06a73099"},
+    {file = "pyftdi-0.50.0.tar.gz", hash = "sha256:7d617fbf4973452f73349383454aaec6eee298bb0789686c34b9c346c717d7db"},
+]
 pygments = [
     {file = "Pygments-2.6.1-py3-none-any.whl", hash = "sha256:ff7a40b4860b727ab48fad6360eb351cc1b33cbf9b15a0f689ca5353e9463324"},
     {file = "Pygments-2.6.1.tar.gz", hash = "sha256:647344a061c249a3b74e230c739f434d7ea4d8b1d5f3721bc0f3558049b38f44"},
@@ -2565,6 +2725,10 @@ pyopenssl = [
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
     {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
+]
+pyserial = [
+    {file = "pyserial-3.4-py2.py3-none-any.whl", hash = "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"},
+    {file = "pyserial-3.4.tar.gz", hash = "sha256:6e2d401fdee0eab996cf734e67773a0143b932772ca8b42451440cfed942c627"},
 ]
 pystache = [
     {file = "pystache-0.5.4.tar.gz", hash = "sha256:f7bbc265fb957b4d6c7c042b336563179444ab313fb93a719759111eabd3b85a"},
@@ -2612,6 +2776,9 @@ pyupgrade = [
     {file = "pyupgrade-2.1.0-py2.py3-none-any.whl", hash = "sha256:a58bcfc534cad819961ecbb1955119a86625d7f055c88d8b780f578b19423b41"},
     {file = "pyupgrade-2.1.0.tar.gz", hash = "sha256:e4acc3a56185378374736d0f14b3ac3ec0967f3763a322e3adadf3104bf0e9be"},
 ]
+pyusb = [
+    {file = "pyusb-1.0.2.tar.gz", hash = "sha256:4e9b72cc4a4205ca64fbf1f3fff39a335512166c151ad103e55c8223ac147362"},
+]
 pyyaml = [
     {file = "PyYAML-5.3.1-cp27-cp27m-win32.whl", hash = "sha256:74809a57b329d6cc0fdccee6318f44b9b8649961fa73144a98735b0aaf029f1f"},
     {file = "PyYAML-5.3.1-cp27-cp27m-win_amd64.whl", hash = "sha256:240097ff019d7c70a4922b6869d8a86407758333f02203e0fc6ff79c5dcede76"},
@@ -2626,8 +2793,8 @@ pyyaml = [
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
 ]
 radon = [
-    {file = "radon-4.0.0-py2.py3-none-any.whl", hash = "sha256:32ac2f86bfacbddade5c79f0e927e97f90a5cda5b86f880511dd849c4a0096e3"},
-    {file = "radon-4.0.0.tar.gz", hash = "sha256:20f799949e42e6899bc9304539de222d3bdaeec276f38fbd4034859ccd548b46"},
+    {file = "radon-4.1.0-py2.py3-none-any.whl", hash = "sha256:0c18111ec6cfe7f664bf9db6c51586714ac8c6d9741542706df8a85aca39b99a"},
+    {file = "radon-4.1.0.tar.gz", hash = "sha256:56082c52206db45027d4a73612e1b21663c4cc2be3760fee769d966fd7efdd6d"},
 ]
 requests = [
     {file = "requests-2.21.0-py2.py3-none-any.whl", hash = "sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b"},
@@ -2640,6 +2807,9 @@ rope = [
     {file = "rope-0.16.0-py2-none-any.whl", hash = "sha256:ae1fa2fd56f64f4cc9be46493ce54bed0dd12dee03980c61a4393d89d84029ad"},
     {file = "rope-0.16.0-py3-none-any.whl", hash = "sha256:52423a7eebb5306a6d63bdc91a7c657db51ac9babfb8341c9a1440831ecf3203"},
     {file = "rope-0.16.0.tar.gz", hash = "sha256:d2830142c2e046f5fc26a022fe680675b6f48f81c7fc1f03a950706e746e9dfe"},
+]
+rpi-gpio = [
+    {file = "RPi.GPIO-0.7.0.tar.gz", hash = "sha256:7424bc6c205466764f30f666c18187a0824077daf20b295c42f08aea2cb87d3f"},
 ]
 scipy = [
     {file = "scipy-1.4.1-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:c5cac0c0387272ee0e789e94a570ac51deb01c796b37fb2aad1fb13f85e2f97d"},
@@ -2691,6 +2861,11 @@ sqlparse = [
 stevedore = [
     {file = "stevedore-1.32.0-py2.py3-none-any.whl", hash = "sha256:a4e7dc759fb0f2e3e2f7d8ffe2358c19d45b9b8297f393ef1256858d82f69c9b"},
     {file = "stevedore-1.32.0.tar.gz", hash = "sha256:18afaf1d623af5950cc0f7e75e70f917784c73b652a34a12d90b309451b5500b"},
+]
+sysv-ipc = [
+    {file = "sysv_ipc-1.0.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:a67fc5b7a3dd5fc9c50776de0c65a44eb776d29bb88364dedb1fb1149e53a1f1"},
+    {file = "sysv_ipc-1.0.1-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:2b2b8491764845d06a9d5731ebe67f12fbe0c35967ac7f2bbe55ff24cb302405"},
+    {file = "sysv_ipc-1.0.1.tar.gz", hash = "sha256:8eff10dd17789ddf21b422ce46ae0f6420088902a88e4296cb805cf2fde8b4dc"},
 ]
 termcolor = [
     {file = "termcolor-1.1.0.tar.gz", hash = "sha256:1d6d69ce66211143803fbc56652b41d73b4a400a2891d7bf7a1cdf4c02de613b"},
