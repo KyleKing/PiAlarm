@@ -2,6 +2,7 @@ cd ~
 git clone https://github.com/adafruit/Adafruit_Python_CharLCD.git
 cd Adafruit_Python_CharLCD
 sudo python setup.py install
+# Now legacy, replaced with "adafruit-circuitpython-charlcd"
 
 cd ~
 git clone https://github.com/sarfata/pi-blaster.git
