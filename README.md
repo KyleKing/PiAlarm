@@ -1,10 +1,10 @@
+**Archived**: started refactoring for better architecture, full test coverage, and improving the mechanical and electrical design. However, I can't quite make a polished exterior that I am happy with. For now, I've decided to archive this project with the hope that I might revisit it in the future
+
+---
+
 # PiAlarm
 
-Raspberry Pi Smart Alarm Clock. RGB light strip, buzzer, character LCD display, and web app. Built with Plotly/Dash to handle the backend alarm clock control and the front-end user interactions
-
-This has been a personal project that I was using for awhile. I originally hacked it together in Python2, but I've learned about TDD, architecture, and general code quality since then. I made an iteration building the entire alarm in NodeJS/React, but decided that Python is just a much better alternative and am using Plotly/Dash.
-
-**Status:** the project was on ice for ~1 year, but I'm starting to work on it again in 2020. My goal is to have a MVP by April 30 and polish and complete the project by end of May. I'm working on other personal projects and have other activities that might interfere, but might as well set a goal!
+Raspberry Pi Smart Alarm Clock. RGB light strip, buzzer, character LCD display, and web app
 
 ## Tech
 
