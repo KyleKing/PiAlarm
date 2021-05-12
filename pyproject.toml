@@ -1,25 +1,21 @@
-[tool.isort]
-line_length = 120
-length_sort = false
-default_section = "THIRDPARTY"
-
 [tool.poetry]
 name = "pialarm"
 version = "0.0.1"
 description = "Python-Raspberry Pi Alarm Clock"
-authors = ["Kyle King <KyleKing@users.noreply.github.com>"]
+authors = ["Kyle King <https://github.com/KyleKing>"]
 repository = "https://github.com/kyleking/pialarm"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.7, !=3.8"
 adafruit_circuitpython_charlcd = {version =  "*", markers = "sys_platform != 'win32' and sys_platform != 'darwin'"}
-dash_auth = "^1.3.2"
+dash_auth = "*"
 dash_charts = {git = "https://github.com/kyleking/dash_charts.git"}
 RPi_GPIO = {version =  "*", markers = "sys_platform != 'win32' and sys_platform != 'darwin'"}
 transitions = "*"
 
 [tool.poetry.dev-dependencies]
-dash = {extras = ["testing"], version = "*, ^1.9"}
+dash = {extras = ["testing"], version = "*, ^1.11"}
 dash_dev = {git = "https://github.com/KyleKing/dash_dev.git"}
 
 [build-system]

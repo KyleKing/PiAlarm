@@ -1,0 +1,5 @@
+TODO
+
+- Configure /Alarms interactions
+
+- Move on to Python control of clock
